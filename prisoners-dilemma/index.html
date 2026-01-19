@@ -4,27 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>社会性の純粋経験：行為的直観 (Pure Experience of Sociality: Action-Intuition)</title>
+    <!-- Tailwind CSS & Chart.js -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* ページ全体をビューポートに固定 */
         html, body {
-            height: 100%; margin: 0; padding: 0;
-            background-color: #0f172a; color: #f1f5f9;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #0f172a; /* Slate-900 */
+            color: #f1f5f9;
             overflow: hidden;
         }
-        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; -webkit-touch-callout: none; user-select: none; }
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        /* カスタムスクロールバー */
         .control-panel::-webkit-scrollbar { width: 4px; }
         .control-panel::-webkit-scrollbar-track { background: transparent; }
         .control-panel::-webkit-scrollbar-thumb { background-color: #334155; border-radius: 10px; }
-        #chart-wrapper { height: 140px; width: 100%; flex-shrink: 0; margin-top: auto; }
 
+        /* グラフエリアの高さ固定 */
+        #chart-wrapper {
+            height: 140px;
+            width: 100%;
+            flex-shrink: 0;
+            margin-top: auto;
+        }
+
+        /* ネオン・スライダーデザイン */
         input[type=range] { -webkit-appearance: none; background: transparent; width: 100%; cursor: pointer; }
         input[type=range]:focus { outline: none; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%;
-            margin-top: -6px; border: 2px solid #475569; box-shadow: 0 0 8px rgba(0,0,0,0.5);
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            margin-top: -6px;
+            border: 2px solid #475569;
+            box-shadow: 0 0 8px rgba(0,0,0,0.5);
         }
+        /* 戦略カラー同期 */
         .slider-coop::-webkit-slider-thumb { background: #FFFFFF; }
         .slider-defect::-webkit-slider-thumb { background: #000000; }
         .slider-tft::-webkit-slider-thumb { background: #4299e1; }
@@ -34,32 +59,44 @@
         .slider-disposition::-webkit-slider-thumb { background: #a0aec0; }
         .slider-appraiser::-webkit-slider-thumb { background: #ffff00; }
         .slider-sect::-webkit-slider-thumb { background: #ff00ff; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #1e293b; border-radius: 2px; }
-
-        @media (max-width: 1023px) {
-            #canvas-container { height: 50vh; width: 100vw; }
-            aside { height: 50vh; }
+        
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: #1e293b;
+            border-radius: 2px;
         }
 
-        /* ふわっと出すためのアニメーション設定 */
-        #infoPanel { transition: opacity 0.5s ease; pointer-events: none; }
-        #infoPanel.show { opacity: 1; pointer-events: auto; }
+        /* モバイルレイアウト（上下50%） */
+        @media (max-width: 1023px) {
+            #canvas-container {
+                height: 50vh;
+                width: 100vw;
+            }
+            aside {
+                height: 50vh;
+            }
+        }
     </style>
 </head>
 <body class="flex flex-col lg:flex-row w-full h-screen overflow-hidden">
 
+    <!-- 描写領域 (Visualization) -->
     <main id="canvas-container" class="flex-shrink-0 lg:flex-grow flex justify-center items-center bg-black/60 relative p-1 lg:p-6">
         <canvas id="gridCanvas" class="shadow-2xl bg-slate-800 rounded-lg transition-opacity duration-300"></canvas>
     </main>
 
+    <!-- 操作パネル (Dashboard) -->
     <aside class="w-full lg:w-[320px] xl:w-[380px] flex-shrink-0 bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col h-full overflow-hidden shadow-2xl z-10">
         <div class="control-panel p-4 lg:p-6 overflow-y-auto flex-grow flex flex-col gap-5">
+            
             <header class="text-center">
                 <h1 class="text-xl font-black text-white tracking-tighter italic uppercase border-b border-slate-700 pb-2">
                     社会性の純粋経験 <span class="text-xs opacity-40 font-normal italic text-blue-400">Action-Intuition</span>
                 </h1>
                 <p class="text-[9px] text-slate-500 font-bold tracking-widest mt-1 uppercase">Exhibit 02-A: Pure Experience of Sociality</p>
                 
+                <!-- リアルタイム・ステータス -->
                 <div class="grid grid-cols-3 gap-1 mt-4 p-2 bg-slate-800/40 rounded border border-slate-700/50 text-[8px] uppercase font-bold text-slate-400">
                     <div class="flex flex-col border-r border-slate-700/50"><span>協力度</span><span id="cooperationRateDisplay" class="text-teal-400 text-sm font-black">50%</span></div>
                     <div class="flex flex-col border-r border-slate-700/50"><span>多様性指数</span><span id="diversityIndexDisplay" class="text-fuchsia-400 text-sm font-black">0%</span></div>
@@ -70,205 +107,388 @@
                 </div>
             </header>
 
+            <!-- 操作ボタン -->
             <div class="grid grid-cols-3 gap-2 shrink-0">
                 <button id="startStopBtn" class="bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-black py-2.5 rounded-lg text-[10px] transition-all shadow-lg uppercase tracking-tight">開始 (START)</button>
                 <button id="resetBtn" class="bg-emerald-700 hover:bg-emerald-600 active:scale-95 text-white font-black py-2.5 rounded-lg text-[10px] transition-all shadow-lg uppercase tracking-tight">初期化 (RESET)</button>
                 <button id="stepBtn" class="bg-slate-700 hover:bg-slate-600 active:scale-95 text-white font-black py-2.5 rounded-lg text-[10px] transition-all shadow-lg uppercase tracking-tight">1歩 (STEP)</button>
             </div>
 
+            <!-- 環境設定：順序最適化 (突然変異率 → 慈悲的介入 → 更新速度 → グリッドサイズ) -->
             <section class="space-y-4 bg-slate-800/20 p-4 rounded-xl border border-slate-700/30 shadow-inner">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1 border-l-2 border-slate-600">環境設定 (Environment)</h2>
                 <div class="space-y-4">
                     <div class="group">
-                        <label class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">突然変異率 (MUTATION) <span id="mutationLabel" class="text-white">1/65536</span></label>
+                        <label class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
+                            突然変異率 (MUTATION) <span id="mutationLabel" class="text-white">1/65536</span>
+                        </label>
                         <input id="mutationSlider" type="range" min="0" max="17" value="1">
                     </div>
                     <div class="group">
-                        <label class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">慈悲的介入 (MOOD) <span id="moodLabel" class="text-white">0.0</span></label>
+                        <label class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
+                            慈悲的介入 (MOOD) <span id="moodLabel" class="text-white">0.0</span>
+                        </label>
                         <input id="moodSlider" type="range" min="0" max="3" step="0.1" value="0">
                     </div>
-                    <div class="group"><label class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">速度 (SPEED) <span id="speedLabel" class="text-white">標準</span></label><input id="speedSlider" type="range" min="0" max="500" value="250"></div>
-                    <div class="group pt-2 border-t border-slate-800/50"><label class="flex justify-between text-[10px] font-bold text-slate-500 mb-1">グリッドサイズ <span id="gridSizeLabel" class="text-slate-400">128</span></label><input id="gridSizeSlider" type="range" min="10" max="256" value="128"></div>
+                    <div class="group">
+                        <label class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
+                            更新速度 (SPEED) <span id="speedLabel" class="text-white font-bold">標準 (Standard)</span>
+                        </label>
+                        <input id="speedSlider" type="range" min="0" max="500" value="250">
+                    </div>
+                    <div class="group pt-2 border-t border-slate-800/50">
+                        <label class="flex justify-between text-[10px] font-bold text-slate-500 mb-1">
+                            グリッドサイズ (GRID SIZE) <span id="gridSizeLabel" class="text-slate-400">128</span>
+                        </label>
+                        <input id="gridSizeSlider" type="range" min="10" max="256" value="128">
+                    </div>
                 </div>
             </section>
             
+            <!-- 戦略比率設定 -->
             <section class="space-y-3">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1 border-l-2 border-blue-500">住民の分布 (Weights)</h2>
                 <div class="grid grid-cols-1 gap-3 px-1 pb-4">
-                    <div class="space-y-1 text-[10px] font-bold"><div class="flex justify-between text-slate-300"><span>協力</span><span id="coopRatioLabel" class="text-slate-500">5%</span></div><input id="coopSlider" type="range" min="0" max="100" value="5" class="slider-coop"></div>
-                    <div class="space-y-1 text-[10px] font-bold"><div class="flex justify-between text-slate-300"><span>裏切り</span><span id="defectRatioLabel" class="text-slate-500">10%</span></div><input id="defectSlider" type="range" min="0" max="100" value="10" class="slider-defect"></div>
-                    <div class="space-y-1 text-[10px] font-bold"><div class="flex justify-between text-blue-400"><span>しっぺ返し</span><span id="tftRatioLabel" class="text-slate-500">10%</span></div><input id="tftSlider" type="range" min="0" max="100" value="10" class="slider-tft"></div>
-                    <div class="space-y-1 text-[10px] font-bold"><div class="flex justify-between text-slate-400"><span>気質 (DIS)</span><span id="randRatioLabel" class="text-slate-500">15%</span></div><input id="randSlider" type="range" min="0" max="100" value="15" class="slider-disposition"></div>
-                    <div class="space-y-1 bg-yellow-400/5 p-1 rounded border border-yellow-400/10 text-[10px] font-black"><div class="flex justify-between text-yellow-400"><span>鑑定士 (APP)</span><span id="appraiserRatioLabel" class="text-slate-500 font-normal">25%</span></div><input id="appraiserSlider" type="range" min="0" max="100" value="25" class="slider-appraiser"></div>
+                    <div class="space-y-1 text-[10px] font-bold">
+                        <div class="flex justify-between text-slate-300"><span>協力 (COOP)</span><span id="coopRatioLabel" class="text-slate-500">5%</span></div>
+                        <input id="coopSlider" type="range" min="0" max="100" value="5" class="slider-coop">
+                    </div>
+                    <div class="space-y-1 text-[10px] font-bold">
+                        <div class="flex justify-between text-slate-300"><span>裏切り (DEFECT)</span><span id="defectRatioLabel" class="text-slate-500">10%</span></div>
+                        <input id="defectSlider" type="range" min="0" max="100" value="10" class="slider-defect">
+                    </div>
+                    <div class="space-y-1 text-[10px] font-bold">
+                        <div class="flex justify-between text-blue-400"><span>しっぺ返し (TFT)</span><span id="tftRatioLabel" class="text-slate-500">10%</span></div>
+                        <input id="tftSlider" type="range" min="0" max="100" value="10" class="slider-tft">
+                    </div>
+                    <div class="space-y-1 text-[10px] font-bold">
+                        <div class="flex justify-between text-purple-400"><span>引金 (GRIM)</span><span id="grimRatioLabel" class="text-slate-500">5%</span></div>
+                        <input id="grimSlider" type="range" min="0" max="100" value="5" class="slider-grim">
+                    </div>
+                    <div class="space-y-1 text-[10px] font-bold">
+                        <div class="flex justify-between text-teal-400"><span>しっぺ返し返し (TFTT)</span><span id="tfttRatioLabel" class="text-slate-500">5%</span></div>
+                        <input id="tfttSlider" type="range" min="0" max="100" value="5" class="slider-tftt">
+                    </div>
+                    <div class="space-y-1 text-[10px] font-bold">
+                        <div class="flex justify-between text-orange-400"><span>パブロフ (PAVLOV)</span><span id="pavlovRatioLabel" class="text-slate-500">10%</span></div>
+                        <input id="pavlovSlider" type="range" min="0" max="100" value="10" class="slider-pavlov">
+                    </div>
+                    <div class="space-y-1 text-[10px] font-bold">
+                        <div class="flex justify-between text-slate-400"><span>気質 (DISPOSITION)</span><span id="randRatioLabel" class="text-slate-500">15%</span></div>
+                        <input id="randSlider" type="range" min="0" max="100" value="15" class="slider-disposition">
+                    </div>
+                    <div class="space-y-1 bg-yellow-400/5 p-1 rounded border border-yellow-400/10 text-[10px] font-black">
+                        <div class="flex justify-between text-yellow-400"><span>鑑定士 (APPRAISER)</span><span id="appraiserRatioLabel" class="text-slate-500 font-normal">25%</span></div>
+                        <input id="appraiserSlider" type="range" min="0" max="100" value="25" class="slider-appraiser">
+                    </div>
+                    <div class="space-y-1 bg-pink-500/5 p-1 rounded border border-pink-500/10 text-[10px] font-black">
+                        <div class="flex justify-between text-pink-500"><span>宗派 (SECT)</span><span id="sectRatioLabel" class="text-slate-500 font-normal">15%</span></div>
+                        <input id="sectSlider" type="range" min="0" max="100" value="15" class="slider-sect">
+                    </div>
                 </div>
             </section>
 
+            <!-- グラフ -->
             <div id="chart-wrapper" class="bg-black/40 rounded-xl border border-slate-800 p-2 shrink-0 mb-4 shadow-2xl">
                 <canvas id="populationChart"></canvas>
             </div>
             
-            <footer class="text-[8px] text-center text-slate-700 font-bold uppercase tracking-[0.3em] shrink-0 mb-2 italic">Absolute Contradiction & Co-evolution</footer>
+            <footer class="text-[8px] text-center text-slate-700 font-bold uppercase tracking-[0.3em] shrink-0 mb-2 italic">
+                Absolute Contradiction & Co-evolution
+            </footer>
         </div>
     </aside>
 
-    <button id="infoOpenBtn" class="fixed top-4 right-4 z-50 bg-slate-800/80 hover:bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center border border-slate-700 shadow-xl transition-all active:scale-90">
-        <span class="font-serif italic text-lg text-blue-400">i</span>
-    </button>
-
-    <div id="infoPanel" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md overflow-y-auto hidden opacity-0 p-6 lg:p-20">
-        <div class="max-w-3xl mx-auto text-slate-300 font-serif leading-relaxed">
-            <button id="infoCloseBtn" class="fixed top-8 right-8 text-slate-500 hover:text-white text-3xl">×</button>
-            <header class="mb-12 border-b border-slate-800 pb-8 text-center">
-                <h2 class="text-3xl font-black text-white italic tracking-tighter mb-2">社会性の純粋経験：行為的直観</h2>
-                <p class="text-xs tracking-[0.4em] text-blue-500 uppercase">Exhibit 02-A Archive</p>
-            </header>
-            <section class="space-y-12">
-                <div>
-                    <h3 class="text-xl font-bold text-white mb-6 border-l-4 border-blue-600 pl-4">1. 囚人のジレンマ：共創の村の物語</h3>
-                    <p class="mb-4 text-slate-400">個々の最適な選択が全体の調和を損なうという葛藤。住民は自らの知恵と力を共有し、コミュニティを形成します。</p>
-                    <div class="bg-slate-900/50 p-6 rounded-lg border border-slate-800 italic text-sm space-y-4">
-                        <ul class="list-disc pl-5 space-y-2 text-slate-500">
-                            <li><strong class="text-slate-300">報酬 (R):</strong> 互いのアイディアが響き合い、発展する豊かな生。</li>
-                            <li><strong class="text-slate-300">誘惑 (T):</strong> 相手の献身を一方的に享受する個人的利得。</li>
-                            <li><strong class="text-slate-300">善意の搾取 (S):</strong> 自分の献身を利用され、活力を消費される状況。</li>
-                            <li><strong class="text-slate-300">相互不信 (P):</strong> 誰も動かず、世界が荒廃したまま固定される。</li>
-                        </ul>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold text-white mb-6 border-l-4 border-blue-600 pl-4">2. アルゴリズムの定義</h3>
-                    <p class="text-sm text-slate-400 mb-4"><strong>鑑定士 (APPRAISER):</strong> 隣人ごとに信頼スコアを保持し、平均信頼度が一定基準を外れれば拒絶し、中間では場の空気に同調します。</p>
-                </div>
-            </section>
-        </div>
-    </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- シミュレーションコア ---
+    // --- システムコア定数 ---
     const STRATEGIES = { COOP: 0, DEFECT: 1, TFT: 2, GRIM: 3, TFTT: 4, PAVLOV: 5, DISPOSITION: 6, APPRAISER: 7, SECT: 8 };
-    const COLORS = { [STRATEGIES.COOP]: '#FFFFFF', [STRATEGIES.DEFECT]: '#000000', [STRATEGIES.TFT]: '#4299e1', [STRATEGIES.GRIM]: '#9b59b6', [STRATEGIES.TFTT]: '#1abc9c', [STRATEGIES.PAVLOV]: '#e67e22', [STRATEGIES.DISPOSITION]: '#808080', [STRATEGIES.APPRAISER]: '#ffff00', [STRATEGIES.SECT]: '#ff00ff' };
-    const STRATEGY_NAMES = { [STRATEGIES.COOP]: '協力', [STRATEGIES.DEFECT]: '裏切り', [STRATEGIES.TFT]: 'しっぺ返し', [STRATEGIES.DISPOSITION]: '気質', [STRATEGIES.APPRAISER]: '鑑定士' };
+    const COLORS = {
+        [STRATEGIES.COOP]: '#FFFFFF', [STRATEGIES.DEFECT]: '#000000', [STRATEGIES.TFT]: '#4299e1',
+        [STRATEGIES.GRIM]: '#9b59b6', [STRATEGIES.TFTT]: '#1abc9c', [STRATEGIES.PAVLOV]: '#e67e22',
+        [STRATEGIES.DISPOSITION]: '#808080', [STRATEGIES.APPRAISER]: '#ffff00', [STRATEGIES.SECT]: '#ff00ff',
+    };
+    const STRATEGY_NAMES = {
+        [STRATEGIES.COOP]: '協力 (COOP)', [STRATEGIES.DEFECT]: '裏切り (DEF)', [STRATEGIES.TFT]: 'しっぺ返し (TFT)',
+        [STRATEGIES.GRIM]: '引金 (GRIM)', [STRATEGIES.TFTT]: '返返 (TFTT)', [STRATEGIES.PAVLOV]: 'パブロフ (PAV)',
+        [STRATEGIES.DISPOSITION]: '気質 (DISPOSITION)', [STRATEGIES.APPRAISER]: '鑑定士 (APPRAISER)', [STRATEGIES.SECT]: '宗派 (SECT)',
+    };
 
     const canvas = document.getElementById('gridCanvas');
     const ctx = canvas.getContext('2d', { alpha: false });
+    
     const ui = {
-        startStop: document.getElementById('startStopBtn'), reset: document.getElementById('resetBtn'), step: document.getElementById('stepBtn'),
-        gridSize: document.getElementById('gridSizeSlider'), mutation: document.getElementById('mutationSlider'), speed: document.getElementById('speedSlider'), mood: document.getElementById('moodSlider'),
-        coopDisp: document.getElementById('cooperationRateDisplay'), diversityDisp: document.getElementById('diversityIndexDisplay'), genDisp: document.getElementById('generationDisplay'),
-        rDisp: document.getElementById('rewardDisplay'), tDisp: document.getElementById('temptationDisplay'), sDisp: document.getElementById('suckerDisplay')
+        startStop: document.getElementById('startStopBtn'),
+        reset: document.getElementById('resetBtn'),
+        step: document.getElementById('stepBtn'),
+        gridSize: document.getElementById('gridSizeSlider'),
+        gridLabel: document.getElementById('gridSizeLabel'),
+        mutation: document.getElementById('mutationSlider'),
+        mutationLabel: document.getElementById('mutationLabel'),
+        speed: document.getElementById('speedSlider'),
+        speedLabel: document.getElementById('speedLabel'),
+        mood: document.getElementById('moodSlider'),
+        moodLabel: document.getElementById('moodLabel'),
+        coopDisp: document.getElementById('cooperationRateDisplay'),
+        diversityDisp: document.getElementById('diversityIndexDisplay'),
+        genDisp: document.getElementById('generationDisplay'),
+        rDisp: document.getElementById('rewardDisplay'),
+        tDisp: document.getElementById('temptationDisplay'),
+        sDisp: document.getElementById('suckerDisplay')
     };
 
-    const sSliders = { coop: document.getElementById('coopSlider'), defect: document.getElementById('defectSlider'), tft: document.getElementById('tftSlider'), rand: document.getElementById('randSlider'), appraiser: document.getElementById('appraiserSlider') };
+    const sSliders = {
+        coop: document.getElementById('coopSlider'), defect: document.getElementById('defectSlider'),
+        tft: document.getElementById('tftSlider'), grim: document.getElementById('grimSlider'),
+        tftt: document.getElementById('tfttSlider'), pavlov: document.getElementById('pavlovSlider'),
+        rand: document.getElementById('randSlider'), appraiser: document.getElementById('appraiserSlider'),
+        sect: document.getElementById('sectSlider')
+    };
+    const sLabels = {};
+    for (let k in sSliders) sLabels[k] = document.getElementById(k + 'RatioLabel');
 
+    // --- シミュレーション状態 ---
     let gridSize = 128, mutationRate = 1 / 65536, interval = 80, moodEffectStrength = 0;
     let grid = null, prevA = null, prevPrevA = null, memoryG = null, memoryA = null, memoryS = null;
     let isRunning = false, animationId = null, lastTime = 0, gen = 0;
     let curPayoffs = { R: 3, T: 5, S: 0, P: 1 };
-    const RAND_MUT_STEP = 1/128;
 
+    const BASE_COOP_RATE = 0.75, SECT_TOLERANCE = 2, FORGIVENESS = 5;
+    const HANDSHAKE_S = [0, 0, 1], HANDSHAKE_E = [0, 0, 1]; 
+    // 【重要】微細継承の設定：128分の1
+    const RAND_MUT_STEP = 1/128; 
+
+    // --- Chart.js ---
     let chart;
     function buildChart() {
         if (chart) chart.destroy();
         chart = new Chart(document.getElementById('populationChart').getContext('2d'), {
-            type: 'line', data: { labels: [], datasets: Object.keys(STRATEGIES).filter(k => STRATEGY_NAMES[STRATEGIES[k]]).map(k => ({ label: STRATEGY_NAMES[STRATEGIES[k]], data: [], borderColor: COLORS[STRATEGIES[k]], borderWidth: 1.5, pointRadius: 0 })) },
-            options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true, grid: { color: '#1e293b' } } } }
+            type: 'line',
+            data: { labels: [], datasets: Object.keys(STRATEGIES).map(k => ({ label: STRATEGY_NAMES[STRATEGIES[k]], data: [], borderColor: COLORS[STRATEGIES[k]], borderWidth: 1.5, pointRadius: 0, tension: 0.15 })) },
+            options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } },
+                scales: { x: { display: false }, y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#475569', font: { size: 8 } } } }
+            }
         });
     }
 
     function getNeighbors(x, y) {
         const n = [];
-        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { if (dx === 0 && dy === 0) continue; n.push({ x: (x + dx + gridSize) % gridSize, y: (y + dy + gridSize) % gridSize }); }
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                if (dx === 0 && dy === 0) continue;
+                n.push({ x: (x + dx + gridSize) % gridSize, y: (y + dy + gridSize) % gridSize });
+            }
+        }
         return n;
     }
 
+    // 【行為的直観：個別反応】ベースコードの面白さを維持
     function getAct(cell, x, y, ox, oy) {
         const s = cell.strategy, id = `${ox},${oy}`;
         switch (s) {
             case STRATEGIES.COOP: return 0;
             case STRATEGIES.DEFECT: return 1;
             case STRATEGIES.TFT: return prevA[oy][ox];
+            case STRATEGIES.GRIM: return memoryG[y][x].has(id) ? 1 : 0;
+            case STRATEGIES.TFTT: return (prevA[oy][ox] === 1 && prevPrevA[oy][ox] === 1) ? 1 : 0;
+            case STRATEGIES.PAVLOV: return (prevA[y][x] === prevA[oy][ox]) ? 0 : 1;
             case STRATEGIES.DISPOSITION: return Math.random() < cell.coopRate ? 0 : 1;
             case STRATEGIES.APPRAISER: {
                 let m = memoryA[y][x]; if (!m[id]) m[id] = { s: 0 };
                 m[id].s = Math.max(-10, Math.min(10, m[id].s + (prevA[oy][ox] === 0 ? 1 : -1)));
-                return m[id].s > 1 ? 0 : (m[id].s < -1 ? 1 : prevA[oy][ox]);
+                return m[id].s > 2 ? 0 : (m[id].s < -2 ? 1 : prevA[oy][ox]);
             }
-            default: return 1;
+            case STRATEGIES.SECT: {
+                let m = memoryS[y][x]; if (!m[id]) m[id] = { turn: 0, h: [], st: 'p', b: 0, sk: 0 };
+                const c = m[id]; if (c.st === 'ally') return 0; if (c.st === 'enemy') return c.b >= SECT_TOLERANCE ? 1 : 0;
+                if (c.turn < HANDSHAKE_S.length) return HANDSHAKE_S[c.turn];
+                let match = true; for(let i=0; i<HANDSHAKE_E.length; i++) if(c.h[i] !== HANDSHAKE_E[i]) match = false;
+                c.st = match ? 'ally' : 'enemy'; return match ? 0 : (c.b >= SECT_TOLERANCE ? 1 : 0);
+            }
         }
+    }
+
+    function syncPayoffs(rate) {
+        const f = (rate - 0.5) * 2;
+        if (f < 0) { curPayoffs.R = 3.0 - (f * moodEffectStrength * 1.5); curPayoffs.T = 5.0 + (f * moodEffectStrength); curPayoffs.S = 0; }
+        else { curPayoffs.R = 3.0 + (f * moodEffectStrength * 0.5); curPayoffs.T = 5.0; curPayoffs.S = (f * moodEffectStrength * 0.5); }
+        ui.rDisp.textContent = curPayoffs.R.toFixed(1); ui.tDisp.textContent = curPayoffs.T.toFixed(1); ui.sDisp.textContent = curPayoffs.S.toFixed(1);
     }
 
     function processEvolve() {
         if (!prevA) return;
         const nextA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
         const scores = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
+        const counts = Array(9).fill(0);
         let totalC = 0;
-        for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) if(prevA[y][x] === 0) totalC++;
-        ui.coopDisp.textContent = `${Math.round((totalC/(gridSize*gridSize))*100)}%`;
+
+        for (let y=0; y<gridSize; y++) {
+            for (let x=0; x<gridSize; x++) {
+                if(prevA[y][x] === 0) totalC++;
+                counts[grid[y][x].strategy]++;
+            }
+        }
+
+        const totalCells = gridSize * gridSize;
+        let entropy = 0;
+        counts.forEach(c => { if(c > 0) { let p = c/totalCells; entropy -= p * Math.log2(p); } });
+        ui.diversityDisp.textContent = `${Math.round((entropy / Math.log2(9)) * 100)}%`;
+        ui.coopDisp.textContent = `${Math.round((totalC/totalCells) * 100)}%`;
         ui.genDisp.textContent = gen;
 
-        for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) {
-            const ns = getNeighbors(x, y); let scoreSum = 0, sumA = 0;
-            for (const n of ns) {
-                const myA = getAct(grid[y][x], x, y, n.x, n.y), opA = getAct(grid[n.y][n.x], n.x, n.y, x, y);
-                scoreSum += (myA === 0) ? (opA === 0 ? curPayoffs.R : curPayoffs.S) : (opA === 0 ? curPayoffs.T : curPayoffs.P);
-                sumA += myA;
+        // ステップ1: 利得計算
+        for (let y=0; y<gridSize; y++) {
+            for (let x=0; x<gridSize; x++) {
+                const ns = getNeighbors(x, y); let scoreSum = 0, sumA = 0;
+                for (const n of ns) {
+                    const myA = getAct(grid[y][x], x, y, n.x, n.y), opA = getAct(grid[n.y][n.x], n.x, n.y, x, y);
+                    scoreSum += (myA === 0) ? (opA === 0 ? curPayoffs.R : curPayoffs.S) : (opA === 0 ? curPayoffs.T : curPayoffs.P);
+                    sumA += myA;
+                    if (grid[y][x].strategy === STRATEGIES.GRIM && opA === 1) memoryG[y][x].add(`${n.x},${n.y}`);
+                    if (grid[y][x].strategy === STRATEGIES.SECT) {
+                        let m = memoryS[y][x][`${n.x},${n.y}`];
+                        if (m.st === 'p') { m.h.push(opA); m.turn++; }
+                        else if (m.st === 'enemy') { if (opA === 1) { m.b++; m.sk = 0; } else { m.sk++; if(m.sk >= FORGIVENESS && m.b > 0) { m.b--; m.sk = 0; } } }
+                    }
+                }
+                scores[y][x] = scoreSum; nextA[y][x] = (sumA / ns.length) > 0.5 ? 1 : 0;
             }
-            scores[y][x] = scoreSum; nextA[y][x] = (sumA / ns.length) > 0.5 ? 1 : 0;
         }
 
+        // ステップ2: 進化 (【重要】有機的等方性の確保)
         const nextGrid = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
-        for (let y = 0; y < gridSize; y++) for (let x = 0; x < gridSize; x++) {
-            const ns = getNeighbors(x, y); let maxS = scores[y][x], winners = [{y, x}];
-            ns.forEach(n => { if (scores[n.y][n.x] > maxS) { maxS = scores[n.y][n.x]; winners = [{y: n.y, x: n.x}]; } else if (scores[n.y][n.x] === maxS) winners.push({y: n.y, x: n.x}); });
-            const w = winners[Math.floor(Math.random() * winners.length)];
-            let nextCell = { ...grid[w.y][w.x] };
-            if (nextCell.strategy === STRATEGIES.DISPOSITION) nextCell.coopRate = Math.max(0, Math.min(1, nextCell.coopRate + (Math.random()-0.5) * RAND_MUT_STEP));
-            nextGrid[y][x] = nextCell;
+        const mPool = [];
+        for (let k in sSliders) { let w = parseInt(sSliders[k].value), s = STRATEGIES[k.toUpperCase() === 'RAND' ? 'DISPOSITION' : k.toUpperCase()]; for (let i=0; i<w; i++) mPool.push(s); }
+        if (mPool.length === 0) mPool.push(...Object.values(STRATEGIES));
+
+        for (let y = 0; y < gridSize; y++) {
+            for (let x = 0; x < gridSize; x++) {
+                const ns = getNeighbors(x, y);
+                let maxS = scores[y][x];
+                let winners = [{y, x}]; // 自分を初期候補に
+                
+                ns.forEach(n => {
+                    if (scores[n.y][n.x] > maxS) {
+                        maxS = scores[n.y][n.x];
+                        winners = [{y: n.y, x: n.x}];
+                    } else if (scores[n.y][n.x] === maxS) {
+                        winners.push({y: n.y, x: n.x});
+                    }
+                });
+
+                // 【止揚：等方性の確保】ランダム選択によるタイブレーキング
+                const w = winners[Math.floor(Math.random() * winners.length)];
+                let nextCell = { ...grid[w.y][w.x] };
+
+                // 突然変異
+                if (Math.random() < mutationRate) {
+                    const st = mPool[Math.floor(Math.random() * mPool.length)];
+                    nextCell = { strategy: st, coopRate: Math.random() };
+                } else if (nextCell.strategy === STRATEGIES.DISPOSITION) {
+                    // 【止揚：微細継承】128分の1のゆらぎ
+                    nextCell.coopRate = Math.max(0, Math.min(1, nextCell.coopRate + (Math.random()-0.5) * RAND_MUT_STEP));
+                }
+
+                // 交代時に記憶をリセット
+                if (grid[y][x].strategy !== nextCell.strategy) {
+                    memoryG[y][x].clear(); memoryA[y][x] = {}; memoryS[y][x] = {};
+                }
+                nextGrid[y][x] = nextCell;
+            }
         }
+
         grid = nextGrid; prevPrevA = prevA; prevA = nextA; gen++;
     }
 
     function render() {
-        if (!grid) return; const s = canvas.width / gridSize;
+        if (!grid) return;
+        const s = canvas.width / gridSize;
         ctx.fillStyle = '#1e293b'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) {
-            const c = grid[y][x]; ctx.fillStyle = c.strategy === STRATEGIES.DISPOSITION ? `rgb(${Math.round(255*c.coopRate)},${Math.round(255*c.coopRate)},${Math.round(255*c.coopRate)})` : COLORS[c.strategy];
-            ctx.fillRect(Math.floor(x*s), Math.floor(y*s), Math.ceil(s), Math.ceil(s));
+        for (let y=0; y<gridSize; y++) {
+            for (let x=0; x<gridSize; x++) {
+                const c = grid[y][x];
+                if (c.strategy === STRATEGIES.DISPOSITION) {
+                    const g = Math.round(255 * c.coopRate); ctx.fillStyle = `rgb(${g},${g},${g})`;
+                } else ctx.fillStyle = COLORS[c.strategy];
+                ctx.fillRect(Math.floor(x * s), Math.floor(y * s), Math.ceil(s), Math.ceil(s));
+            }
         }
     }
 
-    function reset() {
-        isRunning = false; gen = 0; gridSize = parseInt(ui.gridSize.value);
-        const pool = []; for (let k in sSliders) { let n = Math.round((parseInt(sSliders[k].value)/100)*gridSize*gridSize); for(let i=0; i<n; i++) pool.push({strategy: STRATEGIES[k.toUpperCase() === 'RAND' ? 'DISPOSITION' : k.toUpperCase()], coopRate: Math.random()}); }
-        while(pool.length < gridSize*gridSize) pool.push({strategy: STRATEGIES.COOP, coopRate: 0.5});
-        grid = Array(gridSize).fill(0).map((_, y) => Array(gridSize).fill(0).map((_, x) => pool[y*gridSize+x]));
-        prevA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => Math.random()<0.5?0:1));
-        memoryA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => ({})));
-        fit(); buildChart(); render();
+    function updateChart() {
+        if (!chart) return;
+        const counts = Array(9).fill(0);
+        for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) counts[grid[y][x].strategy]++;
+        if (chart.data.labels.length > 50) { chart.data.labels.shift(); chart.data.datasets.forEach(d => d.data.shift()); }
+        chart.data.labels.push(gen); chart.data.datasets.forEach((d, i) => d.data.push(counts[i])); chart.update('none');
     }
 
-    function fit() { const size = Math.min(window.innerWidth, window.innerHeight*0.5)-20; canvas.width = canvas.height = size; render(); }
+    function loop(t) {
+        if (!isRunning) return; animationId = requestAnimationFrame(loop);
+        if (t - lastTime > interval) { processEvolve(); render(); updateChart(); lastTime = t; }
+    }
 
-    ui.startStop.onclick = () => { isRunning = !isRunning; if(isRunning) { lastTime = performance.now(); loop(lastTime); } };
-    ui.reset.onclick = reset; window.addEventListener('resize', fit);
-    function loop(t) { if (!isRunning) return; animationId = requestAnimationFrame(loop); if (t - lastTime > interval) { processEvolve(); render(); lastTime = t; } }
+    function fit() {
+        const container = document.getElementById('canvas-container');
+        const rect = container.getBoundingClientRect();
+        const size = Math.min(rect.width, rect.height) - 10;
+        canvas.width = canvas.height = size;
+        render();
+    }
 
-    // ② 解説パネルの開閉制御
-    const infoPanel = document.getElementById('infoPanel');
-    const infoOpenBtn = document.getElementById('infoOpenBtn');
-    const infoCloseBtn = document.getElementById('infoCloseBtn');
+    function getM(v) { return v == 0 ? 0 : (v == 17 ? 1 : 1 / Math.pow(2, 17 - v)); }
+    function calcIntervalAndLabel(v) {
+        let iv = 80; let lb = "標準 (Standard)";
+        if (v >= 250) { iv = 80 - ((v - 250) * (70 / 250)); if (v > 450) lb = "爆速 (Extreme)"; else if (v > 300) lb = "高速 (High)"; }
+        else { iv = 500 - (v * (420 / 250)); if (v < 50) lb = "低速 (Slow)"; else if (v < 200) lb = "やや低速 (Low)"; }
+        return { interval: iv, label: lb };
+    }
 
-    infoOpenBtn.onclick = () => {
-        infoPanel.classList.remove('hidden');
-        setTimeout(() => infoPanel.classList.add('show'), 10);
+    function reset() {
+        isRunning = false; ui.startStop.textContent = '開始 (START)'; gen = 0;
+        cancelAnimationFrame(animationId);
+        gridSize = parseInt(ui.gridSize.value); 
+        mutationRate = getM(parseInt(ui.mutation.value));
+        const sp = calcIntervalAndLabel(parseInt(ui.speed.value));
+        interval = sp.interval; ui.speedLabel.textContent = sp.label;
+        moodEffectStrength = parseFloat(ui.mood.value);
+
+        const totalW = Object.values(sSliders).reduce((a, b) => a + parseInt(b.value), 0);
+        const pool = []; const target = gridSize * gridSize;
+        for (let k in sSliders) {
+            let n = Math.round((parseInt(sSliders[k].value) / (totalW || 1)) * target);
+            let st = STRATEGIES[k.toUpperCase() === 'RAND' ? 'DISPOSITION' : k.toUpperCase()];
+            for (let i = 0; i < n; i++) pool.push({ strategy: st, coopRate: Math.random() });
+        }
+        while(pool.length < target) pool.push({ strategy: STRATEGIES.COOP, coopRate: Math.random() });
+        for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+        
+        grid = Array(gridSize).fill(0).map((_, y) => Array(gridSize).fill(0).map((_, x) => pool[y * gridSize + x]));
+        const randX = () => Math.random() < 0.5 ? 0 : 1;
+        prevA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(randX));
+        prevPrevA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(randX));
+        memoryG = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => new Set()));
+        memoryA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => ({})));
+        memoryS = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => ({})));
+
+        fit(); buildChart(); updateChart();
+        ui.genDisp.textContent = 0; ui.coopDisp.textContent = "50%"; ui.diversityDisp.textContent = "100%";
+    }
+
+    ui.startStop.onclick = () => { isRunning = !isRunning; ui.startStop.textContent = isRunning ? '停止 (STOP)' : '再開 (RESUME)'; if (isRunning) { lastTime = performance.now(); loop(lastTime); } };
+    ui.reset.onclick = reset; ui.step.onclick = () => { if(isRunning) return; processEvolve(); render(); updateChart(); };
+    ui.gridSize.oninput = e => ui.gridLabel.textContent = e.target.value; ui.gridSize.onchange = reset;
+    ui.mutation.oninput = e => { const v = parseInt(e.target.value); mutationRate = getM(v); ui.mutationLabel.textContent = v === 0 ? '0' : (v === 17 ? '100%' : `1/${Math.pow(2, 17-v)}`); };
+    ui.speed.oninput = e => { 
+        const v = parseInt(e.target.value);
+        const sp = calcIntervalAndLabel(v); interval = sp.interval; ui.speedLabel.textContent = sp.label;
     };
-    infoCloseBtn.onclick = () => {
-        infoPanel.classList.remove('show');
-        setTimeout(() => infoPanel.classList.add('hidden'), 500);
-    };
-
-    reset();
+    ui.mood.oninput = e => { moodEffectStrength = parseFloat(e.target.value); ui.moodLabel.textContent = e.target.value; };
+    function norm() { let t = 0; for(let k in sSliders) t += parseInt(sSliders[k].value); for(let k in sSliders) sLabels[k].textContent = t === 0 ? '0%' : `${Math.round((parseInt(sSliders[k].value)/t)*100)}%`; }
+    for(let k in sSliders) sSliders[k].oninput = norm;
+    window.addEventListener('resize', fit); reset(); norm();
 });
 </script>
 </body>
