@@ -77,6 +77,10 @@
                 height: 50vh;
             }
         }
+
+/* ③ふわっと出すための設定 */
+#infoPanel.opacity-100 { opacity: 1; }
+#infoPanel { transition: opacity 0.5s ease; }        
     </style>
 </head>
 <body class="flex flex-col lg:flex-row w-full h-screen overflow-hidden">
@@ -491,5 +495,75 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', fit); reset(); norm();
 });
 </script>
+<button id="infoOpenBtn" class="fixed top-4 right-4 z-50 bg-slate-800/80 hover:bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center border border-slate-700 shadow-xl transition-all active:scale-90">
+        <span class="font-serif italic text-lg text-blue-400">i</span>
+    </button>
+
+    <div id="infoPanel" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md overflow-y-auto hidden opacity-0 transition-opacity duration-500 p-6 lg:p-20">
+        <div class="max-w-3xl mx-auto text-slate-300 font-serif leading-relaxed">
+            <button id="infoCloseBtn" class="fixed top-8 right-8 text-slate-500 hover:text-white text-3xl">×</button>
+            <header class="mb-12 border-b border-slate-800 pb-8 text-center">
+                <h2 class="text-3xl font-black text-white italic tracking-tighter mb-2">社会性の純粋経験：行為的直観</h2>
+                <p class="text-xs tracking-[0.4em] text-blue-500 uppercase">Exhibit 02-A Archive</p>
+            </header>
+            <section class="space-y-12">
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-6 border-l-4 border-blue-600 pl-4">1. 囚人のジレンマ：共創の村の物語</h3>
+                    <p class="mb-4 text-slate-400">このシミュレーションの根本にあるのは、個々の最適な選択が全体の調和を損なうという葛藤です。</p>
+                    <div class="bg-slate-900/50 p-6 rounded-lg border border-slate-800 italic text-sm space-y-4">
+                        <p><strong>【状況】</strong> 住民は自分の持つ「独自の知恵」を共有し、「労力」を提供する必要があります。</p>
+                        <ul class="list-disc pl-5 space-y-2 text-slate-500">
+                            <li><strong class="text-slate-300">報酬 (R):</strong> 互いのアイディアが響き合い、急速に発展する豊かな生。</li>
+                            <li><strong class="text-slate-300">誘惑 (T):</strong> 自分は労力を温存し、相手の献身を一方的に享受する。</li>
+                            <li><strong class="text-slate-300">善意の搾取 (S):</strong> 自分の献身を相手に利用され、再生産が困難な状況。</li>
+                            <li><strong class="text-slate-300">相互不信 (P):</strong> 誰も知恵を出さず、世界が荒廃したまま固定される。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-6 border-l-4 border-blue-600 pl-4">2. 戦略（アルゴリズム）の定義</h3>
+                    <div class="overflow-x-auto text-xs">
+                        <table class="w-full text-left border-collapse border border-slate-800">
+                            <tr class="bg-slate-900 text-blue-400">
+                                <th class="p-2 border border-slate-800">戦略</th><th class="p-2 border border-slate-800">概要</th><th class="p-2 border border-slate-800">アルゴリズム</th>
+                            </tr>
+                            <tr><td class="p-2 border border-slate-800">協力</td><td>純粋利他</td><td>常に協力(C)を選択。</td></tr>
+                            <tr><td class="p-2 border border-slate-800">裏切り</td><td>純粋利己</td><td>常に裏切り(D)を選択。</td></tr>
+                            <tr><td class="p-2 border border-slate-800">しっぺ返し</td><td>互恵主義</td><td>周囲の協力率が50%以上ならC、未満ならD。</td></tr>
+                            <tr><td class="p-2 border border-slate-800">引金</td><td>断罪主義</td><td>一度でも裏切りを観測すれば永久にD。</td></tr>
+                            <tr><td class="p-2 border border-slate-800 text-blue-400">鑑定士</td><td>知性分析</td><td>隣人の行動をスコアリング。※詳細参照</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="bg-blue-900/10 p-8 border-t-2 border-blue-900/50">
+                    <h4 class="text-lg font-bold text-blue-400 mb-4 italic">🛠️ 鑑定士 (APPRAISER) の詳細</h4>
+                    <p class="text-sm text-slate-400 mb-4">隣人ごとに信頼スコアを $[-10, 10]$ で保持。平均信頼度が $1$ 以上なら「協力」、$-1$ 以下なら「裏切り」、その中間では「場の空気」に同調します。</p>
+                </div>
+            </section>
+            <footer class="mt-20 py-10 border-t border-slate-900 text-center text-[10px] tracking-[0.4em] text-slate-700">ABSOLUTE CONTRADICTION & CO-EVOLUTION</footer>
+        </div>
+    </div>
+    ```
+
+#### ステップ2：JavaScript（動かす仕組み）を貼る
+スクリプトの最後の方に、**`window.addEventListener('resize', fit); reset(); norm();`** という行があるはずや。
+その**「次」の行（ `});` の直前）**に、これを貼ってな。
+
+```javascript
+    // ②パネルを開け閉めする仕組み（ここから）
+    const infoPanel = document.getElementById('infoPanel');
+    const infoOpenBtn = document.getElementById('infoOpenBtn');
+    const infoCloseBtn = document.getElementById('infoCloseBtn');
+
+    infoOpenBtn.onclick = () => {
+        infoPanel.classList.remove('hidden');
+        setTimeout(() => infoPanel.classList.add('opacity-100'), 10);
+    };
+
+    infoCloseBtn.onclick = () => {
+        infoPanel.classList.remove('opacity-100');
+        setTimeout(() => infoPanel.classList.add('hidden'), 500);
+    };
+    // ②（ここまで）    
 </body>
 </html>
