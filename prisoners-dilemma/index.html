@@ -78,7 +78,7 @@
             }
         }
 
-        /* 解説パネル：透明度90% */
+        /* 解説パネル：透明度90% (0.90不透明) */
         #infoPanel {
             transition: opacity 0.5s ease;
             pointer-events: none;
@@ -130,31 +130,11 @@
 
             <section class="space-y-4 bg-slate-800/20 p-4 rounded-xl border border-slate-700/30 shadow-inner">
                 <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1 border-l-2 border-slate-600">環境設定 (Environment)</h2>
-                <div class="space-y-4">
-                    <div class="group">
-                        <label class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
-                            突然変異率 (MUTATION) <span id="mutationLabel" class="text-white">1/65536</span>
-                        </label>
-                        <input id="mutationSlider" type="range" min="0" max="17" value="1">
-                    </div>
-                    <div class="group">
-                        <label class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
-                            慈悲的介入 (MOOD) <span id="moodLabel" class="text-white">0.0</span>
-                        </label>
-                        <input id="moodSlider" type="range" min="0" max="3" step="0.1" value="0">
-                    </div>
-                    <div class="group">
-                        <label class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
-                            更新速度 (SPEED) <span id="speedLabel" class="text-white font-bold">標準 (Standard)</span>
-                        </label>
-                        <input id="speedSlider" type="range" min="0" max="500" value="250">
-                    </div>
-                    <div class="group pt-2 border-t border-slate-800/50">
-                        <label class="flex justify-between text-[10px] font-bold text-slate-500 mb-1">
-                            グリッドサイズ (GRID SIZE) <span id="gridSizeLabel" class="text-slate-400">128</span>
-                        </label>
-                        <input id="gridSizeSlider" type="range" min="10" max="256" value="128">
-                    </div>
+                <div class="space-y-4 text-[10px] font-bold text-slate-400">
+                    <div class="group"><label class="flex justify-between">突然変異率 (MUTATION) <span id="mutationLabel" class="text-white">1/65536</span></label><input id="mutationSlider" type="range" min="0" max="17" value="1"></div>
+                    <div class="group"><label class="flex justify-between">慈悲的介入 (MOOD) <span id="moodLabel" class="text-white">0.0</span></label><input id="moodSlider" type="range" min="0" max="3" step="0.1" value="0"></div>
+                    <div class="group"><label class="flex justify-between">更新速度 (SPEED) <span id="speedLabel" class="text-white font-bold">標準</span></label><input id="speedSlider" type="range" min="0" max="500" value="250"></div>
+                    <div class="group pt-2 border-t border-slate-800/50"><label class="flex justify-between">グリッドサイズ (GRID SIZE) <span id="gridSizeLabel" class="text-slate-400">128</span></label><input id="gridSizeSlider" type="range" min="10" max="256" value="128"></div>
                 </div>
             </section>
             
@@ -192,67 +172,76 @@
             </header>
 
             <section class="space-y-16 pb-24 text-lg text-slate-300">
-                <div class="space-y-6">
+                <div class="space-y-6 text-slate-300">
                     <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider">概要とシステム仕様</h3>
-                    <p>本シミュレーターは、ゲーム理論における「囚人のジレンマ」を2次元グリッド上で展開し、多様な戦略を持つ個体が生存競争を行い、分布を広げていく装置です。</p>
+                    <p>本シミュレーターは、ゲーム理論における「囚人のジレンマ」を2次元グリッド上で展開し、多様な戦略を持つ個体が生存競争を行い、分布を広げていくかを観測する装置です。</p>
                     
                     <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6">1. 囚人のジレンマ：共創の村の物語</h3>
-                    <div class="bg-slate-900/60 p-8 rounded-xl border border-slate-800 italic space-y-6">
-                        <p class="text-white not-italic font-bold underline decoration-blue-500 decoration-2">【状況】住民は自らの知恵を共有し、形にするための汗を惜しみなく提供する必要があります。</p>
-                        <ul class="space-y-4 text-base">
-                            <li><strong class="text-teal-400 font-bold">二人が協力した場合（報酬 R）:</strong> 共に汗を流すことで世界は急速に発展します。一人ひとりが、心身ともに最も満たされた「豊かな生」を享受できるようになります。</li>
-                            <li><strong class="text-red-400 font-bold">自分だけ裏切り、相手が協力した場合（誘惑 T）:</strong> 自分は相手の献身の上に立ち、短期的には最大の利得を得ますが、そこには孤立した合理性しか存在しません。</li>
-                            <li><strong class="text-orange-400 font-bold">自分だけ協力し、相手が裏切った場合（善意の搾取 S）:</strong> 自分の献身を相手に利用され活力を一方的に消費され、生としての再生産が困難な状況に追い込まれます。</li>
-                            <li><strong class="text-slate-300 font-bold">二人が裏切りを選んだ場合（相互不信 P）:</strong> 誰も知恵を出さず世界は荒廃したまま固定されます。響き合う喜びも、深遠な豊かさも失われます。</li>
+                    <p>このシミュレーションの根本にあるのは、個々の最適な選択が全体の調和を損なうという葛藤です。ここでは、村の未来を切り拓くために各々が「知恵と力」を出し合うコミュニティの形成を例に説明します。</p>
+                    
+                    <div class="bg-slate-900/60 p-8 rounded-xl border border-slate-800 italic space-y-6 shadow-xl">
+                        <p class="text-white not-italic font-bold underline decoration-blue-500 decoration-2">【状況】住民は自らの知恵（知見）を共有し、それを形にするための「汗（労力）」を惜しみなく提供する必要があります。</p>
+                        <ul class="space-y-4 text-slate-400 text-base">
+                            <li><strong class="text-teal-400 font-bold">二人が協力した場合（報酬 R）:</strong> 互いのアイディアが響き合い、共に汗を流すことで世界は彩りを増し、急速に発展します。住民一人ひとりが、心身ともに最も満たされた「豊かな生」を享受できるようになります。</li>
+                            <li><strong class="text-red-400 font-bold">自分だけ裏切り、相手が協力した場合（誘惑 T）:</strong> 自分は労力を温存しつつ、相手が心血を注いだ成果を享受します。他人の献身の上に立つことで、短期的・個人的には最大の利得を得ますが、そこには孤立した合理性しか存在しません。</li>
+                            <li><strong class="text-orange-400 font-bold">自分だけ協力し、相手が裏切った場合（善意の搾取 S）:</strong> 自分の献身を相手に利用され、負担も一人で背負わされます。自分の持つ資質も活力も一方的に消費され、生としての再生産が困難な状況に追い込まれます。</li>
+                            <li><strong class="text-slate-300 font-bold">二人が裏切りを選んだ場合（相互不信 P）:</strong> 誰も知恵を出さず、作業も進まないため、世界は貧しく荒廃したまま固定されます。搾取は免れますが、他者と響き合う喜びも、世界がもたらすはずの深遠な豊かさも失われます。</li>
                         </ul>
                     </div>
                     <div class="p-6 border-y border-slate-800 text-sm">
                         <p class="font-bold text-blue-400 mb-2 uppercase tracking-widest">【ジレンマの正体】</p>
-                        <p>個人としては、相手がどうあれ「出し惜しみ」をする方が有利になりますが、全員がその合理性を追求すると、世界全体のステージが上がらず、真の豊かさ（報酬 R）も失われてしまいます。</p>
+                        <p>個人としては、相手がどうあれ「出し惜しみ」をする方が短期的には有利になります。しかし、全員がその合理性を追求すると、世界全体のステージが上がらず、結果として個々が辿り着けたはずの「真の豊かさ（報酬 R）」も失われてしまいます。</p>
                     </div>
                 </div>
 
                 <div class="space-y-6 text-slate-300">
                     <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-xl">2. シミュレーションの仕組み</h3>
                     <ul class="list-disc pl-8 space-y-4 text-base">
-                        <li><strong class="text-slate-200">意思決定 (Decision):</strong> 各セルは前回の平均協力率（場の空気）を読み、自身の戦略に基づき一斉に決定します。</li>
+                        <li><strong class="text-slate-200">意思決定 (Decision):</strong> 各セルは、前回の「周囲8マスの平均協力率（場の空気）」を読み、自身の戦略に基づき「今回の自分の手」を一斉に決定します。</li>
                         <li><strong class="text-slate-200">評価 (Payoff):</strong> 決定された手同士を突き合わせ、利得表に基づきスコアを算出します。</li>
-                        <li><strong class="text-slate-200">進化・模倣 (Evolution):</strong> 周囲で最もスコアが高かった個体の戦略をコピーします。同点の場合はランダム（有機的等方性）。</li>
+                        <li><strong class="text-slate-200">進化・模倣 (Evolution):</strong> 周囲で最も「総スコア」が高かった個体の戦略をコピーします。最高得点者が複数いる場合はランダムに一人を選び、物理的な偏りを排除します（有機的等方性）。</li>
                     </ul>
                 </div>
 
                 <div class="space-y-8">
-                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-xl">3. 戦略（アルゴリズム）の定義 <span class="text-xs font-normal text-slate-400 ml-2">（一般の定義と少し異なるオリジナル定義の戦略があります）</span></h3>
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-xl">
+                        3. 戦略（アルゴリズム）の定義 <span class="text-xs font-normal text-slate-400 ml-2">（一般の定義と少し異なるオリジナル定義の戦略があります）</span>
+                    </h3>
                     <div class="overflow-x-auto text-xs">
                         <table class="w-full text-sm text-left border-collapse bg-slate-900/50">
-                            <thead class="bg-slate-800 text-blue-400">
-                                <tr><th class="p-4 border border-slate-800">戦略名</th><th class="p-4 border border-slate-800 text-xs">概要 / ルール</th></tr>
+                            <thead class="bg-slate-800 text-blue-400 text-xs">
+                                <tr><th class="p-4 border border-slate-800">戦略名</th><th class="p-4 border border-slate-800">概要</th><th class="p-4 border border-slate-800">行動ルール（アルゴリズム）</th></tr>
                             </thead>
                             <tbody class="text-slate-400">
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold">協力 / 裏切り</td><td>常に協力(C)、または常に裏切り(D)を選択。</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold">しっぺ返し (TFT)</td><td>周囲の協力率が50%以上なら協力、未満なら裏切り。</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold text-xs">引金 (GRIM) / 返返 (TFTT)</td><td>一度の裏切りを許さない、または極端な低協力率25%以下のみ裏切る。</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold">パブロフ / 気質</td><td>成功体験の模倣、または個体固有の協力確率 P での行動。</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-blue-400 font-bold italic underline underline-offset-4">鑑定士 (APP)</td><td>行動履歴をスコアリングし信頼度で判定。※下記参照</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold">宗派 (SECT)</td><td>特定の握手プロトコルで仲間を識別し、判明すれば協力。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold">協力 (COOP)</td><td>純粋利他</td><td>状況を問わず、常に「協力(C)」を選択する。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold">裏切り (DEFECT)</td><td>純粋利己</td><td>状況を問わず、常に「裏切り(D)」を選択する。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold">しっぺ返し (TFT)</td><td>互恵主義</td><td>周囲の協力率が50%以上なら「協力(C)」、50%未満なら「裏切り(D)」。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold">引金 (GRIM)</td><td>断罪主義</td><td>一度でも裏切りを観測（記憶）した相手に対しては、永久に「裏切り(D)」を選択する。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold">返返 (TFTT)</td><td>寛容主義</td><td>周囲の協力率が極端に低い（25%未満）場合のみ「裏切り(D)」を出す。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold">パブロフ (PAVLOV)</td><td>実利主義</td><td>前回の自分の手と周囲の平均的な行動が一致（勝利）すれば維持、不一致（敗北）なら変更。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold">気質 (DISPOSITION)</td><td>個別特性</td><td>個体ごとに固有の協力確率 P (0〜1) を持ち、その確率で協力する。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-blue-400 font-bold italic underline underline-offset-4">鑑定士 (APPRAISER)</td><td>知性分析</td><td>隣人の行動履歴をスコアリングし、平均信頼度が一定基準を下回れば「裏切り(D)」。※下記参照</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold">宗派 (SECT)</td><td>集団連帯</td><td>自身の年齢に基づき3手の握手プロトコル [裏切り-裏切り-協力] を実行。仲間と判明すれば協力する。</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="mt-4 p-6 bg-blue-900/10 border border-blue-900/30 rounded-lg shadow-inner">
                         <h4 class="text-sm font-bold text-blue-400 mb-2 italic text-xs">※鑑定士 (APPRAISER) の詳細補足</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed italic">鑑定士は、隣人ごとに信頼スコア s（-10〜10）を保持。協力で+1、裏切りで-1し、スコアが1を超えれば協力、-1を下回れば裏切り、判定保留圏では場の空気に同調します。これにより、初期の混沌下でも安定した核を形成します。</p>
+                        <div class="text-xs text-slate-400 space-y-2 leading-relaxed italic">
+                            <p>鑑定士の行動原理は、「個別評価の蓄積」と「場の空気への適応」という二重構造で成り立っています。隣人ごとに信頼スコア s（-10〜10）を保持し、協力で+1、裏切りで-1。スコアが1を超えれば協力、-1を下回れば裏切り。判定保留圏では場の空気に同調します。これにより、初期の混沌下でも安定した核を形成します。</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="space-y-6">
                     <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider">4. 特殊な継承と変異</h3>
-                    <p class="text-base leading-relaxed"><strong>気質の微細継承:</strong> 模倣の際、気質の協力確率は 1/128 (約0.0078) の極微なゆらぎを伴って継承されます。<br>
-                    <strong>突然変異 (MUTATION):</strong> スライダー設定に基づき、血統に関係なく全く新しい戦略の個体が誕生します。</p>
+                    <p class="text-base leading-relaxed"><strong>気質の微細継承:</strong> 模倣の際、気質(DISPOSITION)の協力確率 P は 1/128 (約0.0078) の極微なゆらぎを伴って継承されます。<br>
+                    <strong>突然変異 (MUTATION):</strong> スライダーで設定された確率に基づき、血統に関係なく全く新しい戦略の個体が誕生します。</p>
                 </div>
 
                 <div class="space-y-6 text-slate-400">
                     <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider">5. 環境パラメータ</h3>
-                    <p class="text-base"><strong>慈悲的介入 (MOOD):</strong> 全体の協力率が高いほど、協力した際の報酬(R)が増大し、報い(S)が緩和されます。<br>
+                    <p class="text-base"><strong>慈悲的介入 (MOOD):</strong> 世界全体の協力率が高いほど、協力した際の報酬(R)が増大し、裏切られた際の報い(S)が緩和されます。<br>
                     <strong>多様性指数 (DIVERSITY):</strong> 全戦略の分布割合をシャノン・エントロピーで算出し、世界の豊かさを 0〜100% で表示します。</p>
                 </div>
 
@@ -478,7 +467,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function norm() { let t = 0; for(let k in sSliders) t += parseInt(sSliders[k].value); for(let k in sSliders) sLabels[k].textContent = t === 0 ? '0%' : `${Math.round((parseInt(sSliders[k].value)/t)*100)}%`; }
     for(let k in sSliders) sSliders[k].oninput = norm;
     window.addEventListener('resize', fit);
-
     const infoPanel = document.getElementById('infoPanel');
     const infoOpenBtn = document.getElementById('infoOpenBtn');
     const infoCloseBtn = document.getElementById('infoCloseBtn');
