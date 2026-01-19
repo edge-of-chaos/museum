@@ -2,419 +2,56 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Exhibit: Real-world Terrain Water Flow Simulation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>純粋美術館 - Museum of Pure Experience</title>
     <style>
-        /* 観測装置の美学に基づいた基底設計 */
-        :root {
-            --panel-bg: rgba(10, 10, 15, 0.94);
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --accent: #6366f1;
-        }
-        html, body {
-            height: 100%; margin: 0; padding: 0; overflow: hidden;
-            background-color: #000; color: #fff;
-            font-family: 'Inter', 'Noto Sans JP', sans-serif;
-        }
+        body { margin: 0; background: #050505; color: #d4d4d4; font-family: "Hiragino Mincho ProN", "MS Mincho", serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
         
-        #main-container {
-            display: flex; flex-direction: column; height: 100vh;
-        }
+        /* 存在の鼓動：純粋な現象としての光 */
+        .void-pulse { width: 160px; height: 160px; border-radius: 50%; background: radial-gradient(circle, rgba(0,212,255,0.12) 0%, rgba(0,0,0,0) 70%); border: 1px solid rgba(0,212,255,0.25); position: absolute; animation: pulse 8s infinite ease-in-out; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.4); opacity: 0.7; border-color: rgba(0, 212, 255, 0.4); } }
         
-        /* 制御パネル */
-        .system-panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--border-subtle);
-            z-index: 50;
+        header { text-align: center; z-index: 10; margin-bottom: 4rem; }
+        h1 { font-size: 2.4rem; letter-spacing: 1.2rem; font-weight: normal; color: #ffffff; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.1); }
+        .eng-sub { font-size: 0.75rem; letter-spacing: 0.5rem; color: #555; margin-top: 0.8rem; text-transform: uppercase; }
+
+        /* 自動採番の設定：ここが止揚のポイント */
+        .gallery { 
+            z-index: 10; width: 85%; max-width: 550px; 
+            counter-reset: exhibit-counter; 
         }
 
-        /* 描画領域 */
-        #viewport {
-            flex-grow: 1; position: relative;
-            display: flex; align-items: center; justify-content: center;
-            background-color: #010101;
-            overflow: hidden;
-        }
-        canvas {
-            display: block; cursor: grab;
-            image-rendering: pixelated; 
-        }
-        canvas:active { cursor: grabbing; }
-
-        /* 同期アニメーション */
-        .sync-loader {
-            border: 2px solid rgba(255,255,255,0.03); border-top: 2px solid var(--accent);
-            border-radius: 50%; width: 32px; height: 32px;
-            animation: sync-spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
-        @keyframes sync-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* 入力インターフェース */
-        .input-minimal {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border-subtle);
-            transition: all 0.3s ease;
-        }
-        .input-minimal:focus {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(99, 102, 241, 0.4);
-            outline: none;
+        .exhibit-card { 
+            display: block; border: 1px solid #222; padding: 35px; text-decoration: none; color: inherit; 
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1); background: rgba(10,10,10,0.6); 
+            backdrop-filter: blur(10px); text-align: center; border-radius: 2px; margin-bottom: 20px;
         }
 
-        /* ボタン状態 */
-        .btn-active { 
-            background: rgba(99, 102, 241, 0.25) !important;
-            border-color: rgba(99, 102, 241, 0.6) !important;
-            color: #a5b4fc !important;
-        }
-        
-        /* スライダー調整 */
-        input[type=range] {
-            @apply h-1 bg-zinc-800 rounded-full appearance-none cursor-pointer accent-indigo-500;
+        .exhibit-card:hover { border-color: #00d4ff; background: rgba(0,212,255,0.04); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .exhibit-title::before {
+            counter-increment: exhibit-counter;
+            content: "第" counter(exhibit-counter) "展示室：";
         }
 
-        /* モバイル最適化（Pixel/iPhone/Android） */
-        @media (max-width: 640px) {
-            .mobile-padding { padding: 0.5rem 0.75rem !important; }
-            .mobile-gap { gap: 0.5rem !important; }
-            .mobile-stack { flex-direction: column; align-items: stretch; }
-        }
+        .exhibit-title { font-size: 1.15rem; letter-spacing: 0.15rem; color: #00d4ff; margin-bottom: 0.6rem; transition: color 0.5s; }
+        .exhibit-card:hover .exhibit-title { color: #ffffff; }
+        .exhibit-sub { font-size: 0.6rem; color: #444; letter-spacing: 0.1rem; text-transform: uppercase; }
     </style>
 </head>
 <body>
+    <div class="void-pulse"></div>
 
-    <div id="main-container">
-        <!-- Header: Control Interface -->
-        <header class="system-panel mobile-padding p-4 transition-all">
-            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center mobile-gap gap-6">
-                
-                <!-- Search/Coord Entry (Integrated Sync Icon) -->
-                <div class="relative w-full sm:w-96 group">
-                    <div class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none flex flex-col">
-                        <span class="text-[8px] text-zinc-400 font-bold leading-none">場所名または緯度,経度</span>
-                        <span class="text-[6px] text-zinc-600 leading-none mt-0.5 uppercase tracking-widest">LOCATION / COORDS</span>
-                    </div>
-                    <input type="text" id="coordInput" value="35.80529, 139.18780" 
-                           class="input-minimal w-full rounded-md py-2 pl-24 pr-10 text-xs sm:text-sm font-light tracking-wider"
-                           placeholder="Enter name or coords and press Enter...">
-                    <!-- Integrated Sync Button Icon -->
-                    <button id="syncIconBtn" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-zinc-500 hover:text-indigo-400 active:scale-90 transition-all" title="Synchronize with Reality">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-                    </button>
-                </div>
+    <header>
+        <h1>純粋美術館</h1>
+        <div class="eng-sub">Museum of Pure Experience</div>
+    </header>
 
-                <!-- Simulation Controls -->
-                <div class="flex items-center justify-between w-full sm:w-auto flex-grow mobile-gap gap-6">
-                    <div class="flex gap-2">
-                        <button id="toggleSimButton" class="bg-white/5 hover:bg-white/10 border border-white/5 px-4 py-1.5 rounded transition-all flex flex-col items-center min-w-[90px]">
-                            <span class="text-[10px] font-bold" id="rain-label-jp">雨を降らす</span>
-                            <span class="text-[7px] text-zinc-500 uppercase tracking-tighter leading-none mt-0.5">Precipitate</span>
-                        </button>
-                        <button id="overlayToggleButton" class="bg-white/5 hover:bg-white/10 border border-white/5 px-4 py-1.5 rounded transition-all flex flex-col items-center">
-                            <span class="text-[10px] font-bold">川重ね</span>
-                            <span class="text-[7px] text-zinc-500 uppercase tracking-tighter leading-none mt-0.5">Overlay</span>
-                        </button>
-                    </div>
-
-                    <div class="h-6 w-px bg-white/5 hidden md:block"></div>
-
-                    <div class="flex flex-col flex-grow min-w-[140px]">
-                        <div class="flex justify-between items-end mb-1">
-                            <span class="text-[8px] text-zinc-500 font-bold uppercase tracking-wide">降雨率 (Precipitation Rate)</span>
-                        </div>
-                        <input type="range" id="rainRateSlider" min="0.00001" max="0.0005" step="0.00001" value="0.0001">
-                    </div>
-
-                    <div class="flex gap-1 ml-auto">
-                        <button class="bg-btn bg-white/5 px-3 py-1.5 rounded text-[9px] border border-white/5 btn-active" data-bg="color">
-                            <span>カラー (Color)</span>
-                        </button>
-                        <button class="bg-btn bg-white/5 px-3 py-1.5 rounded text-[9px] border border-white/5" data-bg="gray">
-                            <span>白黒 (Mono)</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Viewport: Data Visualization -->
-        <main id="viewport">
-            <div id="loader-overlay" class="absolute inset-0 flex items-center justify-center bg-black/90 z-40 hidden transition-opacity duration-1000">
-                <div class="flex flex-col items-center gap-5">
-                    <div class="sync-loader"></div>
-                    <div class="text-center space-y-1.5">
-                        <p class="text-indigo-400 font-mono text-[10px] tracking-[0.4em] animate-pulse uppercase">Synchronizing with Reality...</p>
-                        <p class="text-white/20 font-light text-[8px] tracking-[0.2em] uppercase">現実世界との同期中</p>
-                    </div>
-                </div>
-            </div>
-
-            <canvas id="simulationCanvas"></canvas>
-            <img id="riverOverlay" src="" class="absolute pointer-events-none opacity-50 hidden" alt="Simulation Overlay">
-
-            <!-- Orientation -->
-            <div class="absolute top-4 right-4 text-white/10 text-center select-none pointer-events-none">
-                <div class="text-[8px] font-bold tracking-[0.2em]">TRUE NORTH</div>
-                <div class="text-3xl leading-none mt-1">▲</div>
-            </div>
-
-            <!-- Monitoring HUD -->
-            <div class="absolute bottom-6 left-6 space-y-3 pointer-events-none select-none">
-                <div class="bg-black/30 backdrop-blur-2xl p-4 rounded border border-white/5 space-y-2">
-                    <div class="flex justify-between gap-12 items-baseline">
-                        <span class="text-[8px] text-zinc-500 font-bold uppercase tracking-wider">経過時間 (Elapsed Time)</span>
-                        <span id="elapsedTimeDisplay" class="font-mono text-xs sm:text-sm text-white/80 tabular-nums">00:00</span>
-                    </div>
-                    <div class="flex justify-between gap-12 items-baseline">
-                        <span class="text-[8px] text-zinc-500 font-bold uppercase tracking-wider">降雨量 (Precipitation)</span>
-                        <span id="rainRateDisplay" class="font-mono text-xs sm:text-sm text-white/80 tabular-nums">0.0 mm/h</span>
-                    </div>
-                    <div id="speed-indicator" class="hidden pt-1">
-                        <span class="px-1.5 py-0.5 rounded-[1px] text-[8px] font-bold uppercase tracking-[0.2em] bg-indigo-950/50 text-indigo-400 ring-1 ring-indigo-500/20">x4 Auto Acceleration</span>
-                    </div>
-                </div>
-                <div id="message-box" class="text-indigo-400/60 text-[9px] font-light italic min-h-[1rem] tracking-widest uppercase"></div>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        const canvas = document.getElementById('simulationCanvas');
-        const ctx = canvas.getContext('2d');
-        const viewport = document.getElementById('viewport');
-        const riverOverlay = document.getElementById('riverOverlay');
-        const loader = document.getElementById('loader-overlay');
-        const messageBox = document.getElementById('message-box');
-        const coordInput = document.getElementById('coordInput');
-        const syncIconBtn = document.getElementById('syncIconBtn');
-        const rainRateSlider = document.getElementById('rainRateSlider');
-        const elapsedTimeDisplay = document.getElementById('elapsedTimeDisplay');
-        const rainRateDisplay = document.getElementById('rainRateDisplay');
-        const speedIndicator = document.getElementById('speed-indicator');
-
-        // --- Core Simulation Parameters ---
-        let gridSize = 256;
-        let terrain = null;
-        let water = null;
-        let isSimulating = false;
-        let isRaining = false;
-        let rainRate = 0.0001;
-        let backgroundMode = 'color';
-        let isOverlayVisible = false;
-        let currentAspectRatio = 1.0;
-        let elapsedTime = 0;
-        let lastTimestamp = 0;
-        let animationFrameId;
-        const K_EVAPORATION = 0.999;
-
-        const colors = {
-            landLow: 'hsl(120, 30%, 20%)',
-            landMid: 'hsl(90, 20%, 30%)',
-            landHigh: 'hsl(60, 15%, 50%)',
-            peak: 'hsl(30, 10%, 75%)'
-        };
-
-        function showMessage(msg) {
-            if (!messageBox) return;
-            messageBox.textContent = msg;
-            setTimeout(() => { if(messageBox.textContent === msg) messageBox.textContent = ''; }, 5000);
-        }
-
-        // Correct for Mercator distortion based on Latitude
-        function fitCanvas() {
-            if (!viewport || !canvas) return;
-            const W = viewport.clientWidth;
-            const H = viewport.clientHeight;
-            if (W / H > 1 / currentAspectRatio) {
-                canvas.height = H; canvas.width = H / currentAspectRatio;
-            } else {
-                canvas.width = W; canvas.height = W * currentAspectRatio;
-            }
-            if (riverOverlay) {
-                riverOverlay.style.width = `${canvas.width}px`;
-                riverOverlay.style.height = `${canvas.height}px`;
-            }
-            draw();
-        }
-
-        async function geocode(name) {
-            try {
-                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(name)}&limit=1`;
-                const response = await fetch(url, { headers: { 'User-Agent': 'ExhibitSystemObserver' } });
-                const data = await response.json();
-                return (data && data.length > 0) ? [parseFloat(data[0].lat), parseFloat(data[0].lon)] : null;
-            } catch (e) { return null; }
-        }
-
-        async function loadRealTerrain() {
-            if (loader) loader.classList.remove('hidden');
-            const rawValue = coordInput.value.trim();
-            let lat, lon;
-            const coordMatch = rawValue.match(/^([-+]?\d+\.?\d*)\s*,\s*([-+]?\d+\.?\d*)$/);
-            if (coordMatch) {
-                lat = parseFloat(coordMatch[1]); lon = parseFloat(coordMatch[2]);
-            } else {
-                const result = await geocode(rawValue);
-                if (result) {
-                    [lat, lon] = result; coordInput.value = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-                } else {
-                    showMessage('Protocol Error: Destination Unreachable');
-                    if (loader) loader.classList.add('hidden'); return;
-                }
-            }
-            currentAspectRatio = 1.0 / Math.cos(lat * Math.PI / 180);
-            fitCanvas();
-            const zoom = 14; const n = Math.pow(2, zoom);
-            const xtile = Math.floor(n * ((lon + 180) / 360));
-            const ytile = Math.floor(n * (1 - (Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI)) / 2);
-            try {
-                const [resDem, resMap] = await Promise.all([
-                    fetch(`https://cyberjapandata.gsi.go.jp/xyz/dem/${zoom}/${xtile}/${ytile}.txt`),
-                    fetch(`https://cyberjapandata.gsi.go.jp/xyz/pale/${zoom}/${xtile}/${ytile}.png`)
-                ]);
-                if (!resDem.ok) throw new Error();
-                const [text, blob] = await Promise.all([resDem.text(), resMap.blob()]);
-                if (riverOverlay) riverOverlay.src = URL.createObjectURL(blob);
-                const newTerrain = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
-                const rows = text.trim().split('\n');
-                for (let y = 0; y < gridSize; y++) {
-                    const cols = rows[y] ? rows[y].split(',') : [];
-                    for (let x = 0; x < gridSize; x++) {
-                        const val = parseFloat(cols[x]); newTerrain[y][x] = isNaN(val) ? 0 : val;
-                    }
-                }
-                terrain = newTerrain; normalize(terrain); resetWater(); draw();
-                showMessage(`System Latency Cleared: Synchronized with ${lat.toFixed(4)}, ${lon.toFixed(4)}`);
-            } catch (e) {
-                showMessage('Protocol Error: Data Synchronization Failed');
-            } finally {
-                if (loader) setTimeout(() => loader.classList.add('hidden'), 800);
-            }
-        }
-
-        function normalize(grid) {
-            let min = Infinity, max = -Infinity;
-            for(let y=0; y<gridSize; y++) for(let x=0; x<gridSize; x++) {
-                if(grid[y][x] < min) min = grid[y][x]; if(grid[y][x] > max) max = grid[y][x];
-            }
-            const range = max - min || 1;
-            for(let y=0; y<gridSize; y++) for(let x=0; x<gridSize; x++) grid[y][x] = (grid[y][x] - min) / range;
-        }
-
-        function resetWater() {
-            water = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
-            elapsedTime = 0; updateDisplay();
-        }
-
-        // Physics Simulation Loop
-        function simulate(timestamp) {
-            if (!isSimulating || !terrain || !water) return;
-            const delta = lastTimestamp === 0 ? 16 : timestamp - lastTimestamp;
-            lastTimestamp = timestamp;
-            const simSpeed = isRaining ? 1 : 4;
-            elapsedTime += delta * simSpeed;
-            for (let s = 0; s < simSpeed; s++) {
-                if (isRaining) { for(let y=0; y<gridSize; y++) for(let x=0; x<gridSize; x++) water[y][x] += rainRate; }
-                const flowDeltas = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
-                for(let y=0; y<gridSize; y++){
-                    for(let x=0; x<gridSize; x++){
-                        if(water[y][x] < 1e-5) continue;
-                        const curH = terrain[y][x] + water[y][x];
-                        let minH = curH, target = null;
-                        for(let dy=-1; dy<=1; dy++){
-                            for(let dx=-1; dx<=1; dx++){
-                                if(dx===0 && dy===0) continue;
-                                const ny = y+dy, nx = x+dx;
-                                if(ny>=0 && ny<gridSize && nx>=0 && nx<gridSize){
-                                    const nH = terrain[ny][nx] + water[ny][nx];
-                                    if(nH < minH) { minH = nH; target = {y:ny, x:nx}; }
-                                }
-                            }
-                        }
-                        if(target){
-                            const flow = Math.min(water[y][x], (curH - minH) / 2) * 0.5;
-                            flowDeltas[y][x] -= flow; flowDeltas[target.y][target.x] += flow;
-                        }
-                    }
-                }
-                for(let y=0; y<gridSize; y++) for(let x=0; x<gridSize; x++) {
-                    water[y][x] += flowDeltas[y][x];
-                    
-                    // Fixed Drainage Logic: Hardcoded ON for exhibit
-                    if(y===0 || y===gridSize-1 || x===0 || x===gridSize-1) {
-                        water[y][x] *= 0.1;
-                    }
-                    water[y][x] *= K_EVAPORATION;
-                }
-            }
-            draw(); updateDisplay();
-            animationFrameId = requestAnimationFrame(simulate);
-        }
-
-        function draw() {
-            if (!terrain || !ctx) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const cw = canvas.width / gridSize, ch = canvas.height / gridSize;
-            for(let y=0; y<gridSize; y++){
-                for(let x=0; x<gridSize; x++){
-                    const h = terrain[y][x];
-                    if(backgroundMode === 'gray') ctx.fillStyle = `hsl(0, 0%, ${h * 70 + 8}%)`;
-                    else ctx.fillStyle = h < 0.3 ? colors.landLow : h < 0.6 ? colors.landMid : h < 0.85 ? colors.landHigh : colors.peak;
-                    ctx.fillRect(x*cw, y*ch, cw+1, ch+1);
-                }
-            }
-            if (water) {
-                for(let y=0; y<gridSize; y++){
-                    for(let x=0; x<gridSize; x++){
-                        const w = water[y][x];
-                        if(w > 0.0001){
-                            const deep = Math.min(w / 0.015, 1.0);
-                            ctx.fillStyle = `hsl(${200 + 20*deep}, ${80 - 10*deep}%, ${65 - 25*deep}%)`;
-                            ctx.globalAlpha = Math.min(w * 150, 1);
-                            ctx.fillRect(x*cw, y*ch, cw+1, ch+1);
-                        }
-                    }
-                }
-            }
-            ctx.globalAlpha = 1.0;
-        }
-
-        function updateDisplay() {
-            if (elapsedTimeDisplay) elapsedTimeDisplay.textContent = `${Math.floor(elapsedTime/60000).toString().padStart(2,'0')}:${(Math.floor(elapsedTime/1000)%60).toString().padStart(2,'0')}`;
-            if (rainRateDisplay) rainRateDisplay.textContent = `${(isRaining ? rainRate * 2000 : 0).toFixed(1)} mm/h`;
-            if (speedIndicator) speedIndicator.classList.toggle('hidden', isRaining || !isSimulating);
-        }
-
-        function initEvents() {
-            coordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') loadRealTerrain(); });
-            syncIconBtn.onclick = loadRealTerrain;
-
-            document.getElementById('toggleSimButton').onclick = (e) => {
-                if(!isSimulating) { isSimulating = true; lastTimestamp = 0; animationFrameId = requestAnimationFrame(simulate); }
-                isRaining = !isRaining;
-                document.getElementById('rain-label-jp').textContent = isRaining ? '雨を止める' : '雨を降らす';
-                document.getElementById('toggleSimButton').classList.toggle('btn-active', isRaining);
-            };
-            document.getElementById('overlayToggleButton').onclick = (e) => {
-                isOverlayVisible = !isOverlayVisible;
-                if (riverOverlay) riverOverlay.classList.toggle('hidden', !isOverlayVisible);
-                document.getElementById('overlayToggleButton').classList.toggle('btn-active', isOverlayVisible);
-            };
-            document.querySelectorAll('.bg-btn').forEach(btn => {
-                btn.onclick = () => {
-                    document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('btn-active'));
-                    btn.classList.add('btn-active');
-                    backgroundMode = btn.dataset.bg; draw();
-                };
-            });
-            if (rainRateSlider) rainRateSlider.oninput = (e) => { rainRate = parseFloat(e.target.value); updateDisplay(); };
-            window.onresize = fitCanvas;
-        }
-
-        window.addEventListener('load', () => { initEvents(); loadRealTerrain(); });
-    </script>
+    <main class="gallery">
+        <a href="./terrain-water/" class="exhibit-card">
+            <div class="exhibit-title">実在地形水流シミュレーター</div>
+            <div class="exhibit-sub">Real-world Terrain Water Flow Simulation</div>
+        </a>
+    </main>
 </body>
 </html>
