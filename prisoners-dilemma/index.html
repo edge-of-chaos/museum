@@ -66,7 +66,7 @@
             border-radius: 2px;
         }
 
-        /* モバイルレイアウト修正（スクロール性の確保） */
+        /* モバイルレイアウト修正（パネル全体のスクロール性を確保） */
         @media (max-width: 1023px) {
             #canvas-container {
                 height: 50vh;
@@ -74,7 +74,7 @@
             }
             aside {
                 height: 50vh;
-                overflow-y: auto; /* パネル自体をスクロール可能に */
+                overflow-y: auto;
             }
         }
 
@@ -97,14 +97,14 @@
     <main id="canvas-container" class="flex-shrink-0 lg:flex-grow flex justify-center items-center bg-black/60 relative p-1 lg:p-6">
         <canvas id="gridCanvas" class="shadow-2xl bg-slate-800 rounded-lg transition-opacity duration-300"></canvas>
         
-        <button id="infoOpenBtn" class="absolute top-6 right-6 z-40 bg-slate-800/90 hover:bg-blue-600 text-white px-4 py-2 rounded-full flex items-center gap-2 border border-slate-700 shadow-2xl transition-all active:scale-95 group">
-            <span class="font-serif italic text-blue-400 group-hover:text-white transition-colors text-lg font-bold">i</span>
-            <span class="text-[10px] font-bold tracking-widest uppercase">解説</span>
+        <button id="infoOpenBtn" class="absolute top-6 right-6 z-40 bg-slate-800/90 hover:bg-blue-600 text-white px-5 py-2.5 rounded-full flex items-center gap-3 border border-slate-700 shadow-2xl transition-all active:scale-95 group">
+            <span class="font-serif italic text-blue-400 group-hover:text-white transition-colors text-xl font-bold">i</span>
+            <span class="text-xs font-bold tracking-widest uppercase text-[10px]">解説</span>
         </button>
     </main>
 
     <aside class="w-full lg:w-[320px] xl:w-[380px] flex-shrink-0 bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col h-full overflow-hidden shadow-2xl z-10">
-        <div class="control-panel p-4 lg:p-6 overflow-y-auto flex-grow flex flex-col gap-5 pb-20">
+        <div class="control-panel p-4 lg:p-6 overflow-y-auto flex-grow flex flex-col gap-5 pb-32">
             
             <header class="text-center">
                 <h1 class="text-xl font-black text-white tracking-tighter italic uppercase border-b border-slate-700 pb-2">
@@ -115,10 +115,10 @@
                 <div class="grid grid-cols-3 gap-1 mt-4 p-2 bg-slate-800/40 rounded border border-slate-700/50 text-[8px] uppercase font-bold text-slate-400">
                     <div class="flex flex-col border-r border-slate-700/50"><span>協力度</span><span id="cooperationRateDisplay" class="text-teal-400 text-sm font-black">50%</span></div>
                     <div class="flex flex-col border-r border-slate-700/50"><span>多様性指数</span><span id="diversityIndexDisplay" class="text-fuchsia-400 text-sm font-black">0%</span></div>
-                    <div class="flex flex-col"><span>世代</span><span id="generationDisplay" class="text-slate-300 text-sm font-mono">0</span></div>
-                    <div class="flex flex-col border-t border-r border-slate-700/50 mt-1 pt-1"><span>利得(R)</span><span id="rewardDisplay" class="text-green-500 text-xs font-mono">3.0</span></div>
-                    <div class="flex flex-col border-t border-r border-slate-700/50 mt-1 pt-1"><span>誘惑(T)</span><span id="temptationDisplay" class="text-red-500 text-xs font-mono">5.0</span></div>
-                    <div class="flex flex-col border-t border-slate-700/50 mt-1 pt-1"><span>報い(S)</span><span id="suckerDisplay" class="text-blue-500 text-xs font-mono">0.0</span></div>
+                    <div class="flex flex-col"><span>利得(R)</span><span id="rewardDisplay" class="text-green-500 text-sm font-mono">3.0</span></div>
+                    <div class="flex flex-col border-t border-r border-slate-700/50 mt-1 pt-1"><span>誘惑(T)</span><span id="temptationDisplay" class="text-red-500 text-sm font-mono">5.0</span></div>
+                    <div class="flex flex-col border-t border-r border-slate-700/50 mt-1 pt-1"><span>報い(S)</span><span id="suckerDisplay" class="text-blue-500 text-sm font-mono">0.0</span></div>
+                    <div class="flex flex-col border-t border-slate-700/50 mt-1 pt-1"><span>世代</span><span id="generationDisplay" class="text-slate-300 text-sm font-mono">0</span></div>
                 </div>
             </header>
 
@@ -145,7 +145,7 @@
                     </div>
                     <div class="group">
                         <label class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
-                            更新速度 (SPEED) <span id="speedLabel" class="text-white font-bold">標準</span>
+                            更新速度 (SPEED) <span id="speedLabel" class="text-white font-bold">標準 (Standard)</span>
                         </label>
                         <input id="speedSlider" type="range" min="0" max="500" value="250">
                     </div>
@@ -177,7 +177,7 @@
                 <canvas id="populationChart"></canvas>
             </div>
             
-            <footer class="text-[8px] text-center text-slate-700 font-bold uppercase tracking-[0.3em] shrink-0 italic">
+            <footer class="text-[8px] text-center text-slate-700 font-bold uppercase tracking-[0.3em] shrink-0 mb-2 italic">
                 Absolute Contradiction & Co-evolution
             </footer>
         </div>
@@ -191,42 +191,69 @@
                 <p class="text-xs tracking-[0.5em] text-blue-500 uppercase font-bold text-center">Exhibit 02-A Archive</p>
             </header>
 
-            <section class="space-y-16 pb-24 text-lg">
-                <div class="space-y-6 text-slate-300">
+            <section class="space-y-16 pb-24 text-lg text-slate-300">
+                <div class="space-y-6">
                     <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider">概要とシステム仕様</h3>
-                    <p>本シミュレーターは、ゲーム理論における「囚人のジレンマ」を2次元グリッド上で展開し、多様な戦略を持つ個体がどのように生存競争を行い、分布を広げていくかを観測する装置です。</p>
+                    <p>本シミュレーターは、ゲーム理論における「囚人のジレンマ」を2次元グリッド上で展開し、多様な戦略を持つ個体が生存競争を行い、分布を広げていく装置です。</p>
                     
                     <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6">1. 囚人のジレンマ：共創の村の物語</h3>
                     <div class="bg-slate-900/60 p-8 rounded-xl border border-slate-800 italic space-y-6">
                         <p class="text-white not-italic font-bold underline decoration-blue-500 decoration-2">【状況】住民は自らの知恵を共有し、形にするための汗を惜しみなく提供する必要があります。</p>
-                        <ul class="space-y-4 text-slate-400 text-base">
-                            <li><strong class="text-teal-400 font-bold">二人が協力した場合（報酬 R）:</strong> 共に汗を流すことで世界は彩りを増し急速に発展します。一人ひとりが、心身ともに最も満たされた「豊かな生」を享受できるようになります。</li>
-                            <li><strong class="text-red-400 font-bold">自分だけ裏切り、相手が協力した場合（誘惑 T）:</strong> 自分は労力を温存しつつ、相手の献身の上に立ち、短期的・個人的には最大の利得を得ますが、そこには孤立した合理性しか存在しません。</li>
-                            <li><strong class="text-orange-400 font-bold">自分だけ協力し、相手が裏切った場合（善意の搾取 S）:</strong> 自分の持つ資質も活力も一方的に消費され、生としての再生産が困難な状況に追い込まれます。</li>
-                            <li><strong class="text-slate-300 font-bold">二人が裏切りを選んだ場合（相互不信 P）:</strong> 誰一人知恵を出さず世界は荒廃したまま固定されます。他者と響き合う喜びも、世界がもたらすはずの深遠な豊かさも失われます。</li>
+                        <ul class="space-y-4 text-base">
+                            <li><strong class="text-teal-400 font-bold">二人が協力した場合（報酬 R）:</strong> 共に汗を流すことで世界は急速に発展します。一人ひとりが、心身ともに最も満たされた「豊かな生」を享受できるようになります。</li>
+                            <li><strong class="text-red-400 font-bold">自分だけ裏切り、相手が協力した場合（誘惑 T）:</strong> 自分は相手の献身の上に立ち、短期的には最大の利得を得ますが、そこには孤立した合理性しか存在しません。</li>
+                            <li><strong class="text-orange-400 font-bold">自分だけ協力し、相手が裏切った場合（善意の搾取 S）:</strong> 自分の献身を相手に利用され活力を一方的に消費され、生としての再生産が困難な状況に追い込まれます。</li>
+                            <li><strong class="text-slate-300 font-bold">二人が裏切りを選んだ場合（相互不信 P）:</strong> 誰も知恵を出さず世界は荒廃したまま固定されます。響き合う喜びも、深遠な豊かさも失われます。</li>
                         </ul>
+                    </div>
+                    <div class="p-6 border-y border-slate-800 text-sm">
+                        <p class="font-bold text-blue-400 mb-2 uppercase tracking-widest">【ジレンマの正体】</p>
+                        <p>個人としては、相手がどうあれ「出し惜しみ」をする方が有利になりますが、全員がその合理性を追求すると、世界全体のステージが上がらず、真の豊かさ（報酬 R）も失われてしまいます。</p>
                     </div>
                 </div>
 
                 <div class="space-y-6 text-slate-300">
-                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-xl">2. 戦略（アルゴリズム）の定義 <span class="text-xs font-normal text-slate-400 ml-2">（一般の定義と少し異なるオリジナル定義の戦略があります）</span></h3>
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-xl">2. シミュレーションの仕組み</h3>
+                    <ul class="list-disc pl-8 space-y-4 text-base">
+                        <li><strong class="text-slate-200">意思決定 (Decision):</strong> 各セルは前回の平均協力率（場の空気）を読み、自身の戦略に基づき一斉に決定します。</li>
+                        <li><strong class="text-slate-200">評価 (Payoff):</strong> 決定された手同士を突き合わせ、利得表に基づきスコアを算出します。</li>
+                        <li><strong class="text-slate-200">進化・模倣 (Evolution):</strong> 周囲で最もスコアが高かった個体の戦略をコピーします。同点の場合はランダム（有機的等方性）。</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-8">
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-xl">3. 戦略（アルゴリズム）の定義 <span class="text-xs font-normal text-slate-400 ml-2">（一般の定義と少し異なるオリジナル定義の戦略があります）</span></h3>
                     <div class="overflow-x-auto text-xs">
                         <table class="w-full text-sm text-left border-collapse bg-slate-900/50">
                             <thead class="bg-slate-800 text-blue-400">
-                                <tr><th class="p-4 border border-slate-800">戦略名</th><th class="p-4 border border-slate-800 text-xs text-xs">概要</th><th class="p-4 border border-slate-800 text-xs text-xs text-xs text-xs">行動ルール</th></tr>
+                                <tr><th class="p-4 border border-slate-800">戦略名</th><th class="p-4 border border-slate-800 text-xs">概要 / ルール</th></tr>
                             </thead>
                             <tbody class="text-slate-400">
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold text-xs text-xs text-xs">協力 / 裏切り</td><td>純粋利他 / 純粋利己</td><td>常にC、または常にDを選択。</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold text-xs text-xs">しっぺ返し (TFT)</td><td>互恵主義</td><td>周囲の協力率が50%以上なら協力、未満なら裏切り。</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-blue-400 font-bold italic underline text-xs">鑑定士 (APP)</td><td>知性分析</td><td>隣人の行動をスコアリングし信頼度で判定。※下記参照</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold text-xs">宗派 (SECT)</td><td>集団連帯</td><td>特定の握手プロトコルで仲間を識別し、判明すれば協力。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold">協力 / 裏切り</td><td>常に協力(C)、または常に裏切り(D)を選択。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold">しっぺ返し (TFT)</td><td>周囲の協力率が50%以上なら協力、未満なら裏切り。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold text-xs">引金 (GRIM) / 返返 (TFTT)</td><td>一度の裏切りを許さない、または極端な低協力率25%以下のみ裏切る。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold">パブロフ / 気質</td><td>成功体験の模倣、または個体固有の協力確率 P での行動。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-blue-400 font-bold italic underline underline-offset-4">鑑定士 (APP)</td><td>行動履歴をスコアリングし信頼度で判定。※下記参照</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold">宗派 (SECT)</td><td>特定の握手プロトコルで仲間を識別し、判明すれば協力。</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-4 p-6 bg-blue-900/10 border border-blue-900/30 rounded-lg text-sm shadow-inner">
-                        <h4 class="font-bold text-blue-400 mb-2 italic text-xs">※鑑定士 (APPRAISER) の詳細補足</h4>
+                    <div class="mt-4 p-6 bg-blue-900/10 border border-blue-900/30 rounded-lg shadow-inner">
+                        <h4 class="text-sm font-bold text-blue-400 mb-2 italic text-xs">※鑑定士 (APPRAISER) の詳細補足</h4>
                         <p class="text-xs text-slate-400 leading-relaxed italic">鑑定士は、隣人ごとに信頼スコア s（-10〜10）を保持。協力で+1、裏切りで-1し、スコアが1を超えれば協力、-1を下回れば裏切り、判定保留圏では場の空気に同調します。これにより、初期の混沌下でも安定した核を形成します。</p>
                     </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider">4. 特殊な継承と変異</h3>
+                    <p class="text-base leading-relaxed"><strong>気質の微細継承:</strong> 模倣の際、気質の協力確率は 1/128 (約0.0078) の極微なゆらぎを伴って継承されます。<br>
+                    <strong>突然変異 (MUTATION):</strong> スライダー設定に基づき、血統に関係なく全く新しい戦略の個体が誕生します。</p>
+                </div>
+
+                <div class="space-y-6 text-slate-400">
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider">5. 環境パラメータ</h3>
+                    <p class="text-base"><strong>慈悲的介入 (MOOD):</strong> 全体の協力率が高いほど、協力した際の報酬(R)が増大し、報い(S)が緩和されます。<br>
+                    <strong>多様性指数 (DIVERSITY):</strong> 全戦略の分布割合をシャノン・エントロピーで算出し、世界の豊かさを 0〜100% で表示します。</p>
                 </div>
 
                 <div class="pt-24 border-t border-slate-800 text-center">
@@ -241,7 +268,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 完璧に動くシミュレーション・ロジック（ベース維持） ---
+    // --- 完璧に動くベース・シミュレーション・ロジック ---
     const STRATEGIES = { COOP: 0, DEFECT: 1, TFT: 2, GRIM: 3, TFTT: 4, PAVLOV: 5, DISPOSITION: 6, APPRAISER: 7, SECT: 8 };
     const COLORS = {
         [STRATEGIES.COOP]: '#FFFFFF', [STRATEGIES.DEFECT]: '#000000', [STRATEGIES.TFT]: '#4299e1',
@@ -284,11 +311,15 @@ document.addEventListener('DOMContentLoaded', () => {
         rand: document.getElementById('randSlider'), appraiser: document.getElementById('appraiserSlider'),
         sect: document.getElementById('sectSlider')
     };
+    const sLabels = {};
+    for (let k in sSliders) sLabels[k] = document.getElementById(k + 'RatioLabel');
 
     let gridSize = 128, mutationRate = 1 / 65536, interval = 80, moodEffectStrength = 0;
     let grid = null, prevA = null, prevPrevA = null, memoryG = null, memoryA = null, memoryS = null;
     let isRunning = false, animationId = null, lastTime = 0, gen = 0;
     let curPayoffs = { R: 3, T: 5, S: 0, P: 1 };
+
+    const BASE_COOP_RATE = 0.75, SECT_TOLERANCE = 2, FORGIVENESS = 5;
     const RAND_MUT_STEP = 1/128; 
 
     let chart;
@@ -326,10 +357,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             case STRATEGIES.SECT: {
                 let m = memoryS[y][x]; if (!m[id]) m[id] = { turn: 0, h: [], st: 'p', b: 0, sk: 0 };
-                const c = m[id]; if (c.st === 'ally') return 0; if (c.st === 'enemy') return c.b >= 2 ? 1 : 0;
+                const c = m[id]; if (c.st === 'ally') return 0; if (c.st === 'enemy') return c.b >= SECT_TOLERANCE ? 1 : 0;
                 if (c.turn < 3) return [0, 0, 1][c.turn];
                 let match = true; for(let i=0; i<3; i++) if(c.h[i] !== [0, 0, 1][i]) match = false;
-                c.st = match ? 'ally' : 'enemy'; return match ? 0 : (c.b >= 2 ? 1 : 0);
+                c.st = match ? 'ally' : 'enemy'; return match ? 0 : (c.b >= SECT_TOLERANCE ? 1 : 0);
             }
         }
     }
@@ -349,11 +380,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let totalC = 0;
         for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) { if(prevA[y][x] === 0) totalC++; counts[grid[y][x].strategy]++; }
         const totalCells = gridSize * gridSize;
-        let entropy = 0;
-        counts.forEach(c => { if(c > 0) { let p = c/totalCells; entropy -= p * Math.log2(p); } });
+        let entropy = 0; counts.forEach(c => { if(c > 0) { let p = c/totalCells; entropy -= p * Math.log2(p); } });
         ui.diversityDisp.textContent = `${Math.round((entropy / Math.log2(9)) * 100)}%`;
-        const rate = totalC / totalCells;
-        syncPayoffs(rate); ui.coopDisp.textContent = `${Math.round(rate * 100)}%`; ui.genDisp.textContent = gen;
+        const rate = totalC / totalCells; syncPayoffs(rate); ui.coopDisp.textContent = `${Math.round(rate * 100)}%`; ui.genDisp.textContent = gen;
 
         for (let y=0; y<gridSize; y++) {
             for (let x=0; x<gridSize; x++) {
@@ -374,22 +403,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const nextGrid = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
-        const mPool = [];
-        for (let k in sSliders) { let w = parseInt(sSliders[k].value); let s = STRATEGIES[k.toUpperCase() === 'RAND' ? 'DISPOSITION' : k.toUpperCase()]; for (let i=0; i<w; i++) mPool.push(s); }
+        const mPool = []; for (let k in sSliders) { let w = parseInt(sSliders[k].value); let s = STRATEGIES[k.toUpperCase()==='RAND'?'DISPOSITION':k.toUpperCase()]; for (let i=0; i<w; i++) mPool.push(s); }
         if (mPool.length === 0) mPool.push(...Object.values(STRATEGIES));
 
         for (let y = 0; y < gridSize; y++) {
             for (let x = 0; x < gridSize; x++) {
                 const ns = getNeighbors(x, y);
                 let maxS = scores[y][x], winners = [{y, x}];
-                for (const n of ns) {
-                    if (scores[n.y][n.x] > maxS) { maxS = scores[n.y][n.x]; winners = [{y: n.y, x: n.x}]; }
-                    else if (scores[n.y][n.x] === maxS) { winners.push({y: n.y, x: n.x}); }
-                }
+                for (const n of ns) { if (scores[n.y][n.x] > maxS) { maxS = scores[n.y][n.x]; winners = [{y: n.y, x: n.x}]; } else if (scores[n.y][n.x] === maxS) { winners.push({y: n.y, x: n.x}); } }
                 const w = winners[Math.floor(Math.random() * winners.length)];
                 let nextCell = { ...grid[w.y][w.x] };
-                if (nextCell.strategy === STRATEGIES.DISPOSITION) nextCell.coopRate = Math.max(0, Math.min(1, nextCell.coopRate + (Math.random()-0.5) * RAND_MUT_STEP));
-                if (Math.random() < mutationRate) { const st = mPool[Math.floor(Math.random() * mPool.length)]; nextCell = { strategy: st }; if (st === STRATEGIES.DISPOSITION) nextCell.coopRate = Math.random(); }
+                if (nextCell.strategy === 6) nextCell.coopRate = Math.max(0, Math.min(1, nextCell.coopRate + (Math.random()-0.5) * RAND_MUT_STEP));
+                if (Math.random() < mutationRate) { const st = mPool[Math.floor(Math.random() * mPool.length)]; nextCell = { strategy: st }; if (st === 6) nextCell.coopRate = Math.random(); }
                 if (grid[y][x].strategy !== nextCell.strategy) { memoryG[y][x].clear(); memoryA[y][x] = {}; memoryS[y][x] = {}; }
                 nextGrid[y][x] = nextCell;
             }
@@ -398,21 +423,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function render() {
-        if (!grid) return;
-        const s = canvas.width / gridSize;
-        ctx.fillStyle = '#1e293b'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (!grid) return; const s = canvas.width / gridSize; ctx.fillStyle = '#1e293b'; ctx.fillRect(0, 0, canvas.width, canvas.height);
         for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) {
-            const c = grid[y][x];
-            if (c.strategy === STRATEGIES.DISPOSITION) { const g = Math.round(255 * c.coopRate); ctx.fillStyle = `rgb(${g},${g},${g})`; }
-            else ctx.fillStyle = COLORS[c.strategy];
+            const c = grid[y][x]; if (c.strategy === 6) { const g = Math.round(255 * c.coopRate); ctx.fillStyle = `rgb(${g},${g},${g})`; } else ctx.fillStyle = COLORS[c.strategy];
             ctx.fillRect(Math.floor(x * s), Math.floor(y * s), Math.ceil(s), Math.ceil(s));
         }
     }
 
     function updateChart() {
-        if (!chart) return;
-        const counts = Array(9).fill(0);
-        for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) counts[grid[y][x].strategy]++;
+        if (!chart) return; const counts = Array(9).fill(0); for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) counts[grid[y][x].strategy]++;
         if (chart.data.labels.length > 50) { chart.data.labels.shift(); chart.data.datasets.forEach(d => d.data.shift()); }
         chart.data.labels.push(gen); chart.data.datasets.forEach((d, i) => d.data.push(counts[i])); chart.update('none');
     }
@@ -436,10 +455,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const pool = []; const totalCells = gridSize * gridSize;
         for (let k in sSliders) {
             const num = Math.round((parseInt(sSliders[k].value) / (totalW || 1)) * totalCells);
-            const s = STRATEGIES[k.toUpperCase() === 'RAND' ? 'DISPOSITION' : k.toUpperCase()];
-            for (let i=0; i<num; i++) { const c = { strategy: s }; if (s === STRATEGIES.DISPOSITION) c.coopRate = Math.random(); pool.push(c); }
+            const s = STRATEGIES[k.toUpperCase()==='RAND'?'DISPOSITION':k.toUpperCase()];
+            for (let i=0; i<num; i++) { const c = { strategy: s }; if (s === 6) c.coopRate = Math.random(); pool.push(c); }
         }
-        while(pool.length < totalCells) pool.push({ strategy: STRATEGIES.COOP, coopRate: Math.random() });
+        while(pool.length < totalCells) pool.push({ strategy: 0, coopRate: Math.random() });
         for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
         grid = Array(gridSize).fill(0).map((_, y) => Array(gridSize).fill(0).map((_, x) => pool[y * gridSize + x]));
         prevA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => Math.random()<0.5?0:1));
@@ -465,7 +484,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const infoCloseBtn = document.getElementById('infoCloseBtn');
     infoOpenBtn.onclick = () => { infoPanel.classList.remove('hidden'); setTimeout(() => infoPanel.classList.add('show'), 10); };
     infoCloseBtn.onclick = () => { infoPanel.classList.remove('show'); setTimeout(() => infoPanel.classList.add('hidden'), 500); };
-
     reset(); norm();
 });
 </script>
