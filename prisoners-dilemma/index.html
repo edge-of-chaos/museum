@@ -66,7 +66,7 @@
             border-radius: 2px;
         }
 
-        /* モバイルレイアウト修正（パネル全体のスクロール性を確保） */
+        /* モバイルレイアウト修正 */
         @media (max-width: 1023px) {
             #canvas-container {
                 height: 50vh;
@@ -74,7 +74,7 @@
             }
             aside {
                 height: 50vh;
-                overflow-y: auto;
+                overflow-y: auto !important;
             }
         }
 
@@ -99,26 +99,26 @@
         
         <button id="infoOpenBtn" class="absolute top-6 right-6 z-40 bg-slate-800/90 hover:bg-blue-600 text-white px-5 py-2.5 rounded-full flex items-center gap-3 border border-slate-700 shadow-2xl transition-all active:scale-95 group">
             <span class="font-serif italic text-blue-400 group-hover:text-white transition-colors text-xl font-bold">i</span>
-            <span class="text-xs font-bold tracking-widest uppercase text-[10px]">説明</span>
+            <span class="text-xs font-bold tracking-widest uppercase text-[10px]">解説</span>
         </button>
     </main>
 
     <aside class="w-full lg:w-[320px] xl:w-[380px] flex-shrink-0 bg-slate-900 border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col h-full overflow-hidden shadow-2xl z-10">
-        <div class="control-panel p-4 lg:p-6 overflow-y-auto flex-grow flex flex-col gap-5 pb-32">
+        <div class="control-panel p-4 lg:p-6 overflow-y-auto flex-grow flex flex-col gap-5 pb-80 text-left">
             
             <header class="text-center">
                 <h1 class="text-xl font-black text-white tracking-tighter italic uppercase border-b border-slate-700 pb-2">
                     社会性の純粋経験 <span class="text-xs opacity-40 font-normal italic text-blue-400">Action-Intuition</span>
                 </h1>
-                <p class="text-[9px] text-slate-500 font-bold tracking-widest mt-1 uppercase">Exhibit 02-A: Pure Experience of Sociality</p>
+                <p class="text-[9px] text-slate-500 font-bold tracking-widest mt-1 uppercase text-center">Exhibit 02-A: Pure Experience of Sociality</p>
                 
                 <div class="grid grid-cols-3 gap-1 mt-4 p-2 bg-slate-800/40 rounded border border-slate-700/50 text-[8px] uppercase font-bold text-slate-400">
-                    <div class="flex flex-col border-r border-slate-700/50"><span>協力度</span><span id="cooperationRateDisplay" class="text-teal-400 text-sm font-black">50%</span></div>
-                    <div class="flex flex-col border-r border-slate-700/50"><span>多様性指数</span><span id="diversityIndexDisplay" class="text-fuchsia-400 text-sm font-black">0%</span></div>
-                    <div class="flex flex-col"><span>利得(R)</span><span id="rewardDisplay" class="text-green-500 text-sm font-mono">3.0</span></div>
-                    <div class="flex flex-col border-t border-r border-slate-700/50 mt-1 pt-1"><span>誘惑(T)</span><span id="temptationDisplay" class="text-red-500 text-sm font-mono">5.0</span></div>
-                    <div class="flex flex-col border-t border-r border-slate-700/50 mt-1 pt-1"><span>報い(S)</span><span id="suckerDisplay" class="text-blue-500 text-sm font-mono">0.0</span></div>
-                    <div class="flex flex-col border-t border-slate-700/50 mt-1 pt-1"><span>世代</span><span id="generationDisplay" class="text-slate-300 text-sm font-mono">0</span></div>
+                    <div class="flex flex-col border-r border-slate-700/50 text-center"><span>協力度</span><span id="cooperationRateDisplay" class="text-teal-400 text-sm font-black">50%</span></div>
+                    <div class="flex flex-col border-r border-slate-700/50 text-center"><span>多様性指数</span><span id="diversityIndexDisplay" class="text-fuchsia-400 text-sm font-black">0%</span></div>
+                    <div class="flex flex-col text-center"><span>世代</span><span id="generationDisplay" class="text-slate-300 text-sm font-mono">0</span></div>
+                    <div class="flex flex-col border-t border-r border-slate-700/50 mt-1 pt-1 text-center"><span>利得(R)</span><span id="rewardDisplay" class="text-green-500 text-xs font-mono">3.0</span></div>
+                    <div class="flex flex-col border-t border-r border-slate-700/50 mt-1 pt-1 text-center"><span>誘惑(T)</span><span id="temptationDisplay" class="text-red-500 text-xs font-mono">5.0</span></div>
+                    <div class="flex flex-col border-t border-slate-700/50 mt-1 pt-1 text-center"><span>報い(S)</span><span id="suckerDisplay" class="text-blue-500 text-xs font-mono">0.0</span></div>
                 </div>
             </header>
 
@@ -129,7 +129,7 @@
             </div>
 
             <section class="space-y-4 bg-slate-800/20 p-4 rounded-xl border border-slate-700/30 shadow-inner">
-                <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1 border-l-2 border-slate-600">環境設定 (Environment)</h2>
+                <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1 border-l-2 border-slate-600 text-left">環境設定 (Environment)</h2>
                 <div class="space-y-4 text-[10px] font-bold text-slate-400">
                     <div class="group"><label class="flex justify-between">突然変異率 (MUTATION) <span id="mutationLabel" class="text-white">1/65536</span></label><input id="mutationSlider" type="range" min="0" max="17" value="1"></div>
                     <div class="group"><label class="flex justify-between">慈悲的介入 (MOOD) <span id="moodLabel" class="text-white">0.0</span></label><input id="moodSlider" type="range" min="0" max="3" step="0.1" value="0"></div>
@@ -139,17 +139,17 @@
             </section>
             
             <section class="space-y-3">
-                <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1 border-l-2 border-blue-500">住民の分布 (Weights)</h2>
+                <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1 border-l-2 border-blue-500 text-left">住民の分布 (Weights)</h2>
                 <div class="grid grid-cols-1 gap-3 px-1 pb-4">
-                    <div class="space-y-1 text-[10px] font-bold"><div class="flex justify-between text-slate-300"><span>協力 (COOP)</span><span id="coopRatioLabel" class="text-slate-500">5%</span></div><input id="coopSlider" type="range" min="0" max="100" value="5" class="slider-coop"></div>
-                    <div class="space-y-1 text-[10px] font-bold"><div class="flex justify-between text-slate-300"><span>裏切り (DEFECT)</span><span id="defectRatioLabel" class="text-slate-500">10%</span></div><input id="defectSlider" type="range" min="0" max="100" value="10" class="slider-defect"></div>
-                    <div class="space-y-1 text-[10px] font-bold"><div class="flex justify-between text-blue-400"><span>しっぺ返し (TFT)</span><span id="tftRatioLabel" class="text-slate-500">10%</span></div><input id="tftSlider" type="range" min="0" max="100" value="10" class="slider-tft"></div>
-                    <div class="space-y-1 text-[10px] font-bold"><div class="flex justify-between text-purple-400"><span>引金 (GRIM)</span><span id="grimRatioLabel" class="text-slate-500">5%</span></div><input id="grimSlider" type="range" min="0" max="100" value="5" class="slider-grim"></div>
-                    <div class="space-y-1 text-[10px] font-bold"><div class="flex justify-between text-teal-400"><span>しっぺ返し返し (TFTT)</span><span id="tfttRatioLabel" class="text-slate-500">5%</span></div><input id="tfttSlider" type="range" min="0" max="100" value="5" class="slider-tftt"></div>
-                    <div class="space-y-1 text-[10px] font-bold"><div class="flex justify-between text-orange-400"><span>パブロフ (PAVLOV)</span><span id="pavlovRatioLabel" class="text-slate-500">10%</span></div><input id="pavlovSlider" type="range" min="0" max="100" value="10" class="slider-pavlov"></div>
-                    <div class="space-y-1 text-[10px] font-bold"><div class="flex justify-between text-slate-400"><span>気質 (DISPOSITION)</span><span id="randRatioLabel" class="text-slate-500">15%</span></div><input id="randSlider" type="range" min="0" max="100" value="15" class="slider-disposition"></div>
-                    <div class="space-y-1 bg-yellow-400/5 p-1 rounded border border-yellow-400/10 text-[10px] font-black"><div class="flex justify-between text-yellow-400"><span>鑑定士 (APPRAISER)</span><span id="appraiserRatioLabel" class="text-slate-500 font-normal">25%</span></div><input id="appraiserSlider" type="range" min="0" max="100" value="25" class="slider-appraiser"></div>
-                    <div class="space-y-1 bg-pink-500/5 p-1 rounded border border-pink-500/10 text-[10px] font-black"><div class="flex justify-between text-pink-500"><span>宗派 (SECT)</span><span id="sectRatioLabel" class="text-slate-500 font-normal">15%</span></div><input id="sectSlider" type="range" min="0" max="100" value="15" class="slider-sect"></div>
+                    <div class="space-y-1 text-[10px] font-bold text-left"><div class="flex justify-between text-slate-300"><span>協力 (COOP)</span><span id="coopRatioLabel" class="text-slate-500">5%</span></div><input id="coopSlider" type="range" min="0" max="100" value="5" class="slider-coop"></div>
+                    <div class="space-y-1 text-[10px] font-bold text-left"><div class="flex justify-between text-slate-300"><span>裏切り (DEF)</span><span id="defectRatioLabel" class="text-slate-500">10%</span></div><input id="defectSlider" type="range" min="0" max="100" value="10" class="slider-defect"></div>
+                    <div class="space-y-1 text-[10px] font-bold text-left"><div class="flex justify-between text-blue-400"><span>しっぺ返し (TFT)</span><span id="tftRatioLabel" class="text-slate-500">10%</span></div><input id="tftSlider" type="range" min="0" max="100" value="10" class="slider-tft"></div>
+                    <div class="space-y-1 text-[10px] font-bold text-left"><div class="flex justify-between text-purple-400"><span>引金 (GRIM)</span><span id="grimRatioLabel" class="text-slate-500">5%</span></div><input id="grimSlider" type="range" min="0" max="100" value="5" class="slider-grim"></div>
+                    <div class="space-y-1 text-[10px] font-bold text-left"><div class="flex justify-between text-teal-400"><span>しっぺ返し返し (TFTT)</span><span id="tfttRatioLabel" class="text-slate-500">5%</span></div><input id="tfttSlider" type="range" min="0" max="100" value="5" class="slider-tftt"></div>
+                    <div class="space-y-1 text-[10px] font-bold text-left"><div class="flex justify-between text-orange-400"><span>パブロフ (PAV)</span><span id="pavlovRatioLabel" class="text-slate-500">10%</span></div><input id="pavlovSlider" type="range" min="0" max="100" value="10" class="slider-pavlov"></div>
+                    <div class="space-y-1 text-[10px] font-bold text-left"><div class="flex justify-between text-slate-400"><span>気質 (DISP)</span><span id="randRatioLabel" class="text-slate-500">15%</span></div><input id="randSlider" type="range" min="0" max="100" value="15" class="slider-disposition"></div>
+                    <div class="space-y-1 bg-yellow-400/5 p-1 rounded border border-yellow-400/10 text-[10px] font-black text-left"><div class="flex justify-between text-yellow-400"><span>鑑定士 (APP)</span><span id="appraiserRatioLabel" class="text-slate-500 font-normal">25%</span></div><input id="appraiserSlider" type="range" min="0" max="100" value="25" class="slider-appraiser"></div>
+                    <div class="space-y-1 bg-pink-500/5 p-1 rounded border border-pink-500/10 text-[10px] font-black text-left"><div class="flex justify-between text-pink-500"><span>宗派 (SECT)</span><span id="sectRatioLabel" class="text-slate-500 font-normal">15%</span></div><input id="sectSlider" type="range" min="0" max="100" value="15" class="slider-sect"></div>
                 </div>
             </section>
 
@@ -172,30 +172,32 @@
             </header>
 
             <section class="space-y-16 pb-24 text-lg text-slate-300">
-                <div class="space-y-6 text-slate-300">
-                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider">概要とシステム仕様</h3>
-                    <p>本シミュレーターは、ゲーム理論における「囚人のジレンマ」を2次元グリッド上で展開し、多様な戦略を持つ個体が生存競争を行い、分布を広げていくかを観測する装置です。</p>
+                <div class="space-y-6 text-left">
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-left">概要とシステム仕様</h3>
+                    <p class="leading-relaxed">本シミュレーターは、ゲーム理論における「囚人のジレンマ」を2次元グリッド上で展開し、多様な戦略を持つ個体がどのように生存競争を行い、分布を広げていくかを観測する装置です。</p>
                     
-                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6">1. 囚人のジレンマ：共創の村の物語</h3>
-                    <p>このシミュレーションの根本にあるのは、個々の”最適”な選択が全体の調和を損なうという葛藤です。ここでは、村の未来を切り拓くために各々が「知恵と力」を出し合うコミュニティの形成を例に説明します。</p>
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 text-left">1. 囚人のジレンマ：共創の村の物語</h3>
+                    <p class="leading-relaxed">このシミュレーションの根本にあるのは、個々の”最適”な選択が全体の調和を損なうという葛藤です。ここでは、村の未来を切り拓くために各々が「知恵と力」を出し合うコミュニティの形成を例に説明します。</p>
                     
-                    <div class="bg-slate-900/60 p-8 rounded-xl border border-slate-800 italic space-y-6 shadow-xl">
-                        <p class="text-white not-italic font-bold underline decoration-blue-500 decoration-2">【状況】住民は自らの知恵（知見）を共有し、それを形にするための「汗（労力）」を惜しみなく提供する必要があります。</p>
-                        <ul class="space-y-4 text-slate-400 text-base">
+                    <div class="bg-slate-900/60 p-8 rounded-xl border border-slate-800 italic space-y-6 shadow-xl text-left">
+                        <p class="text-white not-italic font-bold underline decoration-blue-500 decoration-2 text-left">【状況】住民は自らの知恵を共有し、それを形にするための「汗（労力）」を惜しみなく提供する必要があります。</p>
+                        <ul class="space-y-4 text-slate-400 text-base text-left">
                             <li><strong class="text-teal-400 font-bold">二人が協力した場合（報酬 R）:</strong> 互いのアイディアが響き合い、共に汗を流すことで世界は彩りを増し、急速に発展します。住民一人ひとりが、心身ともに最も満たされた「豊かな生」を享受できるようになります。</li>
                             <li><strong class="text-red-400 font-bold">自分だけ裏切り、相手が協力した場合（誘惑 T）:</strong> 自分は労力を温存しつつ、相手が心血を注いだ成果を享受します。他人の献身の上に立つことで、短期的・個人的には最大の利得を得ますが、そこには孤立した合理性しか存在しません。</li>
                             <li><strong class="text-orange-400 font-bold">自分だけ協力し、相手が裏切った場合（善意の搾取 S）:</strong> 自分の献身を相手に利用され、負担も一人で背負わされます。自分の持つ資質も活力も一方的に消費され、生としての再生産が困難な状況に追い込まれます。</li>
                             <li><strong class="text-slate-300 font-bold">二人が裏切りを選んだ場合（相互不信 P）:</strong> 誰も知恵を出さず、作業も進まないため、世界は貧しく荒廃したまま固定されます。搾取は免れますが、他者と響き合う喜びも、世界がもたらすはずの深遠な豊かさも失われます。</li>
                         </ul>
                     </div>
-                    <div class="p-6 border-y border-slate-800 text-sm">
-                        <p class="font-bold text-blue-400 mb-2 uppercase tracking-widest">【ジレンマの正体】</p>
-                        <p>個人としては、相手がどうあれ「出し惜しみ」をする方が短期的には有利になります。しかし、全員がその合理性を追求すると、世界全体のステージが上がらず、結果として個々が辿り着けたはずの「真の豊かさ（報酬 R）」も失われてしまいます。<br>合理性のその先にある景色を見に。真の豊かさを手にするための対話を、ここから。</p>
+                    
+                    <div class="p-6 border-y border-slate-800 text-sm text-left">
+                        <p class="font-bold text-blue-400 mb-2 uppercase tracking-widest text-left">【ジレンマの正体】</p>
+                        <p class="leading-relaxed">個人としては、相手がどうあれ「出し惜しみ」をする方が短期的には有利になります。しかし、全員がその合理性を追求すると、世界全体のステージが上がらず、結果として個々が辿り着けたはずの「真の豊かさ（報酬 R）」も失われてしまいます。</p>
+                        <p class="mt-4 font-bold text-slate-200">合理性のその先にある景色を見に。真の豊かさを手にするための対話を、ここから。</p>
                     </div>
                 </div>
 
-                <div class="space-y-6 text-slate-300">
-                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-xl">2. シミュレーションの仕組み</h3>
+                <div class="space-y-6 text-left">
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-xl text-left">2. シミュレーションの仕組み</h3>
                     <ul class="list-disc pl-8 space-y-4 text-base">
                         <li><strong class="text-slate-200">意思決定 (Decision):</strong> 各セルは、前回の「周囲8マスの平均協力率（場の空気）」を読み、自身の戦略に基づき「今回の自分の手」を一斉に決定します。</li>
                         <li><strong class="text-slate-200">評価 (Payoff):</strong> 決定された手同士を突き合わせ、利得表に基づきスコアを算出します。</li>
@@ -203,8 +205,8 @@
                     </ul>
                 </div>
 
-                <div class="space-y-8">
-                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-xl">
+                <div class="space-y-8 text-left">
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-xl text-left">
                         3. 戦略（アルゴリズム）の定義 <span class="text-xs font-normal text-slate-400 ml-2">（一般の定義と少し異なるオリジナル定義の戦略があります）</span>
                     </h3>
                     <div class="overflow-x-auto text-xs">
@@ -216,39 +218,44 @@
                                 <tr><td class="p-3 border border-slate-800 text-white font-bold">協力 (COOP)</td><td>純粋利他</td><td>状況を問わず、常に「協力(C)」を選択する。</td></tr>
                                 <tr><td class="p-3 border border-slate-800 text-white font-bold">裏切り (DEFECT)</td><td>純粋利己</td><td>状況を問わず、常に「裏切り(D)」を選択する。</td></tr>
                                 <tr><td class="p-3 border border-slate-800 text-white font-bold">しっぺ返し (TFT)</td><td>互恵主義</td><td>周囲の協力率が50%以上なら「協力(C)」、50%未満なら「裏切り(D)」。</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold">引金 (GRIM)</td><td>断罪主義</td><td>一度でも裏切りを観測（記憶）した相手に対しては、永久に「裏切り(D)」を選択する。</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold">返返 (TFTT)</td><td>寛容主義</td><td>周囲の協力率が極端に低い（25%未満）場合のみ「裏切り(D)」を出す。</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold">パブロフ (PAVLOV)</td><td>実利主義</td><td>前回の自分の手と周囲の平均的な行動が一致（勝利）すれば維持、不一致（敗北）なら変更。</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold">気質 (DISPOSITION)</td><td>個別特性</td><td>個体ごとに固有の協力確率 P (0〜1) を持ち、その確率で協力する。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold text-xs">引金 (GRIM)</td><td>断罪主義</td><td>一度でも裏切りを観測（記憶）した相手に対しては、永久に「裏切り(D)」を選択する。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold text-xs">返返 (TFTT)</td><td>寛容主義</td><td>周囲の協力率が極端に低い（25%未満）場合のみ「裏切り(D)」を出す。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold text-xs">パブロフ (PAVLOV)</td><td>実利主義</td><td>前回の自分の手と周囲の平均的な行動が一致（勝利）すれば維持、不一致（敗北）なら変更。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold text-xs">気質 (DISPOSITION)</td><td>個別特性</td><td>個体ごとに固有の協力確率 P (0〜1) を持ち、その確率で協力する。</td></tr>
                                 <tr><td class="p-3 border border-slate-800 text-blue-400 font-bold italic underline underline-offset-4">鑑定士 (APPRAISER)</td><td>知性分析</td><td>隣人の行動履歴をスコアリングし、平均信頼度が一定基準を下回れば「裏切り(D)」。※下記参照</td></tr>
-                                <tr><td class="p-3 border border-slate-800 text-white font-bold">宗派 (SECT)</td><td>集団連帯</td><td>自身の年齢に基づき3手の握手プロトコル [裏切り-裏切り-協力] を実行。仲間と判明すれば協力する。</td></tr>
+                                <tr><td class="p-3 border border-slate-800 text-white font-bold text-xs">宗派 (SECT)</td><td>集団連帯</td><td>自身の年齢に基づき3手の握手プロトコル [裏切り-裏切り-協力] を実行。仲間と判明すれば協力する。</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-4 p-6 bg-blue-900/10 border border-blue-900/30 rounded-lg shadow-inner">
-                        <h4 class="text-sm font-bold text-blue-400 mb-2 italic text-xs">※鑑定士 (APPRAISER) の詳細補足</h4>
-                        <div class="text-xs text-slate-400 space-y-2 leading-relaxed italic">
+                    <div class="mt-4 p-6 bg-blue-900/10 border border-blue-900/30 rounded-lg shadow-inner text-left">
+                        <h4 class="font-bold text-blue-400 mb-2 italic text-xs text-left">※鑑定士 (APPRAISER) の詳細補足</h4>
+                        <div class="text-xs text-slate-400 leading-relaxed italic text-left">
                             <p>鑑定士の行動原理は、「個別評価の蓄積」と「場の空気への適応」という二重構造で成り立っています。隣人ごとに信頼スコア s（-10〜10）を保持し、協力で+1、裏切りで-1。スコアが1を超えれば協力、-1を下回れば裏切り。判定保留圏では場の空気に同調します。これにより、初期の混沌下でも安定した核を形成します。</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="space-y-6">
-                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider">4. 特殊な継承と変異</h3>
-                    <p class="text-base leading-relaxed"><strong>気質の微細継承:</strong> 模倣の際、気質(DISPOSITION)の協力確率 P は 1/128 (約0.0078) の極微なゆらぎを伴って継承されます。<br>
-                    <strong>突然変異 (MUTATION):</strong> スライダーで設定された確率に基づき、血統に関係なく全く新しい戦略の個体が誕生します。</p>
+                <div class="space-y-6 text-left">
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-left text-xl">3. 特殊な継承と変異</h3>
+                    <p class="text-base leading-relaxed text-left text-slate-300"><strong>気質の微細継承:</strong> 模倣の際、気質の協力確率は 1/128 (約0.0078) の極微なゆらぎを伴って継承されます。<br><strong>突然変異 (MUTATION):</strong> スライダー設定に基づき、血統に関係なく全く新しい戦略の個体が誕生します。</p>
                 </div>
 
-                <div class="space-y-6 text-slate-400">
-                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider">5. 環境パラメータ</h3>
-                    <p class="text-base"><strong>慈悲的介入 (MOOD):</strong> 世界全体の協力率が高いほど、協力した際の報酬(R)が増大し、裏切られた際の報い(S)が緩和されます。<br>
-                    <strong>多様性指数 (DIVERSITY):</strong> 全戦略の分布割合をシャノン・エントロピーで算出し、世界の豊かさを 0〜100% で表示します。</p>
+                <div class="space-y-6 text-slate-400 text-left">
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-blue-600 pl-6 uppercase tracking-wider text-left text-xl">4. 環境パラメータ</h3>
+                    <p class="text-base text-left"><strong>慈悲的介入 (MOOD):</strong> 世界全体の協力率が高いほど協力時の報酬(R)が増大し、裏切られた際の報い(S)が緩和されます。<br><strong>多様性指数 (DIVERSITY):</strong> 全戦略の分布割合をシャノン・エントロピーで算出し、世界の豊かさを 0〜100% で表示します。</p>
                 </div>
 
                 <div class="pt-24 border-t border-slate-800 text-center">
-                    <p class="text-lg lg:text-xl font-bold text-white italic tracking-tighter leading-tight uppercase">
+                    <p class="text-lg lg:text-xl font-bold text-white italic tracking-tighter leading-tight uppercase text-center">
                         この観測装置は、個別の「意志」がいかにして「環境」を形成し、<br class="hidden lg:block">
-                        その「環境」がふたたび「意志」を規定するかを可視化したものである。<br><br>「個」の合理性という檻を突き抜け、共に「真の豊かさ」を観測する旅へ。                    </p>
+                        その「環境」がふたたび「意志」を規定するかを可視化したものである。<br><br>「個」の合理性という檻を突き抜け、共に「真の豊かさ」を観測する旅へ。
+                    </p>
+                </div>
+
+                <div class="pt-16 pb-20 text-center">
+                    <button id="infoBottomCloseBtn" class="bg-blue-600 hover:bg-blue-500 text-white font-black py-4 px-10 rounded-full text-sm uppercase tracking-widest transition-all shadow-2xl active:scale-90">
+                        解説を閉じて観測に戻る
+                    </button>
                 </div>
             </section>
         </div>
@@ -256,205 +263,61 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 完璧に動くベース・シミュレーション・ロジック ---
+    // --- 完璧に動くベース・シミュレーション・ロジック（完全維持） ---
     const STRATEGIES = { COOP: 0, DEFECT: 1, TFT: 2, GRIM: 3, TFTT: 4, PAVLOV: 5, DISPOSITION: 6, APPRAISER: 7, SECT: 8 };
-    const COLORS = {
-        [STRATEGIES.COOP]: '#FFFFFF', [STRATEGIES.DEFECT]: '#000000', [STRATEGIES.TFT]: '#4299e1',
-        [STRATEGIES.GRIM]: '#9b59b6', [STRATEGIES.TFTT]: '#1abc9c', [STRATEGIES.PAVLOV]: '#e67e22',
-        [STRATEGIES.DISPOSITION]: '#808080', [STRATEGIES.APPRAISER]: '#ffff00', [STRATEGIES.SECT]: '#ff00ff',
-    };
-    const STRATEGY_NAMES = {
-        [STRATEGIES.COOP]: '協力 (COOP)', [STRATEGIES.DEFECT]: '裏切り (DEF)', [STRATEGIES.TFT]: 'しっぺ返し (TFT)',
-        [STRATEGIES.GRIM]: '引金 (GRIM)', [STRATEGIES.TFTT]: '返返 (TFTT)', [STRATEGIES.PAVLOV]: 'パブロフ (PAV)',
-        [STRATEGIES.DISPOSITION]: '気質 (DISPOSITION)', [STRATEGIES.APPRAISER]: '鑑定士 (APPRAISER)', [STRATEGIES.SECT]: '宗派 (SECT)',
-    };
+    const COLORS = { 0:'#FFF', 1:'#000', 2:'#4299e1', 3:'#9b59b6', 4:'#1abc9c', 5:'#e67e22', 6:'#808080', 7:'#ffff00', 8:'#ff00ff' };
+    const STRATEGY_NAMES = { 0:'協力', 1:'裏切り', 2:'TFT', 3:'引金', 4:'返返', 5:'PAV', 6:'気質', 7:'鑑定', 8:'宗派' };
 
     const canvas = document.getElementById('gridCanvas');
     const ctx = canvas.getContext('2d', { alpha: false });
-    
     const ui = {
-        startStop: document.getElementById('startStopBtn'),
-        reset: document.getElementById('resetBtn'),
-        step: document.getElementById('stepBtn'),
-        gridSize: document.getElementById('gridSizeSlider'),
-        gridLabel: document.getElementById('gridSizeLabel'),
-        mutation: document.getElementById('mutationSlider'),
-        mutationLabel: document.getElementById('mutationLabel'),
-        speed: document.getElementById('speedSlider'),
-        speedLabel: document.getElementById('speedLabel'),
-        mood: document.getElementById('moodSlider'),
-        moodLabel: document.getElementById('moodLabel'),
-        coopDisp: document.getElementById('cooperationRateDisplay'),
-        diversityDisp: document.getElementById('diversityIndexDisplay'),
-        genDisp: document.getElementById('generationDisplay'),
-        rDisp: document.getElementById('rewardDisplay'),
-        tDisp: document.getElementById('temptationDisplay'),
-        sDisp: document.getElementById('suckerDisplay')
+        startStop: document.getElementById('startStopBtn'), reset: document.getElementById('resetBtn'), step: document.getElementById('stepBtn'),
+        gridSize: document.getElementById('gridSizeSlider'), gridLabel: document.getElementById('gridSizeLabel'),
+        mutation: document.getElementById('mutationSlider'), mutationLabel: document.getElementById('mutationLabel'),
+        speed: document.getElementById('speedSlider'), speedLabel: document.getElementById('speedLabel'),
+        mood: document.getElementById('moodSlider'), moodLabel: document.getElementById('moodLabel'),
+        coopDisp: document.getElementById('cooperationRateDisplay'), diversityDisp: document.getElementById('diversityIndexDisplay'), genDisp: document.getElementById('generationDisplay'),
+        rDisp: document.getElementById('rewardDisplay'), tDisp: document.getElementById('temptationDisplay'), sDisp: document.getElementById('suckerDisplay')
     };
+    const sSliders = { coop: document.getElementById('coopSlider'), defect: document.getElementById('defectSlider'), tft: document.getElementById('tftSlider'), grim: document.getElementById('grimSlider'), tftt: document.getElementById('tfttSlider'), pavlov: document.getElementById('pavlovSlider'), rand: document.getElementById('randSlider'), appraiser: document.getElementById('appraiserSlider'), sect: document.getElementById('sectSlider') };
+    const sLabels = {}; for (let k in sSliders) sLabels[k] = document.getElementById(k + 'RatioLabel');
 
-    const sSliders = {
-        coop: document.getElementById('coopSlider'), defect: document.getElementById('defectSlider'),
-        tft: document.getElementById('tftSlider'), grim: document.getElementById('grimSlider'),
-        tftt: document.getElementById('tfttSlider'), pavlov: document.getElementById('pavlovSlider'),
-        rand: document.getElementById('randSlider'), appraiser: document.getElementById('appraiserSlider'),
-        sect: document.getElementById('sectSlider')
-    };
-    const sLabels = {};
-    for (let k in sSliders) sLabels[k] = document.getElementById(k + 'RatioLabel');
-
-    let gridSize = 128, mutationRate = 1 / 65536, interval = 80, moodEffectStrength = 0;
+    let gridSize = 128, mutationRate = 1 / 65536, interval = 80, moodEffectStrength = 0, isRunning = false, animationId = null, lastTime = 0, gen = 0;
     let grid = null, prevA = null, prevPrevA = null, memoryG = null, memoryA = null, memoryS = null;
-    let isRunning = false, animationId = null, lastTime = 0, gen = 0;
     let curPayoffs = { R: 3, T: 5, S: 0, P: 1 };
-
-    const BASE_COOP_RATE = 0.75, SECT_TOLERANCE = 2, FORGIVENESS = 5;
     const RAND_MUT_STEP = 1/128; 
 
     let chart;
     function buildChart() {
         if (chart) chart.destroy();
         chart = new Chart(document.getElementById('populationChart').getContext('2d'), {
-            type: 'line',
-            data: { labels: [], datasets: Object.keys(STRATEGIES).map(k => ({ label: STRATEGY_NAMES[STRATEGIES[k]], data: [], borderColor: COLORS[STRATEGIES[k]], borderWidth: 1.5, pointRadius: 0, tension: 0.15 })) },
-            options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } },
-                scales: { x: { display: false }, y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#475569', font: { size: 8 } } } }
-            }
+            type: 'line', data: { labels: [], datasets: Object.keys(STRATEGIES).map(k => ({ label: STRATEGY_NAMES[STRATEGIES[k]], data: [], borderColor: COLORS[STRATEGIES[k]], borderWidth: 1.5, pointRadius: 0, tension: 0.15 })) },
+            options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#475569', font: { size: 8 } } } } }
         });
     }
-
-    function getNeighbors(x, y) {
-        const n = [];
-        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { if (dx === 0 && dy === 0) continue; n.push({ x: (x + dx + gridSize) % gridSize, y: (y + dy + gridSize) % gridSize }); }
-        return n;
-    }
-
+    function getNeighbors(x, y) { const n = []; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { if (dx === 0 && dy === 0) continue; n.push({ x: (x + dx + gridSize) % gridSize, y: (y + dy + gridSize) % gridSize }); } return n; }
     function getAct(cell, x, y, ox, oy) {
         const s = cell.strategy, id = `${ox},${oy}`;
         switch (s) {
-            case STRATEGIES.COOP: return 0;
-            case STRATEGIES.DEFECT: return 1;
-            case STRATEGIES.TFT: return prevA[oy][ox];
-            case STRATEGIES.GRIM: return memoryG[y][x].has(id) ? 1 : 0;
-            case STRATEGIES.TFTT: return (prevA[oy][ox] === 1 && prevPrevA[oy][ox] === 1) ? 1 : 0;
-            case STRATEGIES.PAVLOV: return (prevA[y][x] === prevA[oy][ox]) ? 0 : 1;
-            case STRATEGIES.DISPOSITION: return Math.random() < cell.coopRate ? 0 : 1;
-            case STRATEGIES.APPRAISER: {
-                let m = memoryA[y][x]; if (!m[id]) m[id] = { s: 0 };
-                m[id].s = Math.max(-10, Math.min(10, m[id].s + (prevA[oy][ox] === 0 ? 1 : -1)));
-                return m[id].s > 2 ? 0 : (m[id].s < -2 ? 1 : prevA[oy][ox]);
-            }
-            case STRATEGIES.SECT: {
-                let m = memoryS[y][x]; if (!m[id]) m[id] = { turn: 0, h: [], st: 'p', b: 0, sk: 0 };
-                const c = m[id]; if (c.st === 'ally') return 0; if (c.st === 'enemy') return c.b >= SECT_TOLERANCE ? 1 : 0;
-                if (c.turn < 3) return [0, 0, 1][c.turn];
-                let match = true; for(let i=0; i<3; i++) if(c.h[i] !== [0, 0, 1][i]) match = false;
-                c.st = match ? 'ally' : 'enemy'; return match ? 0 : (c.b >= SECT_TOLERANCE ? 1 : 0);
-            }
+            case 0: return 0; case 1: return 1; case 2: return prevA[oy][ox]; case 3: return memoryG[y][x].has(id) ? 1 : 0; case 4: return (prevA[oy][ox] === 1 && prevPrevA[oy][ox] === 1) ? 1 : 0; case 5: return (prevA[y][x] === prevA[oy][ox]) ? 0 : 1; case 6: return Math.random() < cell.coopRate ? 0 : 1;
+            case 7: let m = memoryA[y][x]; if (!m[id]) m[id] = { s: 0 }; m[id].s = Math.max(-10, Math.min(10, m[id].s + (prevA[oy][ox] === 0 ? 1 : -1))); return m[id].s > 2 ? 0 : (m[id].s < -2 ? 1 : prevA[oy][ox]);
+            case 8: let ms = memoryS[y][x]; if (!ms[id]) ms[id] = { turn: 0, h: [], st: 'p', b: 0, sk: 0 }; const c = ms[id]; if (c.st === 'ally') return 0; if (c.st === 'enemy') return c.b >= 2 ? 1 : 0; if (c.turn < 3) return [0, 0, 1][c.turn]; let match = true; for(let i=0; i<3; i++) if(c.h[i] !== [0, 0, 1][i]) match = false; c.st = match ? 'ally' : 'enemy'; return match ? 0 : (c.b >= 2 ? 1 : 0);
         }
     }
-
-    function syncPayoffs(rate) {
-        const f = (rate - 0.5) * 2;
-        if (f < 0) { curPayoffs.R = 3.0 - (f * moodEffectStrength * 1.5); curPayoffs.T = 5.0 + (f * moodEffectStrength); curPayoffs.S = 0; }
-        else { curPayoffs.R = 3.0 + (f * moodEffectStrength * 0.5); curPayoffs.T = 5.0; curPayoffs.S = (f * moodEffectStrength * 0.5); }
-        ui.rDisp.textContent = curPayoffs.R.toFixed(1); ui.tDisp.textContent = curPayoffs.T.toFixed(1); ui.sDisp.textContent = curPayoffs.S.toFixed(1);
-    }
-
+    function syncPayoffs(rate) { const f = (rate - 0.5) * 2; if (f < 0) { curPayoffs.R = 3.0 - (f * moodEffectStrength * 1.5); curPayoffs.T = 5.0 + (f * moodEffectStrength); curPayoffs.S = 0; } else { curPayoffs.R = 3.0 + (f * moodEffectStrength * 0.5); curPayoffs.T = 5.0; curPayoffs.S = (f * moodEffectStrength * 0.5); } ui.rDisp.textContent = curPayoffs.R.toFixed(1); ui.tDisp.textContent = curPayoffs.T.toFixed(1); ui.sDisp.textContent = curPayoffs.S.toFixed(1); }
     function processEvolve() {
-        if (!prevA) return;
-        const nextA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
-        const scores = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
-        const counts = Array(9).fill(0);
-        let totalC = 0;
-        for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) { if(prevA[y][x] === 0) totalC++; counts[grid[y][x].strategy]++; }
-        const totalCells = gridSize * gridSize;
-        let entropy = 0; counts.forEach(c => { if(c > 0) { let p = c/totalCells; entropy -= p * Math.log2(p); } });
-        ui.diversityDisp.textContent = `${Math.round((entropy / Math.log2(9)) * 100)}%`;
-        const rate = totalC / totalCells; syncPayoffs(rate); ui.coopDisp.textContent = `${Math.round(rate * 100)}%`; ui.genDisp.textContent = gen;
-
-        for (let y=0; y<gridSize; y++) {
-            for (let x=0; x<gridSize; x++) {
-                const ns = getNeighbors(x, y); let scoreSum = 0, aSum = 0;
-                for (const n of ns) {
-                    const myA = getAct(grid[y][x], x, y, n.x, n.y), opA = getAct(grid[n.y][n.x], n.x, n.y, x, y);
-                    scoreSum += (myA === 0) ? (opA === 0 ? curPayoffs.R : curPayoffs.S) : (opA === 0 ? curPayoffs.T : curPayoffs.P);
-                    aSum += myA;
-                    if (grid[y][x].strategy === STRATEGIES.GRIM && opA === 1) memoryG[y][x].add(`${n.x},${n.y}`);
-                    if (grid[y][x].strategy === STRATEGIES.SECT) {
-                        let m = memoryS[y][x][`${n.x},${n.y}`];
-                        if (m.st === 'p') { m.h.push(opA); m.turn++; }
-                        else if (m.st === 'enemy') { if (opA === 1) { m.b++; m.sk = 0; } else { m.sk++; if(m.sk >= 5 && m.b > 0) { m.b--; m.sk = 0; } } }
-                    }
-                }
-                scores[y][x] = scoreSum; nextA[y][x] = (aSum / ns.length) > 0.5 ? 1 : 0;
-            }
-        }
-        
-        const nextGrid = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
-        const mPool = []; for (let k in sSliders) { let w = parseInt(sSliders[k].value); let s = STRATEGIES[k.toUpperCase()==='RAND'?'DISPOSITION':k.toUpperCase()]; for (let i=0; i<w; i++) mPool.push(s); }
-        if (mPool.length === 0) mPool.push(...Object.values(STRATEGIES));
-
-        for (let y = 0; y < gridSize; y++) {
-            for (let x = 0; x < gridSize; x++) {
-                const ns = getNeighbors(x, y);
-                let maxS = scores[y][x], winners = [{y, x}];
-                for (const n of ns) { if (scores[n.y][n.x] > maxS) { maxS = scores[n.y][n.x]; winners = [{y: n.y, x: n.x}]; } else if (scores[n.y][n.x] === maxS) { winners.push({y: n.y, x: n.x}); } }
-                const w = winners[Math.floor(Math.random() * winners.length)];
-                let nextCell = { ...grid[w.y][w.x] };
-                if (nextCell.strategy === 6) nextCell.coopRate = Math.max(0, Math.min(1, nextCell.coopRate + (Math.random()-0.5) * RAND_MUT_STEP));
-                if (Math.random() < mutationRate) { const st = mPool[Math.floor(Math.random() * mPool.length)]; nextCell = { strategy: st }; if (st === 6) nextCell.coopRate = Math.random(); }
-                if (grid[y][x].strategy !== nextCell.strategy) { memoryG[y][x].clear(); memoryA[y][x] = {}; memoryS[y][x] = {}; }
-                nextGrid[y][x] = nextCell;
-            }
-        }
+        if (!prevA) return; const nextA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0)); const scores = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0)); const counts = Array(9).fill(0); let totalC = 0; for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) { if(prevA[y][x] === 0) totalC++; counts[grid[y][x].strategy]++; } const totalCells = gridSize * gridSize; let entropy = 0; counts.forEach(c => { if(c > 0) { let p = c/totalCells; entropy -= p * Math.log2(p); } }); ui.diversityDisp.textContent = `${Math.round((entropy / Math.log2(9)) * 100)}%`; const rate = totalC / totalCells; syncPayoffs(rate); ui.coopDisp.textContent = `${Math.round(rate * 100)}%`; ui.genDisp.textContent = gen;
+        for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) { const ns = getNeighbors(x, y); let sSum = 0, aSum = 0; for (const n of ns) { const myA = getAct(grid[y][x], x, y, n.x, n.y), opA = getAct(grid[n.y][n.x], n.x, n.y, x, y); sSum += (myA === 0) ? (opA === 0 ? curPayoffs.R : curPayoffs.S) : (opA === 0 ? curPayoffs.T : curPayoffs.P); aSum += myA; if (grid[y][x].strategy === 3 && opA === 1) memoryG[y][x].add(`${n.x},${n.y}`); if (grid[y][x].strategy === 8) { let m = memoryS[y][x][`${n.x},${n.y}`]; if (m.st === 'p') { m.h.push(opA); m.turn++; } else if (m.st === 'enemy') { if (opA === 1) { m.b++; m.sk = 0; } else { m.sk++; if(m.sk >= 5 && m.b > 0) { m.b--; m.sk = 0; } } } } } scores[y][x] = sSum; nextA[y][x] = (aSum / ns.length) > 0.5 ? 1 : 0; }
+        const nextGrid = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0)); const mPool = []; for (let k in sSliders) { let w = parseInt(sSliders[k].value); let s = STRATEGIES[k.toUpperCase()==='RAND'?'DISPOSITION':k.toUpperCase()]; for (let i=0; i<w; i++) mPool.push(s); } if (mPool.length === 0) mPool.push(...Object.values(STRATEGIES));
+        for (let y = 0; y < gridSize; y++) for (let x = 0; x < gridSize; x++) { const ns = getNeighbors(x, y); let maxS = scores[y][x], winners = [{y, x}]; for (const n of ns) { if (scores[n.y][n.x] > maxS) { maxS = scores[n.y][n.x]; winners = [{y: n.y, x: n.x}]; } else if (scores[n.y][n.x] === maxS) { winners.push({y: n.y, x: n.x}); } } const w = winners[Math.floor(Math.random() * winners.length)]; let nextCell = { ...grid[w.y][w.x] }; if (nextCell.strategy === 6) nextCell.coopRate = Math.max(0, Math.min(1, nextCell.coopRate + (Math.random()-0.5) * RAND_MUT_STEP)); if (Math.random() < mutationRate) { const st = mPool[Math.floor(Math.random() * mPool.length)]; nextCell = { strategy: st }; if (st === 6) nextCell.coopRate = Math.random(); } if (grid[y][x].strategy !== nextCell.strategy) { memoryG[y][x].clear(); memoryA[y][x] = {}; memoryS[y][x] = {}; } nextGrid[y][x] = nextCell; }
         grid = nextGrid; prevPrevA = prevA; prevA = nextA; gen++;
     }
-
-    function render() {
-        if (!grid) return; const s = canvas.width / gridSize; ctx.fillStyle = '#1e293b'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) {
-            const c = grid[y][x]; if (c.strategy === 6) { const g = Math.round(255 * c.coopRate); ctx.fillStyle = `rgb(${g},${g},${g})`; } else ctx.fillStyle = COLORS[c.strategy];
-            ctx.fillRect(Math.floor(x * s), Math.floor(y * s), Math.ceil(s), Math.ceil(s));
-        }
-    }
-
-    function updateChart() {
-        if (!chart) return; const counts = Array(9).fill(0); for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) counts[grid[y][x].strategy]++;
-        if (chart.data.labels.length > 50) { chart.data.labels.shift(); chart.data.datasets.forEach(d => d.data.shift()); }
-        chart.data.labels.push(gen); chart.data.datasets.forEach((d, i) => d.data.push(counts[i])); chart.update('none');
-    }
-
+    function render() { if (!grid) return; const s = canvas.width / gridSize; ctx.fillStyle = '#1e293b'; ctx.fillRect(0, 0, canvas.width, canvas.height); for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) { const c = grid[y][x]; if (c.strategy === 6) { const g = Math.round(255 * c.coopRate); ctx.fillStyle = `rgb(${g},${g},${g})`; } else ctx.fillStyle = COLORS[c.strategy]; ctx.fillRect(Math.floor(x * s), Math.floor(y * s), Math.ceil(s), Math.ceil(s)); } }
+    function updateChart() { if (!chart) return; const counts = Array(9).fill(0); for (let y=0; y<gridSize; y++) for (let x=0; x<gridSize; x++) counts[grid[y][x].strategy]++; if (chart.data.labels.length > 50) { chart.data.labels.shift(); chart.data.datasets.forEach(d => d.data.shift()); } chart.data.labels.push(gen); chart.data.datasets.forEach((d, i) => d.data.push(counts[i])); chart.update('none'); }
     function loop(t) { if (!isRunning) return; animationId = requestAnimationFrame(loop); if (t - lastTime > interval) { processEvolve(); render(); updateChart(); lastTime = t; } }
-
-    function fit() { 
-        const container = document.getElementById('canvas-container'); 
-        const rect = container.getBoundingClientRect(); 
-        const size = Math.min(rect.width, rect.height) - 10; 
-        canvas.width = canvas.height = size; 
-        render(); 
-    }
-
+    function fit() { const container = document.getElementById('canvas-container'); const rect = container.getBoundingClientRect(); const size = Math.min(rect.width, rect.height) - 10; canvas.width = canvas.height = size; render(); }
     function reset() {
-        isRunning = false; ui.startStop.textContent = '開始 (START)'; gen = 0; cancelAnimationFrame(animationId);
-        gridSize = parseInt(ui.gridSize.value); mutationRate = (v => v == 0 ? 0 : (v == 17 ? 1 : 1 / Math.pow(2, 17 - v)))(parseInt(ui.mutation.value));
-        const speedV = parseInt(ui.speed.value); interval = speedV >= 250 ? (80 - ((speedV - 250) * (70 / 250))) : (500 - (speedV * (420 / 250)));
-        moodEffectStrength = parseFloat(ui.mood.value);
-        const totalW = Object.values(sSliders).reduce((a, b) => a + parseInt(b.value), 0);
-        const pool = []; const totalCells = gridSize * gridSize;
-        for (let k in sSliders) {
-            const num = Math.round((parseInt(sSliders[k].value) / (totalW || 1)) * totalCells);
-            const s = STRATEGIES[k.toUpperCase()==='RAND'?'DISPOSITION':k.toUpperCase()];
-            for (let i=0; i<num; i++) { const c = { strategy: s }; if (s === 6) c.coopRate = Math.random(); pool.push(c); }
-        }
-        while(pool.length < totalCells) pool.push({ strategy: 0, coopRate: Math.random() });
-        for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-        grid = Array(gridSize).fill(0).map((_, y) => Array(gridSize).fill(0).map((_, x) => pool[y * gridSize + x]));
-        prevA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => Math.random()<0.5?0:1));
-        prevPrevA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => Math.random()<0.5?0:1));
-        memoryG = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => new Set()));
-        memoryA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => ({})));
-        memoryS = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => ({})));
-        fit(); buildChart(); updateChart();
+        isRunning = false; ui.startStop.textContent = '開始 (START)'; gen = 0; cancelAnimationFrame(animationId); gridSize = parseInt(ui.gridSize.value); mutationRate = (v => v == 0 ? 0 : (v == 17 ? 1 : 1 / Math.pow(2, 17 - v)))(parseInt(ui.mutation.value)); const speedV = parseInt(ui.speed.value); interval = speedV >= 250 ? (80 - ((speedV - 250) * (70 / 250))) : (500 - (speedV * (420 / 250))); moodEffectStrength = parseFloat(ui.mood.value); const totalW = Object.values(sSliders).reduce((a, b) => a + parseInt(b.value), 0); const pool = []; const totalCells = gridSize * gridSize; for (let k in sSliders) { const num = Math.round((parseInt(sSliders[k].value) / (totalW || 1)) * totalCells); const s = STRATEGIES[k.toUpperCase()==='RAND'?'DISPOSITION':k.toUpperCase()]; for (let i=0; i<num; i++) { const c = { strategy: s }; if (s === 6) c.coopRate = Math.random(); pool.push(c); } } while(pool.length < totalCells) pool.push({ strategy: 0, coopRate: Math.random() }); for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; } grid = Array(gridSize).fill(0).map((_, y) => Array(gridSize).fill(0).map((_, x) => pool[y * gridSize + x])); prevA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => Math.random()<0.5?0:1)); prevPrevA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => Math.random()<0.5?0:1)); memoryG = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => new Set())); memoryA = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => ({}))); memoryS = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0).map(() => ({}))); fit(); buildChart(); updateChart();
     }
 
     ui.startStop.onclick = () => { isRunning = !isRunning; ui.startStop.textContent = isRunning ? '停止 (STOP)' : '再開 (RESUME)'; if (isRunning) { lastTime = performance.now(); loop(lastTime); } };
@@ -466,11 +329,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function norm() { let t = 0; for(let k in sSliders) t += parseInt(sSliders[k].value); for(let k in sSliders) sLabels[k].textContent = t === 0 ? '0%' : `${Math.round((parseInt(sSliders[k].value)/t)*100)}%`; }
     for(let k in sSliders) sSliders[k].oninput = norm;
     window.addEventListener('resize', fit);
+
     const infoPanel = document.getElementById('infoPanel');
     const infoOpenBtn = document.getElementById('infoOpenBtn');
     const infoCloseBtn = document.getElementById('infoCloseBtn');
+    const infoBottomCloseBtn = document.getElementById('infoBottomCloseBtn');
+    const closePanel = () => { infoPanel.classList.remove('show'); setTimeout(() => infoPanel.classList.add('hidden'), 500); };
     infoOpenBtn.onclick = () => { infoPanel.classList.remove('hidden'); setTimeout(() => infoPanel.classList.add('show'), 10); };
-    infoCloseBtn.onclick = () => { infoPanel.classList.remove('show'); setTimeout(() => infoPanel.classList.add('hidden'), 500); };
+    infoCloseBtn.onclick = closePanel;
+    infoBottomCloseBtn.onclick = closePanel;
+
     reset(); norm();
 });
 </script>
