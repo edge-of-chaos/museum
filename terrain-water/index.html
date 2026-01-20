@@ -76,22 +76,33 @@
             @apply h-1 bg-zinc-800 rounded-full appearance-none cursor-pointer accent-indigo-500;
         }
 
-        /* モバイル最適化（Pixel/iPhone/Android） */
+        /* モバイル最適化 */
         @media (max-width: 640px) {
             .mobile-padding { padding: 0.5rem 0.75rem !important; }
             .mobile-gap { gap: 0.5rem !important; }
             .mobile-stack { flex-direction: column; align-items: stretch; }
+        }
+
+        /* 【追加】解説パネル：透明度90% */
+        #infoPanel {
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            opacity: 0;
+            background-color: rgba(10, 10, 15, 0.90);
+            backdrop-filter: blur(12px);
+        }
+        #infoPanel.show {
+            opacity: 1;
+            pointer-events: auto;
         }
     </style>
 </head>
 <body>
 
     <div id="main-container">
-        <!-- Header: Control Interface -->
         <header class="system-panel mobile-padding p-4 transition-all">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center mobile-gap gap-6">
                 
-                <!-- Search/Coord Entry (Integrated Sync Icon) -->
                 <div class="relative w-full sm:w-96 group">
                     <div class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none flex flex-col">
                         <span class="text-[8px] text-zinc-400 font-bold leading-none">場所名または緯度,経度</span>
@@ -100,20 +111,18 @@
                     <input type="text" id="coordInput" value="35.80529, 139.18780" 
                            class="input-minimal w-full rounded-md py-2 pl-24 pr-10 text-xs sm:text-sm font-light tracking-wider"
                            placeholder="Enter name or coords and press Enter...">
-                    <!-- Integrated Sync Button Icon -->
                     <button id="syncIconBtn" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-zinc-500 hover:text-indigo-400 active:scale-90 transition-all" title="Synchronize with Reality">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
                     </button>
                 </div>
 
-                <!-- Simulation Controls -->
                 <div class="flex items-center justify-between w-full sm:w-auto flex-grow mobile-gap gap-6">
                     <div class="flex gap-2">
                         <button id="toggleSimButton" class="bg-white/5 hover:bg-white/10 border border-white/5 px-4 py-1.5 rounded transition-all flex flex-col items-center min-w-[90px]">
                             <span class="text-[10px] font-bold" id="rain-label-jp">雨を降らす</span>
                             <span class="text-[7px] text-zinc-500 uppercase tracking-tighter leading-none mt-0.5">Precipitate</span>
                         </button>
-                        <button id="overlayToggleButton" class="bg-white/5 hover:bg-white/10 border border-white/5 px-4 py-1.5 rounded transition-all flex flex-col items-center">
+                        <button id="overlayToggleButtonButton" class="bg-white/5 hover:bg-white/10 border border-white/5 px-4 py-1.5 rounded transition-all flex flex-col items-center">
                             <span class="text-[10px] font-bold">川重ね</span>
                             <span class="text-[7px] text-zinc-500 uppercase tracking-tighter leading-none mt-0.5">Overlay</span>
                         </button>
@@ -140,7 +149,6 @@
             </div>
         </header>
 
-        <!-- Viewport: Data Visualization -->
         <main id="viewport">
             <div id="loader-overlay" class="absolute inset-0 flex items-center justify-center bg-black/90 z-40 hidden transition-opacity duration-1000">
                 <div class="flex flex-col items-center gap-5">
@@ -155,13 +163,16 @@
             <canvas id="simulationCanvas"></canvas>
             <img id="riverOverlay" src="" class="absolute pointer-events-none opacity-50 hidden" alt="Simulation Overlay">
 
-            <!-- Orientation -->
+            <button id="infoOpenBtn" class="absolute top-6 right-6 z-40 bg-zinc-900/80 hover:bg-indigo-600 text-white px-5 py-2 rounded-full flex items-center gap-3 border border-zinc-700 shadow-2xl transition-all active:scale-95 group">
+                <span class="font-serif italic text-indigo-400 group-hover:text-white transition-colors text-xl font-bold">i</span>
+                <span class="text-xs font-bold tracking-widest uppercase text-[10px]">説明</span>
+            </button>
+
             <div class="absolute top-4 right-4 text-white/10 text-center select-none pointer-events-none">
                 <div class="text-[8px] font-bold tracking-[0.2em]">TRUE NORTH</div>
                 <div class="text-3xl leading-none mt-1">▲</div>
             </div>
 
-            <!-- Monitoring HUD -->
             <div class="absolute bottom-6 left-6 space-y-3 pointer-events-none select-none">
                 <div class="bg-black/30 backdrop-blur-2xl p-4 rounded border border-white/5 space-y-2">
                     <div class="flex justify-between gap-12 items-baseline">
@@ -179,6 +190,65 @@
                 <div id="message-box" class="text-indigo-400/60 text-[9px] font-light italic min-h-[1rem] tracking-widest uppercase"></div>
             </div>
         </main>
+    </div>
+
+    <div id="infoPanel" class="fixed inset-0 z-[100] overflow-y-auto hidden p-8 lg:p-24">
+        <div class="max-w-4xl mx-auto text-slate-200 font-serif leading-relaxed text-left">
+            <button id="infoCloseBtn" class="fixed top-8 right-8 text-zinc-500 hover:text-white text-4xl transition-colors">×</button>
+            
+            <header class="mb-16 border-b border-zinc-800 pb-12 text-center">
+                <h2 class="text-3xl font-black text-white italic tracking-tighter mb-4">🌊 Exhibit: Real-world Terrain Water Flow Simulation</h2>
+                <p class="text-xs tracking-[0.5em] text-indigo-500 uppercase font-bold text-center italic">Observatory Archive</p>
+            </header>
+
+            <section class="space-y-16 pb-24 text-lg">
+                <div class="space-y-6">
+                    <p class="leading-relaxed">この装置は、国土地理院の標高データを用い、「水は低きへ流れる」という物理法則のみによって実在の地形に川筋を浮かび上がらせる「観測装置」です。</p>
+                    <p class="text-slate-400 italic text-base">This system is a "truth observation device" that uses GSI elevation data to reveal river paths on real-world terrain based solely on the physics of water flowing toward lower elevations.</p>
+                </div>
+
+                <div class="space-y-8">
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-indigo-600 pl-6 uppercase tracking-wider">🕹 操作方法 (Operation Manual)</h3>
+                    <div class="space-y-12">
+                        <div>
+                            <h4 class="font-bold text-slate-100 mb-2">1. 場所の同期 (Synchronizing Location)</h4>
+                            <p class="text-base text-slate-400">場所名または緯度,経度 (LOCATION / COORDS) 入力欄に、観測したい地名（例：「秩父」「富士山」）または緯度,経度（例：35.80529, 139.18780）を入力し、Enter キーまたは右端の 🔄 (Sync) アイコンを押してください。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-100 mb-2">2. 雨を降らす</h4>
+                            <p class="text-base text-slate-400">雨を降らす (Precipitate) ボタンを押すと、描写領域全体に均一な降雨が始まります。<br>降雨率 (Precipitation Rate) スライダーで、雨の強さを調整できます。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-100 mb-2">3. 雨を止める</h4>
+                            <p class="text-base text-slate-400">雨を止めると、時間は自動的に4倍速で進みます。水が地形に沿って流れそこに残る青い筋こそが、その地形が宿命的に持ちうる川筋と言えましょう。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-100 mb-2">4. 実在の川との比較</h4>
+                            <p class="text-base text-slate-400">川重ね (Overlay): 実際の地図に描かれた川筋を透過表示します。シミュレーションが導き出した川になり得る場所と、実際の川の差異を観測してください。<br>カラー/白黒 (Color/Mono): 地形の凹凸をより厳密に視認したい場合は「白黒」モードを選択します。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold text-white border-l-4 border-indigo-600 pl-6 uppercase tracking-wider">💡 観測のヒント (Observation Tips)</h3>
+                    <div class="p-8 bg-indigo-900/10 border border-indigo-900/30 rounded-xl shadow-inner">
+                        <p class="text-base text-slate-300 leading-relaxed italic">土地の記憶: 現実の地図に川がない場所に水が溜まる場合、そこはかつて暗渠（あんきょ）だった場所や、潜在的な水脈である可能性があります。</p>
+                    </div>
+                </div>
+
+                <div class="pt-24 border-t border-zinc-800 text-center">
+                    <p class="text-xl font-bold text-white italic tracking-tighter leading-tight uppercase text-center">
+                        この場所に現れるのは、作為のない自然の論理そのものです。
+                    </p>
+                </div>
+
+                <div class="pt-16 pb-20 text-center">
+                    <button id="infoBottomCloseBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-black py-4 px-10 rounded-full text-sm uppercase tracking-widest transition-all shadow-2xl active:scale-90">
+                        解説を閉じて観測に戻る
+                    </button>
+                </div>
+            </section>
+        </div>
     </div>
 
     <script>
@@ -223,7 +293,6 @@
             setTimeout(() => { if(messageBox.textContent === msg) messageBox.textContent = ''; }, 5000);
         }
 
-        // Correct for Mercator distortion based on Latitude
         function fitCanvas() {
             if (!viewport || !canvas) return;
             const W = viewport.clientWidth;
@@ -309,7 +378,6 @@
             elapsedTime = 0; updateDisplay();
         }
 
-        // Physics Simulation Loop
         function simulate(timestamp) {
             if (!isSimulating || !terrain || !water) return;
             const delta = lastTimestamp === 0 ? 16 : timestamp - lastTimestamp;
@@ -342,11 +410,7 @@
                 }
                 for(let y=0; y<gridSize; y++) for(let x=0; x<gridSize; x++) {
                     water[y][x] += flowDeltas[y][x];
-                    
-                    // Fixed Drainage Logic: Hardcoded ON for exhibit
-                    if(y===0 || y===gridSize-1 || x===0 || x===gridSize-1) {
-                        water[y][x] *= 0.1;
-                    }
+                    if(y===0 || y===gridSize-1 || x===0 || x===gridSize-1) { water[y][x] *= 0.1; }
                     water[y][x] *= K_EVAPORATION;
                 }
             }
@@ -398,10 +462,10 @@
                 document.getElementById('rain-label-jp').textContent = isRaining ? '雨を止める' : '雨を降らす';
                 document.getElementById('toggleSimButton').classList.toggle('btn-active', isRaining);
             };
-            document.getElementById('overlayToggleButton').onclick = (e) => {
+            document.getElementById('overlayToggleButtonButton').onclick = (e) => {
                 isOverlayVisible = !isOverlayVisible;
                 if (riverOverlay) riverOverlay.classList.toggle('hidden', !isOverlayVisible);
-                document.getElementById('overlayToggleButton').classList.toggle('btn-active', isOverlayVisible);
+                document.getElementById('overlayToggleButtonButton').classList.toggle('btn-active', isOverlayVisible);
             };
             document.querySelectorAll('.bg-btn').forEach(btn => {
                 btn.onclick = () => {
@@ -412,6 +476,17 @@
             });
             if (rainRateSlider) rainRateSlider.oninput = (e) => { rainRate = parseFloat(e.target.value); updateDisplay(); };
             window.onresize = fitCanvas;
+
+            // 【追加】解説パネル制御ロジック
+            const infoPanel = document.getElementById('infoPanel');
+            const infoOpenBtn = document.getElementById('infoOpenBtn');
+            const infoCloseBtn = document.getElementById('infoCloseBtn');
+            const infoBottomCloseBtn = document.getElementById('infoBottomCloseBtn');
+            
+            const closePanel = () => { infoPanel.classList.remove('show'); setTimeout(() => infoPanel.classList.add('hidden'), 500); };
+            infoOpenBtn.onclick = () => { infoPanel.classList.remove('hidden'); setTimeout(() => infoPanel.classList.add('show'), 10); };
+            infoCloseBtn.onclick = closePanel;
+            infoBottomCloseBtn.onclick = closePanel;
         }
 
         window.addEventListener('load', () => { initEvents(); loadRealTerrain(); });
