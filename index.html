@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HXJR6GYWPY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-HXJR6GYWPY');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Grounds - 純粋経験の敷地</title>
+    <style>
+        :root {
+            --accent-blue: #00d4ff;
+            --text-main: #ffffff;
+            --text-sub: rgba(255, 255, 255, 0.4);
+        }
+
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #000; /* 画像の外側は完全な黒 */
+            display: flex; justify-content: center; align-items: center;
+            font-family: "Hiragino Mincho ProN", "MS Mincho", serif;
+            overflow: hidden;
+        }
+        
+        /* 画像を保持するコンテナ：アスペクト比を維持 */
+        .world-container {
+            position: relative;
+            height: 100vh;
+            width: calc(100vh * (2/3)); /* 画像の比率に合わせて調整（縦3:横2の場合） */
+            max-width: 100vw;
+            background: url('top-landscape.jpg') no-repeat center center;
+            background-size: contain; /* 拡大しすぎず、全体を収める */
+        }
+
+        /* エリアリンクの基本設定 */
+        .area-node {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%; /* コンテナ幅に合わせる */
+        }
+
+        .label-jp {
+            font-size: 1.4rem; letter-spacing: 0.5rem; color: var(--text-main);
+            text-shadow: 0 0 15px rgba(0,0,0,0.8); margin-bottom: 0.3rem;
+        }
+
+        .label-en {
+            font-size: 0.6rem; letter-spacing: 0.2rem; color: var(--text-sub);
+            text-transform: uppercase;
+        }
+
+        /* 各建物の座標（％指定で画像内の位置に固定） */
+        .node-museum { top: 30%; cursor: pointer; z-index: 20; }
+        .node-museum:hover { transform: scale(1.05); }
+        .node-museum:hover .label-jp { color: var(--accent-blue); text-shadow: 0 0 20px rgba(0, 212, 255, 0.4); }
+
+        .node-gazebo { bottom: 25%; left: -25%; opacity: 0.5; }
+        .node-library { bottom: 25%; right: -25%; opacity: 0.5; }
+
+        .footer-quote {
+            position: absolute; bottom: 30px; width: 100%; text-align: center;
+            font-size: 0.55rem; color: rgba(255,255,255,0.2);
+            letter-spacing: 0.4rem; text-transform: uppercase;
+        }
+
+        /* 横長画面（PC）での微調整 */
+        @media (min-aspect-ratio: 2/3) {
+            .world-container { box-shadow: 0 0 100px rgba(0,0,0,1); }
+        }
+
+        /* スマホ画面での微調整 */
+        @media (max-width: 600px) {
+            .world-container { width: 100vw; }
+            .label-jp { font-size: 1.1rem; letter-spacing: 0.3rem; }
+            .node-gazebo { left: -20%; }
+            .node-library { right: -20%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="world-container">
+        <a href="./museum/" class="area-node node-museum">
+            <span class="label-jp">純粋美術館</span>
+            <span class="label-en">Museum of Pure Experience</span>
+        </a>
+
+        <div class="area-node node-gazebo">
+            <span class="label-jp">東屋</span>
+            <span class="label-en">Gazebo</span>
+        </div>
+
+        <div class="area-node node-library">
+            <span class="label-jp">図書館</span>
+            <span class="label-en">Library</span>
+        </div>
+
+        <div class="footer-quote">Absolute Contradiction & Co-evolution</div>
+    </div>
+
+</body>
+</html>
