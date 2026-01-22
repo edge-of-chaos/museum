@@ -1,1 +1,372 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HXJR6GYWPY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-HXJR6GYWPY');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Exhibit: Hierarchy of Wills - 意志の階層構造</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
+    <style>
+        body { background-color: #020617; margin: 0; overflow: hidden; font-family: sans-serif; }
+        #root { height: 100vh; width: 100vw; }
+        .image-render-pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
+        #infoPanel {
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            opacity: 0;
+            background-color: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(16px);
+        }
+        #infoPanel.show { opacity: 1; pointer-events: auto; }
+        .info-content::-webkit-scrollbar { width: 4px; }
+        .info-content::-webkit-scrollbar-thumb { background: #312e81; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="fixed top-6 right-6 z-[100] flex flex-col gap-4">
+        <button id="infoOpenBtn" class="bg-slate-800/90 hover:bg-indigo-600 text-white px-5 py-2.5 rounded-full flex items-center gap-3 border border-slate-700 shadow-2xl transition-all active:scale-95 group">
+            <span class="font-serif italic text-indigo-400 group-hover:text-white transition-colors text-xl font-bold">i</span>
+            <span class="text-xs font-bold tracking-widest uppercase text-[10px]">説明</span>
+        </button>
+        <a href="../" class="bg-slate-800/90 hover:bg-slate-700 text-white px-5 py-2.5 rounded-full flex items-center gap-3 border border-slate-700 shadow-2xl transition-all active:scale-95 group no-underline">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400 group-hover:text-white transition-colors"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span class="text-xs font-bold tracking-widest uppercase text-[10px]">玄関に戻る</span>
+        </a>
+    </div>
+
+    <div id="infoPanel" class="fixed inset-0 z-[110] overflow-hidden flex justify-center items-start pt-12">
+        <div class="max-w-3xl w-full h-[85vh] overflow-y-auto info-content px-8 lg:px-12 py-12 text-slate-200 font-serif relative">
+            <button id="infoCloseBtn" class="fixed top-8 right-8 text-zinc-500 hover:text-white text-4xl transition-colors">×</button>
+            
+            <header class="mb-12 border-b border-indigo-900/50 pb-8">
+                <h2 class="text-3xl font-black text-white italic tracking-tighter mb-4">てこの総取り選挙盤：あなたの1票が国を動かす。</h2>
+                <p class="text-sm tracking-[0.2em] text-indigo-400 font-bold">── 65,536人の意思を、最小の数で塗り替えろ。</p>
+            </header>
+
+            <section class="space-y-10 text-base lg:text-lg leading-relaxed text-slate-300">
+                <div class="space-y-4">
+                    <p>「たった1票で何が変わるの？」 そう思ったことはありませんか？</p>
+                    <p>このゲームは、現代の選挙システムに隠された「レバレッジ（てこ）」の正体を明らかにするシミュレーターです。アメリカ大統領選などでも採用されている「勝者総取り（Winner-Take-All）」方式では、わずかな差で勝った者が、その場所のすべての力を手に入れます。</p>
+                    <p>接戦の場所で投じられた「たった1票」が、村を動かし、郡を動かし、州を動かし……。最終的に、巨大な「国家の意思（最外枠）」の色をひっくり返す。その衝撃の連鎖を、あなたの指先で体験してください。日本の選挙でもその要素はあるので、選挙前に楽しむのも良いかもしれません。</p>
+                </div>
+
+                <div class="space-y-6 bg-slate-800/30 p-8 rounded-3xl border border-indigo-500/10">
+                    <h3 class="text-xl font-bold text-white border-l-4 border-indigo-600 pl-4">🕹 遊び方（操作ガイド）</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="font-bold text-indigo-400">1. 状況を観測する</h4>
+                            <p class="text-sm">最初は「赤」と「青」の勢力が入り乱れた世界から始まります。65,536人の個人（ドット）の一人ひとりが、それぞれ50%ずつの確率で赤か青に配置された、極めて拮抗した状態です。画面上部を見て、今はどちらの勢力が「国家の意思」を支配しているか確認しましょう。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-indigo-400">2. 個別翻意で1票の力を知る</h4>
+                            <p class="text-sm">左下の「個別翻意」ボタンを押すと、AIが計算した「今、最も効率的な急所」にいる1人を寝返らせます。真っ白な十字線が走った交点が、システム全体を動かすための重要なその「キャスティング・ボート」の位置です。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-indigo-400">3. 瞬間翻意で一気に逆転</h4>
+                            <p class="text-sm">右下の「瞬間翻意」ボタンを押すと、AIが最短ルートで国家を塗り替えるための連続翻意を開始します。一撃ごとに世界を再計算し、無駄な票を1票も使わず、ドミノ倒しのように国家が塗り変わる様子を眺めてください。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-indigo-400">4. 視点を切り替える</h4>
+                            <p class="text-sm">右側のボタン（国・州・郡・村・個）を押すと、それぞれの階層での支配状況を視覚化できます。どの階層においても、相手より「1つでも多くの票」を確保した勢力がその場所の意思を決定します。この「わずかな差」が積み重なり、巨大な国家の答えを形作る構造を確かめてください。<br><span class="opacity-60 italic">・「引き分け」：勢力が完全に拮抗した場所は「白」で表示されます。</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-white border-l-4 border-indigo-600 pl-4">💡 観測のポイント</h3>
+                    <p>全体のわずか数パーセントの人数を動かすだけで、国家全体の色が反転します。「全員を説得する必要はない。急所さえ突けば、世界は変わる。」この事実は、あなたの1票が持つ「重み」の証明でもあります。</p>
+                    <p>この盤上で起きた逆転劇は、現実の社会でも起こりうることです。あなたの1票は、あなたが思っているよりもずっと、この世界の行方を左右する力を持っています。</p>
+                </div>
+
+                <footer class="pt-12 text-center">
+                    <p class="text-xl font-black text-white italic tracking-tighter mb-12 uppercase leading-relaxed">
+                        さあ、真っ白な十字線を走らせ、この世界の真理を射抜いて。
+                    </p>
+                    <button id="infoBottomCloseBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-black py-4 px-12 rounded-full text-sm uppercase tracking-[0.2em] shadow-2xl transition-all active:scale-95">
+                        解説を閉じて観測に戻る
+                    </button>
+                </footer>
+            </section>
+        </div>
+    </div>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+        const App = () => {
+            const GRID_SIZE = 256;
+            const TOTAL_POP = 65536;
+            const MODES = useMemo(() => ({ NATION: 'N', STATE: 'S', COUNTY: 'C', VILLAGE: 'V', DOT: 'D' }), []);
+            const BUTTON_ORDER = [MODES.NATION, MODES.STATE, MODES.COUNTY, MODES.VILLAGE, MODES.DOT];
+            const [stats, setStats] = useState({ nationWinner: 0, initialWinner: 0, challengerSide: 0, currentSecuredCount: 0, opponentSecuredCount: 0, injectedVotes: 0, ready: false, isFinished: false, aimPos: null, vData: new Uint8Array(4096), cData: new Uint8Array(256), sData: new Uint8Array(16) });
+            const [viewMode, setViewMode] = useState(MODES.DOT);
+            const [isRunning, setIsRunning] = useState(false);
+            const votesRef = useRef(new Uint8Array(GRID_SIZE * GRID_SIZE));
+            const canvasRefs = useRef([]); 
+            const injectedRef = useRef(0);
+            const targetMemory = useRef({ sIdx: null, cIdx: null, vIdx: null });
+
+            const computeHierarchy = useCallback((data) => {
+                const v = new Uint8Array(4096); const c = new Uint8Array(256); const s = new Uint8Array(16);
+                const checkAbs = (b, r) => (b >= 9 ? 1 : (r >= 9 ? 2 : 0));
+                const checkRel = (b, r) => (b > r ? 1 : (r > b ? 2 : 0));
+                for (let i = 0; i < 4096; i++) {
+                    let b = 0, r = 0; const vx = i % 64, vy = Math.floor(i / 64);
+                    for (let dy = 0; dy < 4; dy++) for (let dx = 0; dx < 4; dx++) { data[(vy * 4 + dy) * 256 + (vx * 4 + dx)] === 1 ? b++ : r++; }
+                    v[i] = checkAbs(b, r);
+                }
+                for (let i = 0; i < 256; i++) {
+                    let bV = 0, rV = 0; const cx = i % 16, cy = Math.floor(i / 16);
+                    for (let dy = 0; dy < 4; dy++) for (let dx = 0; dx < 4; dx++) { const val = v[(cy * 4 + dy) * 64 + (cx * 4 + dx)]; if (val === 1) bV++; else if (val === 2) rV++; }
+                    c[i] = checkRel(bV, rV);
+                }
+                for (let i = 0; i < 16; i++) {
+                    let bC = 0, rC = 0; const sx = i % 4, sy = Math.floor(i / 4);
+                    for (let dy = 0; dy < 4; dy++) for (let dx = 0; dx < 4; dx++) { const val = c[(sy * 4 + dy) * 16 + (sx * 4 + dx)]; if (val === 1) bC++; else if (val === 2) rC++; }
+                    s[i] = checkRel(bC, rC);
+                }
+                let bS = 0, rS = 0; for (let i = 0; i < 16; i++) { if (s[i] === 1) bS++; else if (s[i] === 2) rS++; }
+                return { v, c, s, nation: checkRel(bS, rS) };
+            }, []);
+
+            const findNextBestPixel = (data, h, challengerSide) => {
+                const challengerVal = challengerSide === 1 ? 1 : 2; const opponentVal = challengerSide === 1 ? 2 : 1;
+                const stateEffs = [];
+                for (let sIdx = 0; sIdx < 16; sIdx++) {
+                    if (h.s[sIdx] === challengerVal) continue;
+                    const sx = sIdx % 4, sy = Math.floor(sIdx / 4);
+                    let stateCost = 0, stateGain = h.s[sIdx] === opponentVal ? 2 : 1;
+                    for (let cy = 0; cy < 4; cy++) for (let cx = 0; cx < 4; cx++) {
+                        const cIdx = (sy * 4 + cy) * 16 + (sx * 4 + cx); if (h.c[cIdx] !== challengerVal) stateCost++;
+                    }
+                    stateEffs.push({ sIdx, efficiency: stateCost / stateGain });
+                }
+                if (stateEffs.length === 0) return null;
+                let minSEff = Math.min(...stateEffs.map(e => e.efficiency));
+                const bestStates = stateEffs.filter(e => Math.abs(e.efficiency - minSEff) < 1e-10).map(e => e.sIdx);
+                let sIdx = targetMemory.current.sIdx;
+                if (!bestStates.includes(sIdx)) { sIdx = bestStates[Math.floor(Math.random() * bestStates.length)]; targetMemory.current.sIdx = sIdx; targetMemory.current.cIdx = null; }
+                const sx_off = sIdx % 4, sy_off = Math.floor(sIdx / 4); const countyEffs = [];
+                for (let cy = 0; cy < 4; cy++) for (let cx = 0; cx < 4; cx++) {
+                    const cIdx = (sy_off * 4 + cy) * 16 + (sx_off * 4 + cx); if (h.c[cIdx] === challengerVal) continue;
+                    let cGain = h.c[cIdx] === opponentVal ? 2 : 1, cCost = 0;
+                    for(let vy=0; vy<4; vy++) for(let vx=0; vx<4; vx++) {
+                        const vIdx = ((sy_off * 4 + cy) * 4 + vy) * 64 + (sx_off * 4 + cx) * 4 + vx;
+                        if (h.v[vIdx] !== challengerVal) cCost++;
+                    }
+                    countyEffs.push({ cIdx, efficiency: cCost / cGain });
+                }
+                if (countyEffs.length === 0) return null;
+                let minCEff = Math.min(...countyEffs.map(e => e.efficiency));
+                const bestCounties = countyEffs.filter(e => Math.abs(e.efficiency - minCEff) < 1e-10).map(e => e.cIdx);
+                let cIdx = targetMemory.current.cIdx;
+                if (!bestCounties.includes(cIdx)) { cIdx = bestCounties[Math.floor(Math.random() * bestCounties.length)]; targetMemory.current.cIdx = cIdx; targetMemory.current.vIdx = null; }
+                const cy_off = Math.floor(cIdx / 16), cx_off = cIdx % 16; const villageEffs = [];
+                for (let vy = 0; vy < 4; vy++) for (let vx = 0; vx < 4; vx++) {
+                    const vIdx = (cy_off * 4 + vy) * 64 + (cx_off * 4 + vx); if (h.v[vIdx] === challengerVal) continue;
+                    let vGain = h.v[vIdx] === opponentVal ? 2 : 1; const pxBase = (cx_off * 4 + vx) * 4, pyBase = (cy_off * 4 + vy) * 4;
+                    let cb = 0, pool = [];
+                    for(let dy=0; dy<4; dy++) for(let dx=0; dx<4; dx++) {
+                        if (votesRef.current[(pyBase+dy)*256 + (pxBase+dx)] === challengerSide) cb++; else pool.push({x: pxBase+dx, y: pyBase+dy});
+                    }
+                    if (pool.length > 0) villageEffs.push({ vIdx, cost: 9 - cb, pixel: pool[0], efficiency: (9 - cb) / vGain });
+                }
+                if (villageEffs.length === 0) return null;
+                let minVEff = Math.min(...villageEffs.map(e => e.efficiency));
+                const bestVillages = villageEffs.filter(e => Math.abs(e.efficiency - minVEff) < 1e-10);
+                let vTarget = bestVillages.find(v => v.vIdx === targetMemory.current.vIdx);
+                if (!vTarget) { vTarget = bestVillages[Math.floor(Math.random() * bestVillages.length)]; targetMemory.current.vIdx = vTarget.vIdx; }
+                return vTarget.pixel;
+            };
+
+            const drawAll = useCallback(() => {
+                if (!votesRef.current || !stats.ready) return;
+                for (let i = 0; i < 16; i++) {
+                    const canvas = canvasRefs.current[i]; if (!canvas) continue;
+                    const ctx = canvas.getContext('2d', { alpha: false }); const sx = i % 4, sy = Math.floor(i / 4); const imgData = ctx.createImageData(64, 64);
+                    for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
+                        const idx = (sy * 64 + y) * 256 + (sx * 64 + x); let res = 0;
+                        if (viewMode === MODES.DOT) res = votesRef.current[idx] === 1 ? 1 : 2;
+                        else if (viewMode === MODES.VILLAGE) res = stats.vData[Math.floor((sy * 64 + y) / 4) * 64 + Math.floor((sx * 64 + x) / 4)];
+                        else if (viewMode === MODES.COUNTY) res = stats.cData[Math.floor((sy * 64 + y) / 16) * 16 + Math.floor((sx * 64 + x) / 16)];
+                        else if (viewMode === MODES.STATE) res = stats.sData[i]; else res = stats.nationWinner;
+                        const pIdx = (y * 64 + x) * 4; const color = res === 1 ? [59, 130, 246] : res === 2 ? [239, 68, 68] : [250, 250, 250];
+                        imgData.data[pIdx] = color[0]; imgData.data[pIdx+1] = color[1]; imgData.data[pIdx+2] = color[2]; imgData.data[pIdx+3] = 255;
+                    }
+                    ctx.putImageData(imgData, 0, 0);
+                }
+            }, [viewMode, stats, MODES]);
+
+            const init = useCallback(() => {
+                const data = new Uint8Array(65536); const buf = new Uint8Array(65536); window.crypto.getRandomValues(buf);
+                for (let i = 0; i < data.length; i++) data[i] = buf[i] % 2;
+                const h = computeHierarchy(data); votesRef.current = data; injectedRef.current = 0;
+                targetMemory.current = { sIdx: null, cIdx: null, vIdx: null };
+                const challenger = h.nation === 1 ? 0 : 1; const cVal = challenger === 1 ? 1 : 2; const oVal = challenger === 1 ? 2 : 1;
+                const sc = Array.from(h.s).filter(s => s === cVal).length, oc = Array.from(h.s).filter(s => s === oVal).length;
+                setStats({ nationWinner: h.nation, initialWinner: h.nation, challengerSide: challenger, currentSecuredCount: sc, opponentSecuredCount: oc, injectedVotes: 0, ready: true, isFinished: (sc > oc || h.nation === 0), aimPos: null, vData: h.v, cData: h.c, sData: h.s });
+                setIsRunning(false);
+            }, [computeHierarchy]);
+
+            useEffect(() => { init(); }, [init]);
+
+            const executeStep = (votes, h, side) => {
+                const p = findNextBestPixel(votes, h, side);
+                if (!p) return { p: null, nextH: h };
+                votes[p.y * 256 + p.x] = side; injectedRef.current++;
+                return { p, nextH: computeHierarchy(votes) };
+            };
+
+            const manualFlip = () => {
+                if (!stats.ready || isRunning || stats.isFinished) return;
+                const { nextH, p } = executeStep(votesRef.current, { v: stats.vData, c: stats.cData, s: stats.sData }, stats.challengerSide);
+                if (!p) { setStats(prev => ({ ...prev, isFinished: true })); return; }
+                const cVal = stats.challengerSide === 1 ? 1 : 2;
+                const sc = Array.from(nextH.s).filter(s => s === cVal).length, oc = Array.from(nextH.s).filter(s => s === (cVal === 1 ? 2 : 1)).length;
+                setStats(prev => ({ ...prev, nationWinner: nextH.nation, currentSecuredCount: sc, opponentSecuredCount: oc, injectedVotes: injectedRef.current, vData: nextH.v, cData: nextH.c, sData: nextH.s, aimPos: { x: p.x, y: p.y }, isFinished: (sc > oc) }));
+            };
+
+            useEffect(() => {
+                if (!isRunning) return;
+                let raf; const animate = () => {
+                    let curH = { v: stats.vData, c: stats.cData, s: stats.sData }; let lastP = null, finished = false; const cVal = stats.challengerSide === 1 ? 1 : 2;
+                    for (let i = 0; i < 16; i++) {
+                        const res = executeStep(votesRef.current, curH, stats.challengerSide); if (!res.p) { finished = true; break; }
+                        lastP = res.p; curH = res.nextH;
+                        if (Array.from(curH.s).filter(s => s === cVal).length > Array.from(curH.s).filter(s => s === (cVal === 1 ? 2 : 1)).length) { finished = true; break; }
+                    }
+                    const sc = Array.from(curH.s).filter(s => s === cVal).length, oc = Array.from(curH.s).filter(s => s === (cVal === 1 ? 2 : 1)).length;
+                    setStats(prev => ({ ...prev, nationWinner: curH.nation, currentSecuredCount: sc, opponentSecuredCount: oc, injectedVotes: injectedRef.current, vData: curH.v, cData: curH.c, sData: curH.s, aimPos: lastP ? { x: lastP.x, y: lastP.y } : prev.aimPos, isFinished: finished }));
+                    if (!finished) raf = requestAnimationFrame(animate); else setIsRunning(false);
+                };
+                raf = requestAnimationFrame(animate); return () => cancelAnimationFrame(raf);
+            }, [isRunning, stats.challengerSide]);
+
+            useEffect(() => { drawAll(); }, [viewMode, stats.ready, drawAll]);
+
+            const chCol = stats.challengerSide === 1 ? 'text-blue-500' : 'text-red-500';
+            const opCol = stats.challengerSide === 1 ? 'text-red-500' : 'text-blue-500';
+            const chBg = stats.challengerSide === 1 ? 'bg-blue-600' : 'bg-red-600';
+            const isActuallyReversed = (stats.currentSecuredCount > stats.opponentSecuredCount);
+            const isTie = stats.nationWinner === 0;
+            const nBorderColor = isTie ? 'border-white' : (stats.nationWinner === 1 ? 'border-blue-600 shadow-[0_0_50px_rgba(59,130,246,0.15)]' : 'border-red-600 shadow-[0_0_50px_rgba(239,68,68,0.15)]');
+            const winnerColorClass = isTie ? 'text-white' : (stats.nationWinner === 1 ? 'text-blue-400' : 'text-red-400');
+            const leverageRatio = stats.injectedVotes > 0 ? Math.floor(TOTAL_POP / stats.injectedVotes) : TOTAL_POP;
+            const getLabel = (mode) => {
+                switch(mode) { case MODES.NATION: return { ja: '国', en: 'N' }; case MODES.STATE: return { ja: '州', en: 'S' }; case MODES.COUNTY: return { ja: '郡', en: 'C' }; case MODES.VILLAGE: return { ja: '村', en: 'V' }; default: return { ja: '個', en: 'D' }; }
+            };
+
+            return (
+                <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-start pt-1 sm:pt-4 font-sans overflow-hidden select-none touch-none">
+                    <div className={`relative w-full max-w-[460px] p-2.5 sm:p-5 bg-slate-900/80 backdrop-blur-3xl rounded-[3rem] border-[10px] border-black flex flex-col items-center shadow-2xl`}>
+                        <div className="flex flex-col items-center mb-0.5 h-10 w-full">
+                            {isActuallyReversed ? (
+                                <div className="flex flex-col items-center animate-in fade-in zoom-in duration-500">
+                                    <div className="flex items-baseline gap-0.5">
+                                        <span className="text-[10px] font-black opacity-80 text-white">全住民の</span>
+                                        <span className="text-[22px] font-black tabular-nums text-white">{leverageRatio.toLocaleString()}</span>
+                                        <span className="text-[10px] font-black opacity-80 text-white px-0.5">分の1の翻意で</span>
+                                        <span className={`text-[22px] font-black px-1 ${winnerColorClass}`}>{stats.challengerSide === 1 ? '青' : '赤'}</span>
+                                        <span className={`text-[22px] font-black italic ml-1 ${winnerColorClass}`}>逆転！</span>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center transition-all duration-500">
+                                    <div className="flex items-baseline gap-2">
+                                        {!isTie && <span className="text-[11px] font-black opacity-60 text-slate-400">現在</span>}
+                                        <span className={`text-[20px] font-black tracking-widest ${winnerColorClass}`}>{isTie ? "引き分け" : (stats.nationWinner === 1 ? '青' : '赤')}</span>
+                                        <span className={`text-[10px] font-black tracking-widest uppercase opacity-70 ${isTie ? 'text-white' : winnerColorClass}`}>{isTie ? "TIE" : (stats.nationWinner === 1 ? 'BLUE' : 'RED')}</span>
+                                        <span className={`text-[20px] font-black italic transition-all duration-700 ${isTie ? 'hidden' : winnerColorClass}`}>勝利</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="w-full grid grid-cols-[auto_1fr_auto] items-center mb-1.5 px-3 sm:px-5">
+                            <div className="flex flex-col gap-1">
+                                <div className="flex flex-col items-start">
+                                    <div className="flex items-baseline gap-1 text-slate-400"><span className="text-[12px] font-black leading-none">注入票</span><span className="text-[7px] font-bold opacity-50">INJ</span></div>
+                                    <div className={`flex items-baseline gap-0.5 font-black tracking-tighter ${chCol}`}><span className="text-sm">+</span><span className="text-xl tabular-nums leading-none">{stats.injectedVotes.toLocaleString()}</span></div>
+                                </div>
+                                <div className="flex flex-col items-start">
+                                    <div className="flex items-baseline gap-1 text-slate-400"><span className="text-[12px] font-black leading-none">制圧州</span><span className="text-[7px] font-bold opacity-50">SEC</span></div>
+                                    <div className="flex items-baseline gap-1"><span className={`text-2xl font-black leading-none tabular-nums ${chCol}`}>{stats.currentSecuredCount}</span><span className="text-[10px] text-slate-700 font-bold px-0.5">:</span><span className={`text-xl font-black leading-none tabular-nums ${opCol}`}>{stats.opponentSecuredCount}</span></div>
+                                </div>
+                            </div>
+                            <div className="flex flex-col items-center pb-0.5 pointer-events-none px-2">
+                                <div className={`w-[160px] flex flex-col items-center py-2 ${chBg} text-white relative transition-all duration-500 shadow-xl`} style={{ clipPath: 'polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%)' }}>
+                                    <span className="text-[14px] font-black tracking-tighter uppercase leading-none">{stats.challengerSide === 1 ? '青' : '赤'} 逆転任務</span>
+                                </div>
+                                <div className="text-[11px] text-slate-600 font-bold italic mt-0.5 tracking-tighter opacity-50 uppercase">Versus</div>
+                            </div>
+                            <div className="w-[60px] h-1"></div>
+                        </div>
+
+                        <div className={`relative p-[2.5px] bg-black rounded-[2rem] border-[8px] transition-all duration-700 ${nBorderColor} overflow-visible w-[96%] aspect-square mb-2.5`}>
+                            {stats.aimPos && (
+                                <div className="absolute inset-0 pointer-events-none z-30">
+                                    <div className="absolute w-[2px] -top-12 -bottom-12" style={{ left: `calc(2.5px + ${(stats.aimPos.x / 255) * 100}% + ${Math.floor(stats.aimPos.x / 64) * 2}px)`, transform: 'translateX(-50%)', background: 'white' }} />
+                                    <div className="absolute h-[2px] -left-12 -right-12" style={{ top: `calc(2.5px + ${(stats.aimPos.y / 255) * 100}% + ${Math.floor(stats.aimPos.y / 64) * 2}px)`, transform: 'translateY(-50%)', background: 'white' }} />
+                                    <div className="absolute w-3 h-3 bg-white rounded-full shadow-[0_0_12px_white]" style={{ left: `calc(2.5px + ${(stats.aimPos.x / 255) * 100}% + ${Math.floor(stats.aimPos.x / 64) * 2}px)`, top: `calc(2.5px + ${(stats.aimPos.y / 255) * 100}% + ${Math.floor(stats.aimPos.y / 64) * 2}px)`, transform: 'translate(-50%, -50%)' }} />
+                                </div>
+                            )}
+                            <div className="grid grid-cols-4 gap-[2px] w-full h-full">
+                                {Array.from({length: 16}).map((_, i) => {
+                                    const win = stats.sData[i];
+                                    const bCol = win === 1 ? 'border-blue-500' : (win === 2 ? 'border-red-500' : 'border-white');
+                                    return (
+                                        <div key={i} className={`relative border-[4px] rounded-[5px] overflow-hidden w-full h-full ${bCol}`}>
+                                            <canvas ref={el => canvasRefs.current[i] = el} width={64} height={64} className="w-full h-full image-render-pixel" />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <div className="absolute -right-[48px] top-0 bottom-0 flex flex-col justify-center gap-1.5 z-40">
+                                {BUTTON_ORDER.map((m) => (
+                                    <button key={m} onClick={() => setViewMode(m)} className={`w-11 h-11 rounded-xl border-2 flex flex-col items-center justify-center transition-all ${viewMode === m ? 'bg-white text-black border-white shadow-xl scale-110' : 'bg-black/70 text-white border-white/20 hover:bg-black'}`}>
+                                        <span className="text-[14px] font-black leading-none">{getLabel(m).ja}</span><span className="text-[8px] font-bold opacity-60 mt-0.5">{getLabel(m).en}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="w-full grid grid-cols-2 mt-2 gap-4 px-2 mb-0.5">
+                            <button onClick={manualFlip} disabled={isRunning || stats.isFinished || !stats.ready || isActuallyReversed} className="py-4 bg-slate-700 text-slate-100 rounded-2xl font-black active:scale-95 border border-white/10 shadow-xl flex flex-col items-center justify-center min-h-[60px] transition-all disabled:opacity-20">
+                                <span className="text-[14px] leading-none">個別翻意</span>
+                                <span className="text-[8px] font-bold opacity-40 uppercase tracking-widest leading-none mt-1">Manual Strike</span>
+                            </button>
+                            <button onClick={() => stats.isFinished ? init() : setIsRunning(true)} disabled={isRunning || !stats.ready} className={`py-4 rounded-2xl font-black active:scale-95 shadow-xl flex flex-col items-center justify-center min-h-[60px] border border-black/10 transition-all ${stats.isFinished ? 'bg-white text-black shadow-[0_0_20px_white/30]' : 'bg-slate-200 text-slate-900'}`}>
+                                <span className="text-[14px] leading-none">{isRunning ? "制圧中..." : stats.isFinished ? "再選挙" : "瞬間翻意"}</span>
+                                <span className="text-[8px] font-bold opacity-40 uppercase tracking-widest leading-none mt-1">{isRunning ? "Targeting" : stats.isFinished ? "Re-election" : "Auto Siege"}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+
+        const infoPanel = document.getElementById('infoPanel');
+        const closePanel = () => { infoPanel.classList.remove('show'); setTimeout(() => infoPanel.classList.add('hidden'), 500); };
+        document.getElementById('infoOpenBtn').onclick = () => { infoPanel.classList.remove('hidden'); setTimeout(() => infoPanel.classList.add('show'), 10); };
+        document.getElementById('infoCloseBtn').onclick = closePanel;
+        document.getElementById('infoBottomCloseBtn').onclick = closePanel;
+    </script>
+</body>
+</html>
