@@ -47,13 +47,12 @@
             letter-spacing: 0.15rem;
             opacity: 0.6;
             z-index: 30;
-            /* pointer-events: none; を削除し、クリック可能に */
             cursor: pointer;
             text-shadow: 0 0 8px rgba(0,0,0,0.5);
             transition: opacity 0.3s;
         }
         .author-signature:hover {
-            opacity: 1; /* ホバー時に強調表示 */
+            opacity: 1;
         }
         .author-signature span {
             font-size: 0.6rem;
@@ -70,6 +69,13 @@
             width: 100%;
         }
 
+        /* 【新設】やまの：玄関と同じサイズ比率で実装 */
+        .node-prefix {
+            font-size: 0.9rem; letter-spacing: 0.1rem; color: var(--text-main);
+            margin-bottom: 0.3rem; font-weight: normal; opacity: 0.9;
+        }
+        .node-prefix span { font-size: 0.6rem; margin-left: 0.1rem; opacity: 0.8; }
+
         .label-jp {
             font-size: 1.4rem; letter-spacing: 0.5rem; color: var(--text-main);
             text-shadow: 0 0 15px rgba(0,0,0,0.8); margin-bottom: 0.3rem;
@@ -80,9 +86,16 @@
             text-transform: uppercase;
         }
 
-        .node-museum { top: 30%; cursor: pointer; z-index: 20; }
-        .node-museum:hover { transform: scale(1.05); }
+        .node-museum { top: 30%; cursor: pointer; z-index: 20; animation: heartbeat 4s infinite ease-in-out; }
+        .node-museum:hover { transform: scale(1.05); animation-play-state: paused; }
         .node-museum:hover .label-jp { color: var(--accent-blue); text-shadow: 0 0 20px rgba(0, 212, 255, 0.4); }
+
+        /* 【追加】拍動アニメーション */
+        @keyframes heartbeat {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.04); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
 
         .node-gazebo { bottom: 25%; left: -25%; opacity: 0.5; }
         .node-library { bottom: 25%; right: -25%; opacity: 0.5; }
@@ -100,6 +113,8 @@
             .node-library { right: -20%; }
             .author-signature { top: 20px; right: 20px; font-size: 0.65rem; }
             .author-signature span { font-size: 0.55rem; }
+            .node-prefix { font-size: 0.75rem; }
+            .node-prefix span { font-size: 0.5rem; }
         }
     </style>
 </head>
@@ -109,6 +124,7 @@
         <div class="author-signature" id="signature" onclick="toggleNightMode()"></div>
 
         <a href="./museum/" class="area-node node-museum">
+            <span class="node-prefix">やま<span>の</span></span>
             <span class="label-jp">純粋美術館</span>
             <span class="label-en">Museum of Pure Experience</span>
         </a>
@@ -127,7 +143,6 @@
     </div>
 
     <script>
-        // 手動モードの状態を保持 (null:自動, true:夜固定, false:昼固定)
         let isManualNightMode = null;
 
         function updateEnvironment() {
@@ -137,17 +152,13 @@
             let isNight;
 
             if (isManualNightMode !== null) {
-                // 手動モードが設定されている場合はそれを使用
                 isNight = isManualNightMode;
             } else {
-                // 自動モード: 現在時刻（現地時間）で判定
                 const now = new Date();
                 const hour = now.getHours();
-                // 18:00から05:59までを「夜」と判定
                 isNight = (hour >= 18 || hour < 6);
             }
 
-            // 状態に応じて表示を更新
             if (isNight) {
                 world.style.backgroundImage = "url('top-landscape-night.jpg')";
                 sig.innerHTML = 'やま<span>の</span>夜';
@@ -157,18 +168,14 @@
             }
         }
 
-        // 署名クリック時の処理
         function toggleNightMode() {
             const world = document.getElementById('mainWorld');
-            // 現在の表示が夜なら昼へ、昼なら夜へ反転
             const currentIsNight = world.style.backgroundImage.includes('night');
             isManualNightMode = !currentIsNight;
-            updateEnvironment(); // 即座に反映
+            updateEnvironment();
         }
 
-        // 初期実行
         updateEnvironment();
-        // 1分ごとにチェック（自動モード時の時間跨ぎ対策）
         setInterval(updateEnvironment, 60000);
     </script>
 
