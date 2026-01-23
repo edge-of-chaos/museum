@@ -209,19 +209,18 @@
         let elapsedTime = 0; let lastTimestamp = 0; let animationFrameId; const K_EVAPORATION = 0.999;
         const colors = { landLow: 'hsl(120, 30%, 20%)', landMid: 'hsl(90, 20%, 30%)', landHigh: 'hsl(60, 15%, 50%)', peak: 'hsl(30, 10%, 75%)' };
         
-        // グリッド重複検知用の状態保持
         let lastTile = { x: null, y: null };
+
+        // 共通の「礼儀」ヘッダー定義
+        const observerHeaders = { 'User-Agent': `PureExperienceMuseumObserver/1.0 (${window.location.href})` };
 
         function showMessage(msg) { if (!messageBox) return; messageBox.textContent = msg; setTimeout(() => { if(messageBox.textContent === msg) messageBox.textContent = ''; }, 5000); }
         function fitCanvas() { if (!viewport || !canvas) return; const W = viewport.clientWidth; const H = viewport.clientHeight; if (W / H > 1 / currentAspectRatio) { canvas.height = H; canvas.width = H / currentAspectRatio; } else { canvas.width = W; canvas.height = W * currentAspectRatio; } if (riverOverlay) { riverOverlay.style.width = `${canvas.width}px`; riverOverlay.style.height = `${canvas.height}px`; } draw(); }
         
-        // 【礼儀の実装】User-AgentにURLを含めて検索
         async function geocode(name) { 
             try { 
                 const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(name)}&limit=1`; 
-                const response = await fetch(url, { 
-                    headers: { 'User-Agent': `PureExperienceMuseumObserver/1.0 (${window.location.href})` } 
-                }); 
+                const response = await fetch(url, { headers: observerHeaders }); // 礼儀：地名検索
                 const data = await response.json(); 
                 return (data && data.length > 0) ? [parseFloat(data[0].lat), parseFloat(data[0].lon)] : null; 
             } catch (e) { return null; } 
@@ -238,18 +237,17 @@
             const xtile = Math.floor(n * ((lon + 180) / 360)); 
             const ytile = Math.floor(n * (1 - (Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI)) / 2);
 
-            // 【対策1】同一タイル検知
             if (xtile === lastTile.x && ytile === lastTile.y) {
                 showMessage('Same Grid Area Detected (Approx. 2-3km sq). Try a more distant location.');
             }
             lastTile = { x: xtile, y: ytile };
 
             try {
-                // 【礼儀と対策2】キャッシュ回避用のタイムスタンプとUser-Agent
                 const ts = Date.now();
+                // 礼儀：国土地理院にも User-Agent を付与
                 const [resDem, resMap] = await Promise.all([
-                    fetch(`https://cyberjapandata.gsi.go.jp/xyz/dem/${zoom}/${xtile}/${ytile}.txt?t=${ts}`), 
-                    fetch(`https://cyberjapandata.gsi.go.jp/xyz/pale/${zoom}/${xtile}/${ytile}.png?t=${ts}`)
+                    fetch(`https://cyberjapandata.gsi.go.jp/xyz/dem/${zoom}/${xtile}/${ytile}.txt?t=${ts}`, { headers: observerHeaders }), 
+                    fetch(`https://cyberjapandata.gsi.go.jp/xyz/pale/${zoom}/${xtile}/${ytile}.png?t=${ts}`, { headers: observerHeaders })
                 ]);
                 
                 if (!resDem.ok) throw new Error(); const [text, blob] = await Promise.all([resDem.text(), resMap.blob()]); if (riverOverlay) riverOverlay.src = URL.createObjectURL(blob);
