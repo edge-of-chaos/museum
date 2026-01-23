@@ -11,35 +11,50 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>純粋美術館 - Museum of Pure Experience</title>
+    <title>純粋美術館 - Yama's Museum of Pure Experience</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { margin: 0; background: #050505; color: #d4d4d4; font-family: "Hiragino Mincho ProN", "MS Mincho", serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; position: relative; }
         
-        .void-pulse { width: 160px; height: 160px; border-radius: 50%; background: radial-gradient(circle, rgba(0,212,255,0.12) 0%, rgba(0,0,0,0) 70%); border: 1px solid rgba(0,212,255,0.25); position: absolute; animation: pulse 8s infinite ease-in-out; z-index: 0; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.4); opacity: 0.7; border-color: rgba(0, 212, 255, 0.4); } }
+        .title-wrapper { position: relative; display: inline-block; text-align: center; }
+
+        .void-pulse { 
+            width: 160px; height: 160px; border-radius: 50%; 
+            background: radial-gradient(circle, rgba(0,212,255,0.22) 0%, rgba(0,0,0,0) 70%); 
+            border: 1px solid rgba(0,212,255,0.45); 
+            position: absolute; 
+            top: calc(50% + 32px); 
+            left: 50%; 
+            transform: translateX(-50%); 
+            z-index: -1; 
+            animation: pulse 8s infinite ease-in-out; 
+            pointer-events: none;
+        }
+        @keyframes pulse { 
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.4; } 
+            50% { transform: translateX(-50%) scale(1.4); opacity: 1.0; border-color: rgba(0, 212, 255, 0.6); } 
+        }
         
         .nav-cluster {
             position: absolute; top: 25px; right: 30px; z-index: 20;
             display: flex; flex-direction: column; gap: 15px; align-items: flex-end;
         }
-        .info-trigger-top {
-            display: flex; align-items: center; color: #666; cursor: pointer; transition: color 0.4s;
-        }
+        .info-trigger-top { display: flex; align-items: center; color: #666; cursor: pointer; transition: color 0.4s; }
         .info-trigger-top:hover { color: #00d4ff; }
         .info-icon { font-size: 1.1rem; margin-right: 8px; }
         .info-text { font-size: 0.8rem; letter-spacing: 0.1rem; }
         
-        .nav-back-link {
-            text-decoration: none; color: #666; font-size: 0.8rem; letter-spacing: 0.1rem;
-            display: flex; align-items: center; transition: color 0.4s;
-        }
+        .nav-back-link { text-decoration: none; color: #666; font-size: 0.8rem; letter-spacing: 0.1rem; display: flex; align-items: center; transition: color 0.4s; }
         .nav-back-link:hover { color: #00d4ff; }
         .nav-back-link i { font-size: 0.9rem; margin-right: 8px; }
 
         header { text-align: center; z-index: 10; margin-bottom: 3rem; }
+        
+        .author-prefix { font-size: 1.4rem; letter-spacing: 0.1rem; color: #ffffff; margin-bottom: 0.4rem; font-weight: normal; opacity: 0.9; }
+        .author-prefix span { font-size: 0.9rem; margin-left: 0.2rem; opacity: 0.8; }
+
         h1 { font-size: 2.2rem; letter-spacing: 1.2rem; font-weight: normal; color: #ffffff; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.1); }
-        .eng-sub { font-size: 0.7rem; letter-spacing: 0.5rem; color: #555; margin-top: 0.8rem; text-transform: uppercase; }
+        .eng-sub { font-size: 0.7rem; letter-spacing: 0.4rem; color: #555; margin-top: 0.8rem; text-transform: uppercase; }
 
         .gallery { z-index: 10; width: 90%; max-width: 550px; counter-reset: exhibit-counter; display: flex; flex-direction: column; gap: 20px; }
         .exhibit-card { display: block; border: 1px solid #222; padding: 30px 25px; text-decoration: none; color: inherit; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); background: rgba(10,10,10,0.4); backdrop-filter: blur(12px); text-align: center; border-radius: 2px; }
@@ -52,32 +67,24 @@
 
         footer { position: absolute; bottom: 30px; z-index: 10; font-size: 0.55rem; color: #333; letter-spacing: 0.3rem; text-transform: uppercase; font-style: italic; }
         
-        #modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); 
-            display: none; justify-content: center; align-items: center; z-index: 100;
-        }
+        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 100; }
         #modal-content { 
             background: #0a0a0a; border: 1px solid #222; padding: 40px; 
             max-width: 600px; width: 85%; max-height: 80vh; overflow-y: auto; 
             border-radius: 4px; box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            line-height: 1.8; font-size: 0.9rem; color: #b0b0b0;
+            line-height: 1.8; font-size: 0.9rem; 
+            color: #b9b9b9; 
             position: relative;
         }
 
-        .modal-close-x {
-            position: absolute; top: 20px; right: 25px;
-            font-size: 1.8rem; color: #444; cursor: pointer;
-            line-height: 1; transition: color 0.3s;
-        }
+        .modal-close-x { position: absolute; top: 20px; right: 25px; font-size: 1.8rem; color: #444; cursor: pointer; line-height: 1; transition: color 0.3s; }
         .modal-close-x:hover { color: #ffffff; }
 
         #modal-content h2 { color: #ffffff; font-size: 1.2rem; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; font-weight: normal; letter-spacing: 0.1rem; padding-right: 30px; }
         #modal-content h3 { color: #00d4ff; font-size: 1rem; margin-top: 25px; font-weight: normal; }
         #modal-content p { margin: 15px 0; }
-        
         .close-btn { text-align: center; margin-top: 40px; }
-        .close-link { color: #555; text-decoration: none; font-size: 0.75rem; letter-spacing: 0.2rem; cursor: pointer; text-transform: uppercase; border: 1px solid #333; padding: 10px 30px; transition: all 0.3s; display: inline-block; }
+        .close-link { color: #aaa; text-decoration: none; font-size: 0.75rem; letter-spacing: 0.2rem; cursor: pointer; text-transform: uppercase; border: 1px solid #666; padding: 10px 30px; transition: all 0.3s; display: inline-block; }
         .close-link:hover { color: #ffffff; border-color: #00d4ff; background: rgba(0,212,255,0.1); }
 
         #modal-content::-webkit-scrollbar { width: 4px; }
@@ -86,7 +93,6 @@
     </style>
 </head>
 <body>
-    <div class="void-pulse"></div>
 
     <div class="nav-cluster">
         <a href="../" class="nav-back-link">
@@ -100,8 +106,12 @@
     </div>
 
     <header>
-        <h1>純粋美術館</h1>
-        <div class="eng-sub">Museum of Pure Experience</div>
+        <div class="author-prefix">やま<span>の</span></div>
+        <div class="title-wrapper">
+            <div class="void-pulse"></div>
+            <h1>純粋美術館</h1>
+        </div>
+        <div class="eng-sub">Yama's Museum of Pure Experience</div>
     </header>
 
     <main class="gallery">
@@ -109,12 +119,10 @@
             <div class="exhibit-title">実在地形水流シミュレーター</div>
             <div class="exhibit-sub">Real-world Terrain Water Flow Simulation</div>
         </a>
-
         <a href="./prisoners-dilemma/" class="exhibit-card">
-            <div class="exhibit-title">行為的直観：鏡の対話</div>
+            <div class="exhibit-title">共創の村の物語</div>
             <div class="exhibit-sub">Action-Intuition: Dialogue of Mirrors</div>
         </a>
-
         <a href="./election/" class="exhibit-card">
             <div class="exhibit-title">意志の階層構造</div>
             <div class="exhibit-sub">Hierarchy of Wills: Re-election Mission</div>
@@ -129,19 +137,24 @@
 
             <h2>純粋美術館：現象と構造の観測所</h2>
             <p>当館へお越しいただき、ありがとうございます。ここは、私たちの世界を形づくる目に見えない律動を、あるがままに観測するための実験場です。</p>
-            
             <h3>■ コンセプト：なぜここを作ったのか</h3>
-            <p>現代の情報の海は、誰かの意図や一時的な流行によって絶えず塗り替えられています。そんな中で、そうした作為から一度離れ、ただそこにある世界の理（ことわり）に触れてみたいという想いが、この美術館のはじまりです。ここにあるのは、物理法則や数理的な理（ことわり）だけが描き出す、純粋な世界です。</p>
-            
+            <p>現代の情報の海は、誰かの意図や一時的な流行によって絶えず塗り替えられています。そんな中で、そうした作為から一度離れ、ただそこにある世界の理（ことわり）に触れてみたいという想いが、この美術館のはじまりです。ここにあるのは、物理法則や数理的な理だけが描き出す、純粋な世界です。</p>
             <h3>■ 展示の軌跡：広がり続ける展示室</h3>
-            <p>館内に並ぶ展示室（プログラム）は、それぞれが世界の仕組みを覗き見るための小さな窓のようなものです。地形と水流、そして意思決定のゆらぎ……。展示室はこれからも、館主の探究の赴くままに、少しずつ増えていく予定です。この美術館そのものが、生きているように成長していく過程も、一緒に楽しんでいただければ幸いです。</p>
-            
+            <p>館内に並ぶ展示室（プログラム）は、それぞれが世界の仕組みを覗き見るための小さな窓のようなものです。地形と水流、そして意思決定のゆらぎ……。展示室はこれからも、観測主・やまの探究の赴くままに、少しずつ増えていく予定です。この美術館そのものが、生きているように成長していく過程も、一緒に楽しんでいただければ幸いです。</p>
             <h3>■ 観測の楽しみ方</h3>
-            <p>ここでは、あなたが装置を操作（行為）することで、初めて新しい現象が生まれます。数理が描く静かな風景の中に、あなただけの「発見」を見つけてみてください。</p>
+            <p>ここでは、あなたが装置を操作（行為）することで、初めて新しい現象が生まれます。数理が描く静かな風景の中に、あなただけの発見を見つけてみてください。</p>
             
-            <h3 style="margin-top:40px; border-top: 1px solid #222; padding-top:20px; color: #ffffff;">【プライバシーポリシー】</h3>
-            <p style="font-size: 0.9rem; color: #b0b0b0;">当館では、より質の高い観測環境を維持するため、Googleアナリティクスによるアクセス解析を行っています。</p>
-            <ul style="font-size: 0.9rem; color: #b0b0b0; padding-left: 20px;">
+            <div style="text-align: right; color: #b0b0b0; font-size: 0.85rem; margin-top: 50px; opacity: 0.8; letter-spacing: 0.1rem; line-height: 1.8;">
+                この静寂が、あなたを映す鏡となりますように。<br>
+                理（ことわり）が描く風景を、あなたと共に。<br>
+                ―― 館主・やま
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #222; margin: 40px 0;">
+
+            <h3 style="color: #b0b0b0; font-size: 1rem; font-weight: normal;">【プライバシーポリシー】</h3>
+            <p style="font-size: 0.8rem; color: #b0b0b0;">当館では、より質の高い観測環境を維持するため、Googleアナリティクスによるアクセス解析を行っています。</p>
+            <ul style="font-size: 0.8rem; color: #b0b0b0; padding-left: 20px;">
                 <li>データ収集: Cookieを使用してアクセスデータを収集しますが、これは完全に匿名で行われます。</li>
                 <li>用途: 閲覧状況の統計的な把握のみに使用し、個人を特定する情報は一切取得しません。</li>
                 <li>設定: ブラウザの設定によりCookieを無効化することで、データの収集を拒否することが可能です。</li>
@@ -154,12 +167,9 @@
     </div>
 
     <script>
-        function openModal() {
-            document.getElementById('modal-overlay').style.display = 'flex';
-        }
-        function closeModal() {
-            document.getElementById('modal-overlay').style.display = 'none';
-        }
+        function openModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+        window.onclick = function(event) { if (event.target == document.getElementById('modal-overlay')) closeModal(); };
     </script>
 </body>
 </html>
