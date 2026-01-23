@@ -17,6 +17,7 @@
             --accent-blue: #00d4ff;
             --text-main: #ffffff;
             --text-sub: rgba(255, 255, 255, 0.4);
+            --magnet-power: 0; /* JSで動的に変更 */
         }
 
         body, html { 
@@ -39,34 +40,26 @@
         }
 
         .author-signature {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            color: var(--text-main);
-            font-size: 0.75rem;
-            letter-spacing: 0.15rem;
-            opacity: 0.6;
-            z-index: 30;
-            cursor: pointer;
-            text-shadow: 0 0 8px rgba(0,0,0,0.5);
-            transition: opacity 0.3s;
+            position: absolute; top: 25px; right: 25px;
+            color: var(--text-main); font-size: 0.75rem; letter-spacing: 0.15rem;
+            opacity: 0.6; z-index: 30; cursor: pointer;
+            text-shadow: 0 0 8px rgba(0,0,0,0.5); transition: opacity 0.3s;
         }
-        .author-signature:hover {
-            opacity: 1;
-        }
-        .author-signature span {
-            font-size: 0.6rem;
-            margin: 0 0.05rem;
-        }
+        .author-signature:hover { opacity: 1; }
+        .author-signature span { font-size: 0.6rem; margin: 0 0.05rem; }
 
         .area-node {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            width: 100%;
+            position: absolute; display: flex; flex-direction: column; align-items: center;
+            text-decoration: none; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); width: 100%;
+        }
+
+        /* 【案1:星雲の残照】リンク背後のオーラ */
+        .museum-aura {
+            position: absolute; top: 50%; left: 50%;
+            width: 300px; height: 300px; transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(0, 212, 255, calc(0.15 + var(--magnet-power) * 0.2)) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1; pointer-events: none;
+            filter: blur(20px); animation: aura-pulse 4s infinite ease-in-out;
         }
 
         .node-prefix {
@@ -75,42 +68,46 @@
         }
         .node-prefix span { font-size: 0.6rem; margin-left: 0.1rem; opacity: 0.8; }
 
-        .label-jp {
-            letter-spacing: 0.5rem; color: var(--text-main);
-            text-shadow: 0 0 15px rgba(0,0,0,0.8); margin-bottom: 0.3rem;
-        }
+        .label-jp { letter-spacing: 0.5rem; color: var(--text-main); text-shadow: 0 0 15px rgba(0,0,0,0.8); margin-bottom: 0.3rem; }
+        .label-en { letter-spacing: 0.2rem; color: var(--text-sub); text-transform: uppercase; }
 
-        .label-en {
-            letter-spacing: 0.2rem; color: var(--text-sub);
-            text-transform: uppercase;
+        /* 【案2:顕現の余白】初期は透明、ディレイをかけて登場 */
+        .node-museum { 
+            top: 30%; cursor: pointer; z-index: 20; opacity: 0;
+            animation: fadeReveal 1.5s ease-out 1.2s forwards, heartbeat 4s infinite ease-in-out 2.7s; 
         }
-
-        /* 【Museum】全体的に大きくし、ホバー時の拡大率をアップ（1.15） */
-        .node-museum { top: 30%; cursor: pointer; z-index: 20; animation: heartbeat 4s infinite ease-in-out; }
-        .node-museum .node-prefix { font-size: 1.1rem; } /* プレフィックスも拡大 */
-        .node-museum .label-jp { font-size: 1.8rem; } /* 日本語ラベルを拡大 */
+        .node-museum .node-prefix { font-size: 1.1rem; }
+        .node-museum .label-jp { font-size: 1.8rem; }
         .node-museum .label-en { font-size: 0.75rem; }
-        .node-museum:hover { transform: scale(1.15); animation-play-state: paused; }
-        .node-museum:hover .label-jp { color: var(--accent-blue); text-shadow: 0 0 20px rgba(0, 212, 255, 0.4); }
 
-        /* 【Sub Nodes】文字サイズを小さく抑え、目立たないように設定 */
+        /* マウスオーバー/接近時のインタラクション向上 */
+        .node-museum:hover { transform: scale(1.15) !important; animation-play-state: paused; }
+        .node-museum:hover .label-jp { color: var(--accent-blue); text-shadow: 0 0 25px rgba(0, 212, 255, 0.6); }
+
         .node-gazebo, .node-library { bottom: 25%; opacity: 0.5; }
         .node-gazebo .label-jp, .node-library .label-jp { font-size: 1.1rem; }
         .node-gazebo .label-en, .node-library .label-en { font-size: 0.5rem; }
-        
         .node-gazebo { left: -25%; }
         .node-library { right: -25%; }
 
+        @keyframes fadeReveal {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 0.8; transform: scale(1); }
+        }
+
         @keyframes heartbeat {
-            0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.04); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.8; }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(calc(1.04 + var(--magnet-power) * 0.04)); }
+        }
+
+        @keyframes aura-pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
         }
 
         .footer-quote {
             position: absolute; bottom: 30px; width: 100%; text-align: center;
-            font-size: 0.55rem; color: rgba(255,255,255,0.2);
-            letter-spacing: 0.4rem; text-transform: uppercase;
+            font-size: 0.55rem; color: rgba(255,255,255,0.2); letter-spacing: 0.4rem; text-transform: uppercase;
         }
 
         @media (max-width: 600px) {
@@ -130,7 +127,8 @@
     <div class="world-container" id="mainWorld">
         <div class="author-signature" id="signature" onclick="toggleNightMode()"></div>
 
-        <a href="./museum/" class="area-node node-museum">
+        <a href="./museum/" class="area-node node-museum" id="museumNode">
+            <div class="museum-aura"></div>
             <span class="node-prefix">やま<span>の</span></span>
             <span class="label-jp">純粋美術館</span>
             <span class="label-en">Museum of Pure Experience</span>
@@ -155,9 +153,7 @@
         function updateEnvironment() {
             const world = document.getElementById('mainWorld');
             const sig = document.getElementById('signature');
-            
             let isNight;
-
             if (isManualNightMode !== null) {
                 isNight = isManualNightMode;
             } else {
@@ -165,7 +161,6 @@
                 const hour = now.getHours();
                 isNight = (hour >= 18 || hour < 6);
             }
-
             if (isNight) {
                 world.style.backgroundImage = "url('top-landscape-night.jpg')";
                 sig.innerHTML = 'やま<span>の</span>夜';
@@ -182,9 +177,27 @@
             updateEnvironment();
         }
 
+        // 【案3:磁気的な誘引】ポインタの接近を検知
+        document.addEventListener('mousemove', (e) => {
+            const node = document.getElementById('museumNode');
+            if (!node) return;
+            const rect = node.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const dist = Math.hypot(e.clientX - centerX, e.clientY - centerY);
+            
+            // 250px以内から磁力を発生させる
+            const power = Math.max(0, 1 - dist / 250);
+            node.style.setProperty('--magnet-power', power);
+        });
+
+        // タッチデバイスへの対応（指が近づく概念の代用）
+        document.addEventListener('touchstart', () => {
+             document.getElementById('museumNode').style.setProperty('--magnet-power', '0.5');
+        }, {passive: true});
+
         updateEnvironment();
         setInterval(updateEnvironment, 60000);
     </script>
-
 </body>
 </html>
