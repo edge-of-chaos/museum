@@ -21,23 +21,45 @@
 
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; 
-            background: #000; /* 画像の外側は完全な黒 */
+            background: #000;
             display: flex; justify-content: center; align-items: center;
             font-family: "Hiragino Mincho ProN", "MS Mincho", serif;
             overflow: hidden;
         }
         
-        /* 画像を保持するコンテナ：アスペクト比を維持 */
         .world-container {
             position: relative;
             height: 100vh;
-            width: calc(100vh * (2/3)); /* 画像の比率に合わせて調整（縦3:横2の場合） */
+            width: calc(100vh * (2/3));
             max-width: 100vw;
-            background: url('top-landscape.jpg') no-repeat center center;
-            background-size: contain; /* 拡大しすぎず、全体を収める */
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: contain;
+            transition: background-image 2s ease-in-out;
         }
 
-        /* エリアリンクの基本設定 */
+        .author-signature {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            color: var(--text-main);
+            font-size: 0.75rem;
+            letter-spacing: 0.15rem;
+            opacity: 0.6;
+            z-index: 30;
+            /* pointer-events: none; を削除し、クリック可能に */
+            cursor: pointer;
+            text-shadow: 0 0 8px rgba(0,0,0,0.5);
+            transition: opacity 0.3s;
+        }
+        .author-signature:hover {
+            opacity: 1; /* ホバー時に強調表示 */
+        }
+        .author-signature span {
+            font-size: 0.6rem;
+            margin: 0 0.05rem;
+        }
+
         .area-node {
             position: absolute;
             display: flex;
@@ -45,7 +67,7 @@
             align-items: center;
             text-decoration: none;
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            width: 100%; /* コンテナ幅に合わせる */
+            width: 100%;
         }
 
         .label-jp {
@@ -58,7 +80,6 @@
             text-transform: uppercase;
         }
 
-        /* 各建物の座標（％指定で画像内の位置に固定） */
         .node-museum { top: 30%; cursor: pointer; z-index: 20; }
         .node-museum:hover { transform: scale(1.05); }
         .node-museum:hover .label-jp { color: var(--accent-blue); text-shadow: 0 0 20px rgba(0, 212, 255, 0.4); }
@@ -72,23 +93,21 @@
             letter-spacing: 0.4rem; text-transform: uppercase;
         }
 
-        /* 横長画面（PC）での微調整 */
-        @media (min-aspect-ratio: 2/3) {
-            .world-container { box-shadow: 0 0 100px rgba(0,0,0,1); }
-        }
-
-        /* スマホ画面での微調整 */
         @media (max-width: 600px) {
             .world-container { width: 100vw; }
             .label-jp { font-size: 1.1rem; letter-spacing: 0.3rem; }
             .node-gazebo { left: -20%; }
             .node-library { right: -20%; }
+            .author-signature { top: 20px; right: 20px; font-size: 0.65rem; }
+            .author-signature span { font-size: 0.55rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="world-container">
+    <div class="world-container" id="mainWorld">
+        <div class="author-signature" id="signature" onclick="toggleNightMode()"></div>
+
         <a href="./museum/" class="area-node node-museum">
             <span class="label-jp">純粋美術館</span>
             <span class="label-en">Museum of Pure Experience</span>
@@ -106,6 +125,52 @@
 
         <div class="footer-quote">Absolute Contradiction & Co-evolution</div>
     </div>
+
+    <script>
+        // 手動モードの状態を保持 (null:自動, true:夜固定, false:昼固定)
+        let isManualNightMode = null;
+
+        function updateEnvironment() {
+            const world = document.getElementById('mainWorld');
+            const sig = document.getElementById('signature');
+            
+            let isNight;
+
+            if (isManualNightMode !== null) {
+                // 手動モードが設定されている場合はそれを使用
+                isNight = isManualNightMode;
+            } else {
+                // 自動モード: 現在時刻（現地時間）で判定
+                const now = new Date();
+                const hour = now.getHours();
+                // 18:00から05:59までを「夜」と判定
+                isNight = (hour >= 18 || hour < 6);
+            }
+
+            // 状態に応じて表示を更新
+            if (isNight) {
+                world.style.backgroundImage = "url('top-landscape-night.jpg')";
+                sig.innerHTML = 'やま<span>の</span>夜';
+            } else {
+                world.style.backgroundImage = "url('top-landscape.jpg')";
+                sig.innerHTML = 'やま<span>の</span>朝';
+            }
+        }
+
+        // 署名クリック時の処理
+        function toggleNightMode() {
+            const world = document.getElementById('mainWorld');
+            // 現在の表示が夜なら昼へ、昼なら夜へ反転
+            const currentIsNight = world.style.backgroundImage.includes('night');
+            isManualNightMode = !currentIsNight;
+            updateEnvironment(); // 即座に反映
+        }
+
+        // 初期実行
+        updateEnvironment();
+        // 1分ごとにチェック（自動モード時の時間跨ぎ対策）
+        setInterval(updateEnvironment, 60000);
+    </script>
 
 </body>
 </html>
