@@ -11,6 +11,19 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:title" content="Pure Grounds - やまの純粋美術館">
+    <meta property="og:description" content="理（ことわり）が描く静寂。時間と共に移ろう景色と、純粋経験の敷地へようこそ。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://edge-of-chaos.github.io/">
+    <meta property="og:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
+    <meta property="og:site_name" content="やまの純粋美術館">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pure Grounds - やまの純粋美術館">
+    <meta name="twitter:description" content="理が描く静寂。純粋経験の敷地を観測する。">
+    <meta name="twitter:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
+
     <title>Pure Grounds - 純粋経験の敷地</title>
     <style>
         :root {
@@ -70,7 +83,6 @@
         .label-jp { letter-spacing: 0.5rem; color: var(--text-main); text-shadow: 0 0 15px rgba(0,0,0,0.8); margin-bottom: 0.3rem; }
         .label-en { letter-spacing: 0.2rem; color: var(--text-sub); text-transform: uppercase; }
 
-        /* 【修正】即座に表示（opacity: 0.8）し、ディレイなしで拍動を開始 */
         .node-museum { 
             top: 30%; cursor: pointer; z-index: 20; opacity: 0.8;
             animation: heartbeat 4s infinite ease-in-out; 
@@ -155,10 +167,10 @@
                 isNight = (hour >= 18 || hour < 6);
             }
             if (isNight) {
-                world.style.backgroundImage = "url('top-landscape-night.jpg')";
+                world.style.backgroundImage = "url('https://edge-of-chaos.github.io/top-landscape-night.jpg')";
                 sig.innerHTML = 'やま<span>の</span>夜';
             } else {
-                world.style.backgroundImage = "url('top-landscape.jpg')";
+                world.style.backgroundImage = "url('https://edge-of-chaos.github.io/top-landscape.jpg')";
                 sig.innerHTML = 'やま<span>の</span>朝';
             }
         }
