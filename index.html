@@ -69,7 +69,6 @@
             width: 100%;
         }
 
-        /* 【新設】やまの：玄関と同じサイズ比率で実装 */
         .node-prefix {
             font-size: 0.9rem; letter-spacing: 0.1rem; color: var(--text-main);
             margin-bottom: 0.3rem; font-weight: normal; opacity: 0.9;
@@ -77,28 +76,36 @@
         .node-prefix span { font-size: 0.6rem; margin-left: 0.1rem; opacity: 0.8; }
 
         .label-jp {
-            font-size: 1.4rem; letter-spacing: 0.5rem; color: var(--text-main);
+            letter-spacing: 0.5rem; color: var(--text-main);
             text-shadow: 0 0 15px rgba(0,0,0,0.8); margin-bottom: 0.3rem;
         }
 
         .label-en {
-            font-size: 0.6rem; letter-spacing: 0.2rem; color: var(--text-sub);
+            letter-spacing: 0.2rem; color: var(--text-sub);
             text-transform: uppercase;
         }
 
+        /* 【Museum】全体的に大きくし、ホバー時の拡大率をアップ（1.15） */
         .node-museum { top: 30%; cursor: pointer; z-index: 20; animation: heartbeat 4s infinite ease-in-out; }
-        .node-museum:hover { transform: scale(1.05); animation-play-state: paused; }
+        .node-museum .node-prefix { font-size: 1.1rem; } /* プレフィックスも拡大 */
+        .node-museum .label-jp { font-size: 1.8rem; } /* 日本語ラベルを拡大 */
+        .node-museum .label-en { font-size: 0.75rem; }
+        .node-museum:hover { transform: scale(1.15); animation-play-state: paused; }
         .node-museum:hover .label-jp { color: var(--accent-blue); text-shadow: 0 0 20px rgba(0, 212, 255, 0.4); }
 
-        /* 【追加】拍動アニメーション */
+        /* 【Sub Nodes】文字サイズを小さく抑え、目立たないように設定 */
+        .node-gazebo, .node-library { bottom: 25%; opacity: 0.5; }
+        .node-gazebo .label-jp, .node-library .label-jp { font-size: 1.1rem; }
+        .node-gazebo .label-en, .node-library .label-en { font-size: 0.5rem; }
+        
+        .node-gazebo { left: -25%; }
+        .node-library { right: -25%; }
+
         @keyframes heartbeat {
             0% { transform: scale(1); opacity: 0.8; }
             50% { transform: scale(1.04); opacity: 1; }
             100% { transform: scale(1); opacity: 0.8; }
         }
-
-        .node-gazebo { bottom: 25%; left: -25%; opacity: 0.5; }
-        .node-library { bottom: 25%; right: -25%; opacity: 0.5; }
 
         .footer-quote {
             position: absolute; bottom: 30px; width: 100%; text-align: center;
@@ -108,13 +115,13 @@
 
         @media (max-width: 600px) {
             .world-container { width: 100vw; }
-            .label-jp { font-size: 1.1rem; letter-spacing: 0.3rem; }
+            .node-museum .label-jp { font-size: 1.4rem; letter-spacing: 0.3rem; }
+            .node-museum .node-prefix { font-size: 0.9rem; }
+            .node-gazebo .label-jp, .node-library .label-jp { font-size: 0.9rem; }
             .node-gazebo { left: -20%; }
             .node-library { right: -20%; }
             .author-signature { top: 20px; right: 20px; font-size: 0.65rem; }
             .author-signature span { font-size: 0.55rem; }
-            .node-prefix { font-size: 0.75rem; }
-            .node-prefix span { font-size: 0.5rem; }
         }
     </style>
 </head>
