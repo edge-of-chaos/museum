@@ -17,7 +17,7 @@
             --accent-blue: #00d4ff;
             --text-main: #ffffff;
             --text-sub: rgba(255, 255, 255, 0.4);
-            --magnet-power: 0; /* JSで動的に変更 */
+            --magnet-power: 0; 
         }
 
         body, html { 
@@ -53,7 +53,6 @@
             text-decoration: none; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); width: 100%;
         }
 
-        /* 【案1:星雲の残照】リンク背後のオーラ */
         .museum-aura {
             position: absolute; top: 50%; left: 50%;
             width: 300px; height: 300px; transform: translate(-50%, -50%);
@@ -71,16 +70,15 @@
         .label-jp { letter-spacing: 0.5rem; color: var(--text-main); text-shadow: 0 0 15px rgba(0,0,0,0.8); margin-bottom: 0.3rem; }
         .label-en { letter-spacing: 0.2rem; color: var(--text-sub); text-transform: uppercase; }
 
-        /* 【案2:顕現の余白】初期は透明、ディレイをかけて登場 */
+        /* 【修正】即座に表示（opacity: 0.8）し、ディレイなしで拍動を開始 */
         .node-museum { 
-            top: 30%; cursor: pointer; z-index: 20; opacity: 0;
-            animation: fadeReveal 1.5s ease-out 1.2s forwards, heartbeat 4s infinite ease-in-out 2.7s; 
+            top: 30%; cursor: pointer; z-index: 20; opacity: 0.8;
+            animation: heartbeat 4s infinite ease-in-out; 
         }
         .node-museum .node-prefix { font-size: 1.1rem; }
         .node-museum .label-jp { font-size: 1.8rem; }
         .node-museum .label-en { font-size: 0.75rem; }
 
-        /* マウスオーバー/接近時のインタラクション向上 */
         .node-museum:hover { transform: scale(1.15) !important; animation-play-state: paused; }
         .node-museum:hover .label-jp { color: var(--accent-blue); text-shadow: 0 0 25px rgba(0, 212, 255, 0.6); }
 
@@ -89,11 +87,6 @@
         .node-gazebo .label-en, .node-library .label-en { font-size: 0.5rem; }
         .node-gazebo { left: -25%; }
         .node-library { right: -25%; }
-
-        @keyframes fadeReveal {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 0.8; transform: scale(1); }
-        }
 
         @keyframes heartbeat {
             0%, 100% { transform: scale(1); }
@@ -177,7 +170,6 @@
             updateEnvironment();
         }
 
-        // 【案3:磁気的な誘引】ポインタの接近を検知
         document.addEventListener('mousemove', (e) => {
             const node = document.getElementById('museumNode');
             if (!node) return;
@@ -186,12 +178,10 @@
             const centerY = rect.top + rect.height / 2;
             const dist = Math.hypot(e.clientX - centerX, e.clientY - centerY);
             
-            // 250px以内から磁力を発生させる
             const power = Math.max(0, 1 - dist / 250);
             node.style.setProperty('--magnet-power', power);
         });
 
-        // タッチデバイスへの対応（指が近づく概念の代用）
         document.addEventListener('touchstart', () => {
              document.getElementById('museumNode').style.setProperty('--magnet-power', '0.5');
         }, {passive: true});
