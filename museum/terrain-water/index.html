@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* 観測装置の美学に基づいた基底設計 */
         :root {
             --panel-bg: rgba(10, 10, 15, 0.94);
             --border-subtle: rgba(255, 255, 255, 0.08);
@@ -26,14 +25,11 @@
             background-color: #000; color: #fff;
             font-family: 'Inter', 'Noto Sans JP', sans-serif;
         }
-        
         #main-container { display: flex; flex-direction: column; height: 100vh; }
         .system-panel { background: var(--panel-bg); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border-subtle); z-index: 50; }
         #viewport { flex-grow: 1; position: relative; display: flex; align-items: center; justify-content: center; background-color: #010101; overflow: hidden; }
         canvas { display: block; cursor: grab; image-rendering: pixelated; }
         canvas:active { cursor: grabbing; }
-
-        /* 【新デザイン】ナビゲーション・クラスター（上が戻る、下が説明） */
         .nav-cluster { position: absolute; top: 25px; right: 30px; z-index: 100; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; }
         .btn-ui {
             text-decoration: none; color: #888; background: rgba(20,20,20,0.85); backdrop-filter: blur(12px);
@@ -43,16 +39,13 @@
         }
         .btn-ui:hover { color: #00d4ff; border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.05); transform: translateX(-5px); }
         .btn-ui i { font-size: 0.8rem; width: 14px; text-align: center; }
-
         .sync-loader { border: 2px solid rgba(255,255,255,0.03); border-top: 2px solid var(--accent); border-radius: 50%; width: 32px; height: 32px; animation: sync-spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
         @keyframes sync-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .input-minimal { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle); transition: all 0.3s ease; }
         .input-minimal:focus { background: rgba(255, 255, 255, 0.08); border-color: rgba(99, 102, 241, 0.4); outline: none; }
         .btn-active { background: rgba(99, 102, 241, 0.25) !important; border-color: rgba(99, 102, 241, 0.6) !important; color: #a5b4fc !important; }
-        
         #infoPanel { transition: opacity 0.5s ease; pointer-events: none; opacity: 0; background-color: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px); }
         #infoPanel.show { opacity: 1; pointer-events: auto; }
-
         @media (max-width: 640px) { 
             .mobile-padding { padding: 0.5rem 0.75rem !important; } 
             .mobile-gap { gap: 0.5rem !important; } 
@@ -215,17 +208,50 @@
         let rainRate = 0.0001; let backgroundMode = 'color'; let isOverlayVisible = false; let currentAspectRatio = 1.0;
         let elapsedTime = 0; let lastTimestamp = 0; let animationFrameId; const K_EVAPORATION = 0.999;
         const colors = { landLow: 'hsl(120, 30%, 20%)', landMid: 'hsl(90, 20%, 30%)', landHigh: 'hsl(60, 15%, 50%)', peak: 'hsl(30, 10%, 75%)' };
+        
+        // グリッド重複検知用の状態保持
+        let lastTile = { x: null, y: null };
 
         function showMessage(msg) { if (!messageBox) return; messageBox.textContent = msg; setTimeout(() => { if(messageBox.textContent === msg) messageBox.textContent = ''; }, 5000); }
         function fitCanvas() { if (!viewport || !canvas) return; const W = viewport.clientWidth; const H = viewport.clientHeight; if (W / H > 1 / currentAspectRatio) { canvas.height = H; canvas.width = H / currentAspectRatio; } else { canvas.width = W; canvas.height = W * currentAspectRatio; } if (riverOverlay) { riverOverlay.style.width = `${canvas.width}px`; riverOverlay.style.height = `${canvas.height}px`; } draw(); }
-        async function geocode(name) { try { const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(name)}&limit=1`; const response = await fetch(url, { headers: { 'User-Agent': 'ExhibitSystemObserver' } }); const data = await response.json(); return (data && data.length > 0) ? [parseFloat(data[0].lat), parseFloat(data[0].lon)] : null; } catch (e) { return null; } }
+        
+        // 【礼儀の実装】User-AgentにURLを含めて検索
+        async function geocode(name) { 
+            try { 
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(name)}&limit=1`; 
+                const response = await fetch(url, { 
+                    headers: { 'User-Agent': `PureExperienceMuseumObserver/1.0 (${window.location.href})` } 
+                }); 
+                const data = await response.json(); 
+                return (data && data.length > 0) ? [parseFloat(data[0].lat), parseFloat(data[0].lon)] : null; 
+            } catch (e) { return null; } 
+        }
+
         async function loadRealTerrain() {
             if (loader) loader.classList.remove('hidden');
             const rawValue = coordInput.value.trim(); let lat, lon; const coordMatch = rawValue.match(/^([-+]?\d+\.?\d*)\s*,\s*([-+]?\d+\.?\d*)$/);
-            if (coordMatch) { lat = parseFloat(coordMatch[1]); lon = parseFloat(coordMatch[2]); } else { const result = await geocode(rawValue); if (result) { [lat, lon] = result; coordInput.value = `${lat.toFixed(5)}, ${lon.toFixed(5)}`; } else { showMessage('Protocol Error: Destination Unreachable'); if (loader) loader.classList.add('hidden'); return; } }
-            currentAspectRatio = 1.0 / Math.cos(lat * Math.PI / 180); fitCanvas(); const zoom = 14; const n = Math.pow(2, zoom); const xtile = Math.floor(n * ((lon + 180) / 360)); const ytile = Math.floor(n * (1 - (Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI)) / 2);
+            
+            if (coordMatch) { lat = parseFloat(coordMatch[1]); lon = parseFloat(coordMatch[2]); } 
+            else { const result = await geocode(rawValue); if (result) { [lat, lon] = result; coordInput.value = `${lat.toFixed(5)}, ${lon.toFixed(5)}`; } else { showMessage('Protocol Error: Destination Unreachable'); if (loader) loader.classList.add('hidden'); return; } }
+            
+            currentAspectRatio = 1.0 / Math.cos(lat * Math.PI / 180); fitCanvas(); const zoom = 14; const n = Math.pow(2, zoom); 
+            const xtile = Math.floor(n * ((lon + 180) / 360)); 
+            const ytile = Math.floor(n * (1 - (Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI)) / 2);
+
+            // 【対策1】同一タイル検知
+            if (xtile === lastTile.x && ytile === lastTile.y) {
+                showMessage('Same Grid Area Detected (Approx. 2-3km sq). Try a more distant location.');
+            }
+            lastTile = { x: xtile, y: ytile };
+
             try {
-                const [resDem, resMap] = await Promise.all([fetch(`https://cyberjapandata.gsi.go.jp/xyz/dem/${zoom}/${xtile}/${ytile}.txt`), fetch(`https://cyberjapandata.gsi.go.jp/xyz/pale/${zoom}/${xtile}/${ytile}.png`)]);
+                // 【礼儀と対策2】キャッシュ回避用のタイムスタンプとUser-Agent
+                const ts = Date.now();
+                const [resDem, resMap] = await Promise.all([
+                    fetch(`https://cyberjapandata.gsi.go.jp/xyz/dem/${zoom}/${xtile}/${ytile}.txt?t=${ts}`), 
+                    fetch(`https://cyberjapandata.gsi.go.jp/xyz/pale/${zoom}/${xtile}/${ytile}.png?t=${ts}`)
+                ]);
+                
                 if (!resDem.ok) throw new Error(); const [text, blob] = await Promise.all([resDem.text(), resMap.blob()]); if (riverOverlay) riverOverlay.src = URL.createObjectURL(blob);
                 const newTerrain = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0)); const rows = text.trim().split('\n');
                 for (let y = 0; y < gridSize; y++) { const cols = rows[y] ? rows[y].split(',') : []; for (let x = 0; x < gridSize; x++) { const val = parseFloat(cols[x]); newTerrain[y][x] = isNaN(val) ? 0 : val; } }
