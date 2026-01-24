@@ -12,19 +12,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta property="og:title" content="Pure Grounds - やまの純粋美術館">
-    <meta property="og:description" content="理（ことわり）が描く静寂。時間と共に移ろう景色と、純粋経験の敷地へようこそ。">
+    <title>やまの純粋美術館｜静寂と観測の敷地</title>
+    <meta name="description" content="境界の先に広がる、静かな観測の地。地表界隈や社会の構造を透視し、日常の裏側に潜む「理（ことわり）」を静かに見つめる場所です。">
+    
+    <link rel="canonical" href="https://edge-of-chaos.github.io/">
+
+    <meta property="og:title" content="やまの純粋美術館｜静寂と観測の敷地">
+    <meta property="og:description" content="境界の先に広がる、静かな観測の地。日常の裏側に潜む「理」を静かに見つめる場所です。">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://edge-of-chaos.github.io/">
     <meta property="og:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
     <meta property="og:site_name" content="やまの純粋美術館">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Pure Grounds - やまの純粋美術館">
-    <meta name="twitter:description" content="理が描く静寂。純粋経験の敷地を観測する。">
+    <meta name="twitter:title" content="やまの純粋美術館｜静寂と観測の敷地">
+    <meta name="twitter:description" content="境界の先に広がる、静かな観測の地。日常の裏側に潜む「理」を静かに見つめる場所です。">
     <meta name="twitter:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
 
-    <title>Pure Grounds - 純粋経験の敷地</title>
     <style>
         :root {
             --accent-blue: #00d4ff;
@@ -62,7 +66,9 @@
         .author-signature span { font-size: 0.6rem; margin: 0 0.05rem; }
 
         .area-node {
-            position: absolute; display: flex; flex-direction: column; align-items: center;
+            position: absolute; 
+            left: 0; 
+            display: flex; flex-direction: column; align-items: center;
             text-decoration: none; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); width: 100%;
         }
 
@@ -80,7 +86,11 @@
         }
         .node-prefix span { font-size: 0.6rem; margin-left: 0.1rem; opacity: 0.8; }
 
-        .label-jp { letter-spacing: 0.5rem; color: var(--text-main); text-shadow: 0 0 15px rgba(0,0,0,0.8); margin-bottom: 0.3rem; }
+        .label-jp { 
+            letter-spacing: 0.5rem; 
+            text-indent: 0.5rem; 
+            color: var(--text-main); text-shadow: 0 0 15px rgba(0,0,0,0.8); margin-bottom: 0.3rem; 
+        }
         .label-en { letter-spacing: 0.2rem; color: var(--text-sub); text-transform: uppercase; }
 
         .node-museum { 
@@ -97,8 +107,10 @@
         .node-gazebo, .node-library { bottom: 25%; opacity: 0.5; }
         .node-gazebo .label-jp, .node-library .label-jp { font-size: 1.1rem; }
         .node-gazebo .label-en, .node-library .label-en { font-size: 0.5rem; }
+        
+        /* 左右ノードの配置を修正 */
         .node-gazebo { left: -25%; }
-        .node-library { right: -25%; }
+        .node-library { left: 25%; }
 
         @keyframes heartbeat {
             0%, 100% { transform: scale(1); }
@@ -121,7 +133,7 @@
             .node-museum .node-prefix { font-size: 0.9rem; }
             .node-gazebo .label-jp, .node-library .label-jp { font-size: 0.9rem; }
             .node-gazebo { left: -20%; }
-            .node-library { right: -20%; }
+            .node-library { left: 20%; }
             .author-signature { top: 20px; right: 20px; font-size: 0.65rem; }
             .author-signature span { font-size: 0.55rem; }
         }
