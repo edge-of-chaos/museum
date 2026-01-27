@@ -14,67 +14,42 @@
 
     <title>玄関：各室案内｜やまの純粋美術館</title>
 
-    <meta name="description" content="館内各展示室への入口。地表を流れる水の事象、個と全体の葛藤、社会の逆転、などそれぞれの窓から、日常の裏側に潜む仕組みを観測します。">
+    <meta name="description" content="館内各展示室への入口。地表を流れる水の事象、個と全体の葛藤、社会の逆転、太陽の時空、などそれぞれの窓から、日常の裏側に潜む仕組みを観測します。">
     
     <link rel="canonical" href="https://edge-of-chaos.github.io/">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <meta property="og:title" content="玄関：各室案内｜やまの純粋美術館">
-    <meta property="og:description" content="館内各展示室への入口。地表を流れる水の事象、個と全体の葛藤、社会の逆転。日常の裏側に潜む仕組みを観測します。">
+    <meta property="og:description" content="館内各展示室への入口。地表を流れる水の事象、個と全体の葛藤、社会の逆転、太陽の時空。日常の裏側に潜む仕組みを観測します。">
     <meta property="og:type" content="article">
-    <meta property="og:url" content="https://edge-of-chaos.github.io/museum/">
+    <meta property="og:url" content="https://edge-of-chaos.github.io/">
     <meta property="og:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
     <meta property="og:site_name" content="やまの純粋美術館">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="玄関：各室案内｜やまの純粋美術館">
-    <meta name="twitter:description" content="館内各展示室への入口。地表を流れる水の事象、個と全体の葛藤、社会の逆転を観測します。">
+    <meta name="twitter:description" content="館内各展示室への入口。地表を流れる水の事象、個と全体の葛藤、社会の逆転、太陽の時空を観測します。">
     <meta name="twitter:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
 
     <style>
         body { margin: 0; background: #050505; color: #d4d4d4; font-family: "Hiragino Mincho ProN", "MS Mincho", serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; position: relative; }
-        
         .title-wrapper { position: relative; display: inline-block; text-align: center; }
-
-        .void-pulse { 
-            width: 160px; height: 160px; border-radius: 50%; 
-            background: radial-gradient(circle, rgba(0,212,255,0.22) 0%, rgba(0,0,0,0) 70%); 
-            border: 1px solid rgba(0,212,255,0.45); 
-            position: absolute; 
-            top: calc(50% + 32px); 
-            left: 50%; 
-            transform: translateX(-50%); 
-            z-index: -1; 
-            animation: pulse 8s infinite ease-in-out; 
-            pointer-events: none;
-        }
-        @keyframes pulse { 
-            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.4; } 
-            50% { transform: translateX(-50%) scale(1.4); opacity: 1.0; border-color: rgba(0, 212, 255, 0.6); } 
-        }
-        
-        .nav-cluster {
-            position: absolute; top: 25px; right: 30px; z-index: 20;
-            display: flex; flex-direction: column; gap: 15px; align-items: flex-end;
-        }
+        .void-pulse { width: 160px; height: 160px; border-radius: 50%; background: radial-gradient(circle, rgba(0,212,255,0.22) 0%, rgba(0,0,0,0) 70%); border: 1px solid rgba(0,212,255,0.45); position: absolute; top: calc(50% + 32px); left: 50%; transform: translateX(-50%); z-index: -1; animation: pulse 8s infinite ease-in-out; pointer-events: none; }
+        @keyframes pulse { 0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.4; } 50% { transform: translateX(-50%) scale(1.4); opacity: 1.0; border-color: rgba(0, 212, 255, 0.6); } }
+        .nav-cluster { position: absolute; top: 25px; right: 30px; z-index: 20; display: flex; flex-direction: column; gap: 15px; align-items: flex-end; }
         .info-trigger-top { display: flex; align-items: center; color: #666; cursor: pointer; transition: color 0.4s; }
         .info-trigger-top:hover { color: #00d4ff; }
         .info-icon { font-size: 1.1rem; margin-right: 8px; }
         .info-text { font-size: 0.8rem; letter-spacing: 0.1rem; }
-        
         .nav-back-link { text-decoration: none; color: #666; font-size: 0.8rem; letter-spacing: 0.1rem; display: flex; align-items: center; transition: color 0.4s; }
         .nav-back-link:hover { color: #00d4ff; }
         .nav-back-link i { font-size: 0.9rem; margin-right: 8px; }
-
         header { text-align: center; z-index: 10; margin-bottom: 3rem; }
-        
         .author-prefix { font-size: 1.4rem; letter-spacing: 0.1rem; color: #ffffff; margin-bottom: 0.4rem; font-weight: normal; opacity: 0.9; }
         .author-prefix span { font-size: 0.9rem; margin-left: 0.2rem; opacity: 0.8; }
-
         h1 { font-size: 2.2rem; letter-spacing: 1.2rem; font-weight: normal; color: #ffffff; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.1); }
         .eng-sub { font-size: 0.7rem; letter-spacing: 0.4rem; color: #555; margin-top: 0.8rem; text-transform: uppercase; }
-
         .gallery { z-index: 10; width: 90%; max-width: 550px; counter-reset: exhibit-counter; display: flex; flex-direction: column; gap: 20px; }
         .exhibit-card { display: block; border: 1px solid #222; padding: 30px 25px; text-decoration: none; color: inherit; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); background: rgba(10,10,10,0.4); backdrop-filter: blur(12px); text-align: center; border-radius: 2px; }
         .exhibit-card:hover { border-color: #00d4ff; background: rgba(0,212,255,0.04); transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
@@ -83,29 +58,17 @@
         .exhibit-card:hover .exhibit-title { color: #ffffff; }
         .exhibit-sub { font-size: 0.55rem; color: #444; letter-spacing: 0.1rem; text-transform: uppercase; transition: color 0.5s; }
         .exhibit-card:hover .exhibit-sub { color: #888; }
-
         footer { position: absolute; bottom: 30px; z-index: 10; font-size: 0.55rem; color: #333; letter-spacing: 0.3rem; text-transform: uppercase; font-style: italic; }
-        
         #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 100; }
-        #modal-content { 
-            background: #0a0a0a; border: 1px solid #222; padding: 40px; 
-            max-width: 600px; width: 85%; max-height: 80vh; overflow-y: auto; 
-            border-radius: 4px; box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            line-height: 1.8; font-size: 0.9rem; 
-            color: #b9b9b9; 
-            position: relative;
-        }
-
+        #modal-content { background: #0a0a0a; border: 1px solid #222; padding: 40px; max-width: 600px; width: 85%; max-height: 80vh; overflow-y: auto; border-radius: 4px; box-shadow: 0 0 50px rgba(0,0,0,0.8); line-height: 1.8; font-size: 0.9rem; color: #b9b9b9; position: relative; }
         .modal-close-x { position: absolute; top: 20px; right: 25px; font-size: 1.8rem; color: #444; cursor: pointer; line-height: 1; transition: color 0.3s; }
         .modal-close-x:hover { color: #ffffff; }
-
         #modal-content h2 { color: #ffffff; font-size: 1.2rem; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; font-weight: normal; letter-spacing: 0.1rem; padding-right: 30px; }
         #modal-content h3 { color: #00d4ff; font-size: 1rem; margin-top: 25px; font-weight: normal; }
         #modal-content p { margin: 15px 0; }
         .close-btn { text-align: center; margin-top: 40px; }
         .close-link { color: #aaa; text-decoration: none; font-size: 0.75rem; letter-spacing: 0.2rem; cursor: pointer; text-transform: uppercase; border: 1px solid #666; padding: 10px 30px; transition: all 0.3s; display: inline-block; }
         .close-link:hover { color: #ffffff; border-color: #00d4ff; background: rgba(0,212,255,0.1); }
-
         #modal-content::-webkit-scrollbar { width: 4px; }
         #modal-content::-webkit-scrollbar-track { background: #050505; }
         #modal-content::-webkit-scrollbar-thumb { background: #222; }
@@ -146,6 +109,10 @@
             <div class="exhibit-title">意志の階層構造</div>
             <div class="exhibit-sub">Hierarchy of Wills: Re-election Mission</div>
         </a>
+        <a href="./solar-basho/" class="exhibit-card">
+            <div class="exhibit-title">境界の時空　太陽の高さと地の明るさ</div>
+            <div class="exhibit-sub">Solar-Basho: Temporal Axis Observer</div>
+        </a>
     </main>
 
     <footer>Absolute Contradiction & Co-evolution</footer>
@@ -159,7 +126,7 @@
             <h3>■ コンセプト：なぜここを作ったのか</h3>
             <p>現代の情報の海は、誰かの意図や一時的な流行によって絶えず塗り替えられています。そんな中で、そうした作為から一度離れ、ただそこにある世界の理（ことわり）に触れてみたいという想いが、この美術館のはじまりです。ここにあるのは、物理法則や数理的な理だけが描き出す、純粋な世界です。</p>
             <h3>■ 展示の軌跡：広がり続ける展示室</h3>
-            <p>館内に並ぶ展示室（プログラム）は、それぞれが世界の仕組みを覗き見るための小さな窓のようなものです。地形と水流、そして意思決定のゆらぎ……。展示室はこれからも、観測主・やまの探究の赴くままに、少しずつ増えていく予定です。この美術館そのものが、生きているように成長していく過程も、一緒に楽しんでいただければ幸いです。</p>
+            <p>館内に並ぶ展示室（プログラム）は、それぞれが世界の仕組みを覗き見るための小さな窓のようなものです。地形と水流、意思と社会、そして地から見た太陽……。展示室はこれからも、観測主・やまの探究の赴くままに、少しずつ増えていく予定です。</p>
             <h3>■ 観測の楽しみ方</h3>
             <p>ここでは、あなたが装置を操作（行為）することで、初めて新しい現象が生まれます。数理が描く静かな風景の中に、あなただけの発見を見つけてみてください。</p>
             
