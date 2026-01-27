@@ -103,7 +103,7 @@
 
         const App = () => {
             const [config, setConfig] = useState(() => {
-                const saved = localStorage.getItem('sun_observer_v55');
+                const saved = localStorage.getItem('sun_observer_v56');
                 return saved ? JSON.parse(saved) : { ...PRESETS.osaka, id: 'osaka' };
             });
 
@@ -152,16 +152,25 @@
                 const hourAngle = (solarTime / 4 - 180) * Math.PI / 180;
                 const sinAlt = Math.sin(latR) * Math.sin(decl) + Math.cos(latR) * Math.cos(decl) * Math.cos(hourAngle);
                 const alt = Math.asin(Math.min(1, Math.max(-1, sinAlt))) * 180 / Math.PI;
+                
                 const isN = config.lat >= 0;
                 const sDecl = 23.44 * (isN ? 1 : -1) * Math.PI / 180;
                 const wDecl = 23.44 * (isN ? -1 : 1) * Math.PI / 180;
                 const getSinNoon = (d) => Math.cos(latR - d);
-                const rat = (ref) => (sinAlt > 0 && ref > 0 ? (sinAlt / ref) * 100 : 0).toFixed(1);
+
+                const rat = (ref) => {
+                    if (sinAlt <= 0) return "0.0";
+                    if (ref <= 0) return "∞";
+                    return ((sinAlt / ref) * 100).toFixed(1);
+                };
+
                 return {
                     alt: parseFloat(alt.toFixed(1)), sinAlt: sinAlt,
-                    zen: parseFloat((Math.max(0, sinAlt) * 100).toFixed(1)),
-                    day: rat(Math.cos(latR - decl)), sum: rat(getSinNoon(sDecl)),
-                    equ: rat(getSinNoon(0)), win: rat(getSinNoon(wDecl)),
+                    zen: rat(1.0),
+                    day: rat(Math.cos(latR - decl)), 
+                    sum: rat(getSinNoon(sDecl)),
+                    equ: rat(getSinNoon(0)), 
+                    win: rat(getSinNoon(wDecl)),
                     noonTime: (() => {
                         const m = (720 - 4 * config.lng - eqtime) + (config.tz * 60);
                         const s = (m + 14400) % 1440 * 60;
@@ -176,7 +185,7 @@
                 let energy = 0;
                 if (alt < -18) energy = 0;
                 else if (alt < 0) energy = ((alt + 18) / 18) * 0.15;
-                else energy = 0.15 + ((zen / 100) * 0.85);
+                else energy = 0.15 + ((parseFloat(zen) || 0) / 100 * 0.85);
                 const h = 230 + (energy * 130), s = 30 + (energy * 70), l = 3 + (energy * 42);
                 return { background: `radial-gradient(circle at 50% 50%, hsl(${h}, ${s}%, ${l}%) 0%, #000000 100%)` };
             }, [physics]);
@@ -213,7 +222,7 @@
             const handleSave = () => {
                 const final = { ...editForm, lat: parseFloat(editForm.lat) || 0, lng: parseFloat(editForm.lng) || 0, tz: parseFloat(editForm.tz) || 0 };
                 setConfig(final);
-                localStorage.setItem('sun_observer_v55', JSON.stringify(final));
+                localStorage.setItem('sun_observer_v56', JSON.stringify(final));
                 setShowSettings(false);
             };
 
@@ -223,7 +232,7 @@
             return (
                 <div className="w-full h-full min-h-screen flex flex-col items-center justify-center p-4 outer-canvas" style={{ background: outerBackgroundStyle.background }}>
                     
-                    {/* ナビゲーション */}
+                    {/* ナビゲーション・クラスター */}
                     <div className="nav-cluster">
                         <a href="../" className="btn-ui">
                             <i className="fa-solid fa-arrow-left"></i>
@@ -251,7 +260,7 @@
                                 <>
                                     <div className="text-left border-l border-[#ff85a2]/40 pl-4">
                                         <div className="text-[13px] font-bold text-[#ffb7c5]/90 tracking-widest leading-none">
-                                            {timeline.prev.type}{"   "}から
+                                            {timeline.prev.type}{"    "}から
                                         </div>
                                         <div className="text-[12px] font-mono text-white/60 mt-1">{timeline.prev.time.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
                                     </div>
@@ -265,11 +274,13 @@
                             )}
                         </div>
 
+                        {/* 中央クラスタ */}
                         <div className="space-y-1 pt-2 pb-1">
                             <div className="flex flex-col items-center mb-0.5">
                                 <span className="text-[15px] font-bold text-white font-mono tracking-widest leading-none">{physics.noonTime}</span>
                                 <span className="text-[8px] font-bold text-[#ffb7c5]/40 uppercase tracking-tighter">今日の南中時刻 / Solar Noon</span>
                             </div>
+                            
                             <div className="progress-container relative space-y-2">
                                 <div className="flex justify-between items-end px-1">
                                     <span className="text-[8px] font-bold opacity-30 uppercase tracking-[0.2em]">Temporal Axis</span>
@@ -279,13 +290,14 @@
                                     <div className="h-full bg-[#ff85a2] shadow-[0_0_15px_#ff85a2]" style={{ width: `${pct}%` }}></div>
                                 </div>
                             </div>
+
                             <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10">
                                 <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.alt}°</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">高度/Alt</span></div>
-                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.zen}%</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">天頂比/Zen</span></div>
-                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.day}%</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">今日比/Day</span></div>
-                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.sum}%</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">夏至比/Sum</span></div>
-                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.equ}%</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">春秋比/Equ</span></div>
-                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.win}%</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">冬至比/Win</span></div>
+                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.zen}{typeof physics.zen === 'string' && physics.zen.includes('∞') ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">天頂比/Zen</span></div>
+                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.day}{physics.day === '∞' ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">今日比/Day</span></div>
+                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.sum}{physics.sum === '∞' ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">夏至比/Sum</span></div>
+                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.equ}{physics.equ === '∞' ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">春秋比/Equ</span></div>
+                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.win}{physics.win === '∞' ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">冬至比/Win</span></div>
                             </div>
                         </div>
 
@@ -294,7 +306,7 @@
                                 <>
                                     <div className="text-left border-l border-[#ff85a2]/40 pl-4">
                                         <div className="text-[13px] font-bold text-[#ffb7c5]/90 tracking-widest leading-none">
-                                            {timeline.next.type}{"   "}まで
+                                            {timeline.next.type}{"    "}まで
                                         </div>
                                         <div className="text-[12px] font-mono text-white/60 mt-1">{timeline.next.time.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
                                     </div>
@@ -307,7 +319,7 @@
                         <div className="text-[7px] opacity-10 tracking-[1.5em] text-center uppercase leading-none">The Boundary Observer</div>
                     </div>
 
-                    {/* 説明モーダル */}
+                    {/* 【復元レイアウト】説明モーダル */}
                     {showInfo && (
                         <div className="info-overlay" onClick={() => setShowInfo(false)}>
                             <div className="info-content" onClick={e => e.stopPropagation()}>
@@ -329,7 +341,7 @@
                                         <h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">2. 主な機能 / Key Features</h3>
                                         <div className="space-y-6">
                                             <div><h4 className="font-bold text-[#ff85a2]">境界カウントダウン</h4><p className="text-sm">日の出・日の入り時刻を算出。境界からの経過時間と、次の境界までの残り時間をリアルタイムに表示します。</p></div>
-                                            <div><h4 className="font-bold text-[#ff85a2]">光量比</h4><p className="text-sm">今この瞬間の太陽エネルギー（受照強度）を、天頂比、今日比、そして季節ごとの基準（夏至・春秋・冬至）と比較してパーセンテージで示します。</p></div>
+                                            <div><h4 className="font-bold text-[#ff85a2]">光量比</h4><p className="text-sm">今この瞬間の太陽エネルギー（受照強度）を、天頂比、今日の*南中時比、そして季節ごとの基準（夏至・春秋・冬至）と比較してパーセンテージで示します。*正中</p></div>
                                             <div><h4 className="font-bold text-[#ff85a2]">グローバル対応</h4><p className="text-sm">世界中の緯度・経度を入力可能。時差は経度からの理論値として自動計算。極圏での「白夜・極夜」モードにも対応しています。</p></div>
                                             <div><h4 className="font-bold text-[#ff85a2]">環境同期型ビジュアル</h4><p className="text-sm">メインパネルの外側の背景色が、太陽の高度とエネルギー量に合わせてダイナミックに変化します。</p></div>
                                         </div>
@@ -347,7 +359,7 @@
 
                                     <div className="info-section-card">
                                         <h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">4. 指標の解説 / Data Glossary</h3>
-                                        <p className="text-sm mb-4 italic">本ツールでは、ランベルトの余弦則に基づき、地表面が受ける太陽エネルギーの強度を算出しています。</p>
+                                        <p className="text-sm mb-4 italic">本ツールでは、ランベルトの余弦則に基づき、地表面が受ける太陽エネルギーの強度を算出しています。（大気による反射等、薄明時の明るさなどは計算式に入れておりませんが、微小故、結果として実際と表示値に差はないと思われます。）</p>
                                         <div className="grid grid-cols-1 gap-3 text-sm">
                                             <div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">高度 (Alt)</span><span>地平線を0°とした太陽の角度。</span></div>
                                             <div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">天頂比 (Zen)</span><span>太陽が真上（高度90°）にある時を100%とした比率。</span></div>
@@ -357,7 +369,7 @@
                                         <p className="mt-6 text-xs text-white/40">※ 冬至比などは、季節によって100%を大きく超えることがありますが、これは「冬のピーク時に比べて今どれだけ強い光が届いているか」を正しく示す数値です。</p>
                                     </div>
 
-                                    <footer class="pt-12 text-center">
+                                    <footer class="pt-12 text-center pb-12">
                                         <p className="text-xl font-black text-white italic tracking-tighter mb-12 uppercase leading-relaxed">リアルタイムに刻々と変化する「光」のデータを、日々の観測にお役立てください。</p>
                                         <button onClick={() => setShowInfo(false)} className="bg-[#ff85a2] hover:bg-[#ff7592] text-black font-black py-4 px-12 rounded-full text-sm uppercase tracking-[0.2em] shadow-2xl transition-all active:scale-95">解説を閉じて観測に戻る</button>
                                     </footer>
