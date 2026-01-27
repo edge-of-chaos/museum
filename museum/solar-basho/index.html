@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     
     <title>境界の時空：太陽の観測室｜やまの純粋美術館</title>
-    <meta name="description" content="光と闇の境界線を刻む、太陽の高度シミュレーター。時空を流れる光の事象を、静かに観測するための窓です。">
+    <meta name="description" content="光と闇の境界線を刻む、太陽の高度シミュレーター。時空を流れる光の事象を, 静かに観測するための窓です。">
     <link rel="canonical" href="https://edge-of-chaos.github.io/museum/solar-basho/">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -341,7 +341,7 @@
                                         <h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">2. 主な機能 / Key Features</h3>
                                         <div className="space-y-6">
                                             <div><h4 className="font-bold text-[#ff85a2]">境界カウントダウン</h4><p className="text-sm">日の出・日の入り時刻を算出。境界からの経過時間と、次の境界までの残り時間をリアルタイムに表示します。</p></div>
-                                            <div><h4 className="font-bold text-[#ff85a2]">光量比</h4><p className="text-sm">今この瞬間の太陽エネルギー（受照強度）を、天頂比、今日の*南中時比、そして季節ごとの基準（夏至・春秋・冬至）と比較してパーセンテージで示します。*正中</p></div>
+                                            <div><h4 className="font-bold text-[#ff85a2]">光量比</h4><p className="text-sm">今この瞬間の太陽エネルギー（受照強度）を、天頂比、今日比、そして季節ごとの基準（夏至・春秋・冬至）と比較してパーセンテージで示します。</p></div>
                                             <div><h4 className="font-bold text-[#ff85a2]">グローバル対応</h4><p className="text-sm">世界中の緯度・経度を入力可能。時差は経度からの理論値として自動計算。極圏での「白夜・極夜」モードにも対応しています。</p></div>
                                             <div><h4 className="font-bold text-[#ff85a2]">環境同期型ビジュアル</h4><p className="text-sm">メインパネルの外側の背景色が、太陽の高度とエネルギー量に合わせてダイナミックに変化します。</p></div>
                                         </div>
@@ -351,19 +351,36 @@
                                         <h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">3. 操作方法 / How to Use</h3>
                                         <div className="space-y-4">
                                             <h4 className="font-bold text-white/80">3.1 画面の見方</h4>
-                                            <p className="text-sm">ヘッダーに観測地点名と時刻、上部に境界からの経過時間、中央に南中時刻と物理量グリッド、下部に次の境界までの残り時間を表示します。</p>
-                                            <h4 className="font-bold text-white/80 mt-6">3.2 設定の変更</h4>
-                                            <p className="text-sm">画面右上のギアアイコン（⚙️）から設定メニューを開き、プリセット選択または緯度・経度の手動入力が可能です。保存すると即座に計算に反映されます。</p>
+                                            <p className="text-sm mb-2">ヘッダー: 観測地点名と現在時刻を表示。</p>
+                                            <p className="text-sm mb-2">上部タイマー: 「日の出」または「日の入り」が起きてから、現在までに経過した時間。</p>
+                                            <p className="text-sm mb-2 font-bold">中央セクション:</p>
+                                            <ul className="text-sm ml-4 mb-4 space-y-1">
+                                                <li>Solar Noon: 本日の太陽高度が最も高くなる時刻（*南中(正中）時刻）を表示。</li>
+                                                <li>Temporal Axis: 次の境界までの時間的進捗を示すプログレスバー。</li>
+                                                <li>物理量グリッド: 太陽高度（Alt）と、5種類の相対光量比（%）をリアルタイム表示。</li>
+                                            </ul>
+                                            <p className="text-sm">下部タイマー: 次の「日の出」または「日の入り」まで、あとどれくらい時間があるかを表示。</p>
+
+                                            <h4 className="font-bold text-white/80 mt-8">3.2 設定の変更</h4>
+                                            <p className="text-sm mb-2">画面右上のギアアイコン（⚙️）から設定メニューを開きます。</p>
+                                            <p className="text-sm mb-2">プリセット選択: 日本の主要都市（札幌〜那覇）をリストから即座に選択できます。</p>
+                                            <p className="text-sm mb-2 font-bold">手動入力 (Manual Input):</p>
+                                            <ul className="text-sm ml-4 mb-4 space-y-1">
+                                                <li>緯度 (Latitude): 北緯は正、南緯は負の値を入力。</li>
+                                                <li>経度 (Longitude): 東経は正、西経は負の値を入力。</li>
+                                                <li>標準時差 (UTC Offset): 経度から理論値が自動計算されますが、現地の法定時差に合わせて調整してください（日本は+9）。</li>
+                                            </ul>
+                                            <p className="text-sm">設定を保存して適用: ボタンを押すと、すべての計算と背景色が新地点の情報に同期されます。</p>
                                         </div>
                                     </div>
 
                                     <div className="info-section-card">
                                         <h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">4. 指標の解説 / Data Glossary</h3>
-                                        <p className="text-sm mb-4 italic">本ツールでは、ランベルトの余弦則に基づき、地表面が受ける太陽エネルギーの強度を算出しています。（大気による反射等、薄明時の明るさなどは計算式に入れておりませんが、微小故、結果として実際と表示値に差はないと思われます。）</p>
+                                        <p className="text-sm mb-4 italic">本ツールでは、ランベルトの余弦則に基づき、地表面が受ける太陽エネルギーの強度を算出しています。（大気による反射等、薄明時の明るさは計算式に入れておりませんが、微小故、結果として実際と表示値に差はないと思われます。）</p>
                                         <div className="grid grid-cols-1 gap-3 text-sm">
                                             <div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">高度 (Alt)</span><span>地平線を0°とした太陽の角度。</span></div>
                                             <div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">天頂比 (Zen)</span><span>太陽が真上（高度90°）にある時を100%とした比率。</span></div>
-                                            <div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">今日比 (Day)</span><span>今日の南中時を100%とした今の比率。</span></div>
+                                            <div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">今日比 (Day)</span><span>今日の*南中（正中）時を100%とした今の比率。</span></div>
                                             <div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">季節比</span><span>夏至(Sum) / 春秋(Equ) / 冬至(Win) の南中に対する比率。</span></div>
                                         </div>
                                         <p className="mt-6 text-xs text-white/40">※ 冬至比などは、季節によって100%を大きく超えることがありますが、これは「冬のピーク時に比べて今どれだけ強い光が届いているか」を正しく示す数値です。</p>
