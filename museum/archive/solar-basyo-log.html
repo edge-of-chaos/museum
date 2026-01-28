@@ -1,1 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HXJR6GYWPY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-HXJR6GYWPY');
+    </script>
 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>光の境界を求めて：開発記｜やまの純粋美術館・アーカイブ室</title>
+    <meta name="description" content="観測ツール「境界の時空」の制作記録。数理モデルがいかにして実存的な光の表現へと昇華されたか、その試行錯誤の軌跡。">
+    <link rel="canonical" href="https://edge-of-chaos.github.io/museum/archive/solar-basho-log.html">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:title" content="光の境界を求めて：開発記｜やまの純粋美術館">
+    <meta property="og:description" content="太陽の鼓動を小さな画面に閉じ込めようとした、ある観測者の記録。">
+    <meta property="og:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=M+PLUS+Rounded+1c:wght@300;700&display=swap');
+        body { background-color: #050505; color: #e2e8f0; font-family: 'Noto Serif JP', serif; line-height: 2; }
+        .article-container { max-width: 750px; margin: 0 auto; padding: 100px 20px; }
+        h1 { font-family: 'M PLUS Rounded 1c', sans-serif; letter-spacing: 0.1em; }
+        .chapter-title { color: #ff85a2; font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: bold; margin-top: 60px; border-bottom: 1px solid rgba(255,133,162,0.2); padding-bottom: 10px; }
+        .quote-box { border-left: 2px solid #ff85a2; padding-left: 20px; margin: 40px 0; color: #ffb7c5; font-style: italic; }
+        .nav-link { font-family: 'M PLUS Rounded 1c', sans-serif; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-decoration: none; }
+        
+        /* 固定ナビゲーション */
+        .nav-btn-museum { position: fixed; top: 40px; left: 30px; font-size: 0.75rem; color: #ff85a2; opacity: 0.5; z-index: 100; text-transform: uppercase; letter-spacing: 0.2em; }
+        .nav-btn-museum:hover { opacity: 1; }
+        .btn-close { position: fixed; top: 30px; right: 30px; font-size: 2.5rem; color: rgba(255, 133, 162, 0.4); z-index: 100; }
+        .btn-close:hover { color: #ff85a2; transform: rotate(90deg); }
+
+        .exhibit-gate {
+            border: 1px solid rgba(255,133,162,0.3); padding: 50px 20px; border-radius: 40px;
+            background: linear-gradient(145deg, rgba(255,133,162,0.05) 0%, rgba(0,0,0,0) 100%);
+            text-align: center; margin: 100px 0;
+        }
+        @media (max-width: 600px) { .nav-btn-museum { display: none; } }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="nav-btn-museum nav-link"><i class="fa-solid fa-house-chimney mr-2"></i> Museum Entrance</a>
+    <a href="./index.html" class="btn-close nav-link">×</a>
+
+    <article class="article-container">
+        <header class="mb-20 text-center">
+            <p class="text-sm tracking-[0.3em] text-[#ff85a2] mb-4 uppercase">Archive Log #04</p>
+            <h1 class="text-3xl md:text-4xl font-bold leading-tight text-white mb-8">光の境界を求めて<br><span class="text-xl md:text-2xl opacity-80">── 観測ツール「境界の時空」ができるまで</span></h1>
+            <div class="h-1 w-20 bg-[#ff85a2] mx-auto mt-10"></div>
+        </header>
+
+        <section class="space-y-12 text-zinc-300">
+            <p>これは、太陽の鼓動を、スマホ等の小さな画面に閉じ込めようとした、ある観測者の記録やで。</p>
+            <h2 class="chapter-title">序章：はじまりは「境界」への素朴な疑問から</h2>
+            <p>最初は、便利ツールを作ろうと思っただけやねん。「日の出とか日の入りっていう『光の切り替わり（境界）』から、どれくらい時間が経ったのか知りたいな」って。生き物としての実感は、あとどれくらいで暗くなるかの方が大事やん？ だから、特定の場所だけで動くカウントダウンタイマーからスタートしたん。</p>
+            <h2 class="chapter-title">第1章：世界中の空を繋ぐ「座標」と「時差」の戦い</h2>
+            <p>世界中のどこにいても観測できるようにしたい。ここで壁になったのが「緯度・経度」と「時差」の問題。経度15度で1時間の差という理屈をベースに、自動で現地の時差を予想するロジックを組んだん。これで、各地の「今」の太陽を追えるようになったんやで。</p>
+            <h2 class="chapter-title">第2章：光を「エネルギー」として計る</h2>
+            <p>次は「その光がどれくらい強いんか？」を入れたくなってん。数学的に計算してパーセントで出せるようにしたわ。天頂比、今日比、季節比。人間の目は光に馴染むけど、この割合を見て色々感じられたら面白いやん！</p>
+            <h2 class="chapter-title">第3章：極圏で起きた事件</h2>
+            <p>そこでバグが見つかったわ。「南極に近い場所を入れたら、画面が真っ黒になって動かへん！」白夜・極夜でプログラムがパニックになってたんやね。そこを修正して、太陽が全く昇らない闇の中でも、微かな光の兆しに <strong>「∞（無限大）」</strong> という記号を刻むことにしたんよ。</p>
+            <h2 class="chapter-title">第4章：虚空を染める「世界の呼吸」</h2>
+            <p>ロジックは完璧になった。そこで、外側の虚空を太陽のエネルギーに合わせて染め上げることにしたわ。昼はクリムゾン、薄明は紫、夜は宇宙の深淵。これで、データと情緒がひとつになったわ。</p>
+            <h2 class="chapter-title">終章：円環は完成した</h2>
+            <p>最後は、夜の間は「地球の裏側」を映し出すようにした。これで闇の底まで、24時間の円環が繋がったんや。南半球も考慮して「正中（せいちゅう）」という言葉に集約。これは、ただの便利ツールを超えて、脈動しはじめたってことやね。</p>
+        </section>
+
+        <div class="exhibit-gate">
+            <p class="text-xs tracking-[0.3em] text-[#ff85a2] mb-6 uppercase">Ready to Observe</p>
+            <h3 class="text-xl text-white mb-8 font-serif italic">準備は整った。今、その光を観測しに行こう。</h3>
+            <a href="../solar-basho/index.html" class="inline-block bg-white text-black font-black py-4 px-10 rounded-full text-xs uppercase tracking-[0.3em] hover:bg-[#ff85a2] transition-all active:scale-95 no-underline nav-link">
+                第4展示室へ入る
+            </a>
+        </div>
+
+        <footer class="mt-24 text-center border-t border-white/10 pt-10">
+            <p class="text-sm opacity-40 italic">Observation continues, as long as there is light.</p>
+            <p class="mt-4 font-bold text-[#ff85a2] tracking-widest">館主：やま</p>
+        </footer>
+
+        <div class="mt-20 pb-20 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+            <a href="./index.html" class="text-zinc-500 hover:text-[#ff85a2] text-xs uppercase tracking-[0.2em] transition-all nav-link">
+                <i class="fa-solid fa-list-ul mr-2"></i> アーカイブ目録に戻る
+            </a>
+            <a href="../index.html" class="text-zinc-500 hover:text-[#ff85a2] text-xs uppercase tracking-[0.2em] transition-all nav-link">
+                <i class="fa-solid fa-house-chimney mr-2"></i> 美術館・玄関に戻る
+            </a>
+        </div>
+    </article>
+</body>
+</html>
