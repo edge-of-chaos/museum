@@ -91,8 +91,9 @@
             text-indent: 0.5rem; 
             color: var(--text-main); text-shadow: 0 0 15px rgba(0,0,0,0.8); margin-bottom: 0.3rem; 
         }
-        .label-en { letter-spacing: 0.2rem; color: var(--text-sub); text-transform: uppercase; }
+        .label-en { letter-spacing: 0.2rem; color: var(--text-sub); text-transform: uppercase; transition: color 0.4s; }
 
+        /* 美術館ノード */
         .node-museum { 
             top: 30%; cursor: pointer; z-index: 20; opacity: 0.8;
             animation: heartbeat 4s infinite ease-in-out; 
@@ -104,13 +105,18 @@
         .node-museum:hover { transform: scale(1.15) !important; animation-play-state: paused; }
         .node-museum:hover .label-jp { color: var(--accent-blue); text-shadow: 0 0 25px rgba(0, 212, 255, 0.6); }
 
+        /* 東屋・図書館ノード（ベース） */
         .node-gazebo, .node-library { bottom: 25%; opacity: 0.5; }
-        .node-gazebo .label-jp, .node-library .label-jp { font-size: 1.1rem; }
+        .node-gazebo .label-jp, .node-library .label-jp { font-size: 1.1rem; transition: all 0.4s; }
         .node-gazebo .label-en, .node-library .label-en { font-size: 0.5rem; }
         
-        /* 左右ノードの配置を修正 */
-        .node-gazebo { left: -25%; }
-        .node-library { left: 25%; }
+        /* 図書館（収蔵庫リンク）のホバー演出 */
+        .node-library { left: 25%; cursor: pointer; }
+        .node-library:hover { opacity: 1; transform: scale(1.1); }
+        .node-library:hover .label-jp { color: var(--accent-blue); }
+        .node-library:hover .label-en { color: #888; }
+
+        .node-gazebo { left: -25%; cursor: default; }
 
         @keyframes heartbeat {
             0%, 100% { transform: scale(1); }
@@ -156,10 +162,10 @@
             <span class="label-en">Gazebo</span>
         </div>
 
-        <div class="area-node node-library">
-            <span class="label-jp">図書館</span>
+        <a href="museum/archive/index.html" class="area-node node-library">
+            <span class="label-jp">収蔵庫</span>
             <span class="label-en">Library</span>
-        </div>
+        </a>
 
         <div class="footer-quote">Absolute Contradiction & Co-evolution</div>
     </div>
