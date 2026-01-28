@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HXJR6GYWPY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-HXJR6GYWPY');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>収蔵庫：制作の記録｜やまの純粋美術館</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=IM+Fell+English+SC&display=swap');
+        
+        :root {
+            --wood-dark: #2c1e12;
+            --wood-light: #4a3321;
+            --paper-bg: #f4eadd;
+            --paper-text: #3d3228;
+            --brass-antique: #b89b72;
+        }
+
+        body { 
+            /* 木目調の背景：複数のグラデーションを重ねて古い木の質感を出す */
+            background-color: var(--wood-dark);
+            background-image: 
+                radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%), /* ヴィネット効果（四隅を暗く） */
+                repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 10px), /* 細かい木目 */
+                linear-gradient(to bottom, var(--wood-dark), var(--wood-light)); /* 全体の色ムラ */
+            background-blend-mode: multiply, overlay, normal;
+            color: var(--paper-text);
+            font-family: 'Noto Serif JP', serif;
+            min-height: 100vh;
+        }
+
+        /* 古い紙のようなコンテナ */
+        .parchment-container {
+            background-color: var(--paper-bg);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            box-shadow: 
+                inset 0 0 30px rgba(44, 30, 18, 0.5), /* 内側の影 */
+                0 10px 30px rgba(0,0,0,0.5); /* 外側の影 */
+            border-radius: 4px;
+            border: 1px solid rgba(44, 30, 18, 0.2);
+        }
+        
+        /* 立体的な木の棚板のような区切り線 */
+        .shelf-border {
+            border-bottom: 2px solid #1a120b; /* 影 */
+            box-shadow: 0 1px 0 rgba(255,255,255,0.1); /* ハイライト */
+        }
+
+        .archive-item {
+            position: relative;
+            padding: 2.5rem 2rem;
+            transition: all 0.4s ease-out;
+        }
+
+        /* ホバー時に真鍮のプレートがスライドしてくる演出 */
+        .archive-item::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0; width: 4px;
+            background: linear-gradient(to bottom, #8c704c, var(--brass-antique), #8c704c);
+            opacity: 0.3;
+            transition: all 0.4s;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+        }
+
+        .archive-item:hover {
+            background-color: rgba(184, 155, 114, 0.1); /* アンティークなハイライト */
+            padding-left: 2.5rem;
+        }
+
+        .archive-item:hover::before {
+            opacity: 1;
+            width: 8px;
+        }
+
+        .engraved-text {
+            color: var(--brass-antique);
+            text-shadow: 0 1px 1px rgba(0,0,0,0.5); /* 刻印されたような影 */
+            font-family: 'IM Fell English SC', serif; /* 古典的な英語フォント */
+        }
+        
+        .nav-link { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: opacity 0.3s; }
+    </style>
+</head>
+<body class="py-10 px-4 md:px-8">
+
+    <nav class="max-w-4xl mx-auto mb-12">
+        <a href="../index.html" class="nav-link engraved-text opacity-70 hover:opacity-100">
+            <i class="fa-solid fa-arrow-left-long mr-3"></i> To Museum Entrance
+        </a>
+    </nav>
+
+    <main class="max-w-4xl mx-auto parchment-container p-8 md:p-16">
+        <header class="mb-24 text-center relative">
+            <div class="mb-6">
+                <i class="fa-solid fa-landmark-dome text-5xl engraved-text opacity-80"></i>
+            </div>
+            <p class="text-xs tracking-[0.5em] engraved-text mb-4 uppercase font-bold">The Grand Archive</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-[#2c1e12] mb-8 leading-snug">収蔵庫：制作の記録</h1>
+            <div class="flex justify-center items-center gap-4 mb-8 opacity-60">
+                <div class="h-px w-12 bg-[#2c1e12]"></div>
+                <i class="fa-solid fa-scroll text-[#2c1e12]"></i>
+                <div class="h-px w-12 bg-[#2c1e12]"></div>
+            </div>
+            <p class="leading-loose max-w-xl mx-auto text-sm font-medium">
+                ここは、純粋な論理が実存へと至る過程を記した、古い記録の保管室である。<br>
+                静謐な時間の中で、思考の断片を紐解かれたい。
+            </p>
+        </header>
+
+        <section class="border-t-2 border-[#1a120b] box-shadow-[0_1px_0_rgba(255,255,255,0.1)]">
+            <a href="./solar-basho-log.html" class="archive-item shelf-border block group no-underline">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <span class="text-xs engraved-text tracking-widest">LIB-IV : OPTICS</span>
+                        <h2 class="text-2xl text-[#2c1e12] mt-2 font-bold group-hover:text-[#8c704c] transition-colors">光の境界を求めて</h2>
+                        <p class="text-sm mt-3 opacity-80 font-medium"><i class="fa-solid fa-compass-drafting mr-2 opacity-60"></i> 観測装置「境界の時空」実装記録</p>
+                    </div>
+                    <i class="fa-solid fa-feather-pointed engraved-text text-2xl opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all"></i>
+                </div>
+            </a>
+
+            <div class="archive-item shelf-border opacity-40 cursor-not-allowed bg-[rgba(44,30,18,0.05)]">
+                <span class="text-xs tracking-widest font-bold">LIB-III : WILL</span>
+                <h2 class="text-2xl mt-2 font-bold">意志の階層構造（未整理）</h2>
+                <p class="text-sm mt-3"><i class="fa-solid fa-box-archive mr-2"></i> Awaiting compilation...</p>
+            </div>
+
+            <div class="archive-item shelf-border opacity-40 cursor-not-allowed bg-[rgba(44,30,18,0.05)]">
+                <span class="text-xs tracking-widest font-bold">LIB-II : SOCIETY</span>
+                <h2 class="text-2xl mt-2 font-bold">相互作用の幾何学（未整理）</h2>
+                <p class="text-sm mt-3"><i class="fa-solid fa-box-archive mr-2"></i> Awaiting compilation...</p>
+            </div>
+
+            <div class="archive-item shelf-border opacity-40 cursor-not-allowed bg-[rgba(44,30,18,0.05)]">
+                <span class="text-xs tracking-widest font-bold">LIB-I : PHYSICS</span>
+                <h2 class="text-2xl mt-2 font-bold">流体と標高の創発（未整理）</h2>
+                <p class="text-sm mt-3"><i class="fa-solid fa-box-archive mr-2"></i> Awaiting compilation...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-20 pb-20 text-center engraved-text opacity-60">
+        <p class="text-[10px] tracking-[0.3em] uppercase">The Museum of Pure Logic & Emergence / Est. 2026</p>
+    </footer>
+</body>
+</html>
