@@ -16,6 +16,16 @@
     <meta name="description" content="光と闇の境界線を刻む、太陽の高度シミュレーター。時空を流れる光の事象を, 静かに観測するための窓です。">
     <link rel="canonical" href="https://edge-of-chaos.github.io/museum/solar-basho/">
 
+    <meta property="og:title" content="境界の時空：太陽の観測室｜やまの純粋美術館">
+    <meta property="og:description" content="光と闇の境界線を刻む、太陽の高度シミュレーター。今この瞬間の光量を、宇宙の軸から観測します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://edge-of-chaos.github.io/museum/solar-basho/"> <meta property="og:image" content="https://edge-of-chaos.github.io/top-landscape.jpg"> <meta property="og:site_name" content="やまの純粋美術館">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="境界の時空：太陽の観測室｜やまの純粋美術館">
+    <meta name="twitter:description" content="光と闇の境界線を刻む、太陽の高度シミュレーター。">
+    <meta name="twitter:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -25,63 +35,25 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap');
         * { font-family: 'M PLUS Rounded 1c', sans-serif; box-sizing: border-box; }
-        
-        html, body { 
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #000 !important; overflow: hidden; 
-            touch-action: none; color: #fce4ec;
-        }
-
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #000 !important; overflow: hidden; touch-action: none; color: #fce4ec; }
         .glow-text { text-shadow: 0 0 20px rgba(255, 133, 162, 0.7); }
         .glow-text-future { text-shadow: 0 0 15px rgba(255, 183, 197, 0.45); }
         select { -webkit-appearance: none; appearance: none; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        
-        .physics-card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 133, 162, 0.5);
-            border-radius: 14px; padding: 8px 1px;
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        }
-
+        .physics-card { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 133, 162, 0.5); border-radius: 14px; padding: 8px 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); }
         .outer-canvas { transition: background 4s cubic-bezier(0.4, 0, 0.2, 1); }
-
-        /* 【統合デザイン】ナビゲーション・クラスター */
         .nav-cluster { position: absolute; top: 25px; right: 30px; z-index: 100; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; }
-        .btn-ui {
-            text-decoration: none; color: rgba(255, 183, 197, 0.6); background: rgba(20,20,20,0.85); backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 133, 162, 0.2); border-radius: 50px; padding: 10px 22px;
-            font-size: 0.7rem; letter-spacing: 0.15rem; display: flex; align-items: center; gap: 10px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer;
-        }
+        .btn-ui { text-decoration: none; color: rgba(255, 183, 197, 0.6); background: rgba(20,20,20,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 133, 162, 0.2); border-radius: 50px; padding: 10px 22px; font-size: 0.7rem; letter-spacing: 0.15rem; display: flex; align-items: center; gap: 10px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; }
         .btn-ui:hover { color: #ff85a2; border-color: rgba(255, 133, 162, 0.5); background: rgba(255, 133, 162, 0.05); transform: translateX(-5px); }
         .btn-ui i { font-size: 0.8rem; width: 14px; text-align: center; }
-
-        /* モーダル・説明パネル */
-        .info-overlay {
-            position: fixed; inset: 0; background: rgba(10, 10, 10, 0.95);
-            backdrop-blur: 20px; z-index: 200; display: flex;
-            justify-content: center; items-start: flex-start; overflow: hidden;
-            animation: fadeIn 0.5s ease;
-        }
+        .info-overlay { position: fixed; inset: 0; background: rgba(10, 10, 10, 0.95); backdrop-blur: 20px; z-index: 200; display: flex; justify-content: center; items-start: flex-start; overflow: hidden; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .info-content {
-            width: 100%; max-width: 800px; height: 100vh; overflow-y: auto;
-            padding: 60px 40px; color: #e2e8f0; text-align: left;
-        }
+        .info-content { width: 100%; max-width: 800px; height: 100vh; overflow-y: auto; padding: 60px 40px; color: #e2e8f0; text-align: left; }
         .info-content::-webkit-scrollbar { width: 4px; }
         .info-content::-webkit-scrollbar-thumb { background: #ff85a2; border-radius: 10px; }
-
         .info-header { border-bottom: 1px solid rgba(255, 133, 162, 0.3); padding-bottom: 30px; margin-bottom: 40px; }
         .info-section-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 133, 162, 0.1); border-radius: 24px; padding: 30px; margin-bottom: 30px; }
-        
-        @media (max-width: 600px) {
-            .nav-cluster { top: 20px; right: 20px; gap: 8px; }
-            .btn-ui { padding: 8px 18px; font-size: 0.6rem; }
-            .info-content { padding: 40px 20px; }
-        }
+        @media (max-width: 600px) { .nav-cluster { top: 20px; right: 20px; gap: 8px; } .btn-ui { padding: 8px 18px; font-size: 0.6rem; } .info-content { padding: 40px 20px; } }
     </style>
 </head>
 <body>
@@ -89,7 +61,6 @@
 
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
-
         const PRESETS = {
             sapporo: { lat: 43.0618, lng: 141.3545, name: "札幌 / SAPPORO", tz: 9 },
             sendai: { lat: 38.2682, lng: 140.8694, name: "仙台 / SENDAI", tz: 9 },
@@ -106,10 +77,9 @@
                 const saved = localStorage.getItem('sun_observer_v56');
                 return saved ? JSON.parse(saved) : { ...PRESETS.osaka, id: 'osaka' };
             });
-
             const [now, setNow] = useState(new Date());
-            const [showSettings, setShowSettings] = useState(false);
             const [showInfo, setShowInfo] = useState(false);
+            const [showSettings, setShowSettings] = useState(false);
             const [editForm, setEditForm] = useState({ ...config, lat: String(config.lat), lng: String(config.lng), tz: String(config.tz) });
 
             useEffect(() => {
@@ -117,19 +87,14 @@
                 return () => clearInterval(timer);
             }, []);
 
-            useEffect(() => {
-                if (showSettings) {
-                    setEditForm({ ...config, lat: String(config.lat), lng: String(config.lng), tz: String(config.tz) });
-                }
-            }, [showSettings, config]);
+            useEffect(() => { if (showSettings) setEditForm({ ...config, lat: String(config.lat), lng: String(config.lng), tz: String(config.tz) }); }, [showSettings, config]);
 
             const handleCoordChange = (field, value) => {
                 const nextForm = { ...editForm, [field]: value };
                 if (nextForm.id === 'custom') {
                     const lNum = parseFloat(nextForm.lng) || 0;
                     if (field === 'lng') nextForm.tz = String(Math.round(lNum / 15));
-                    const latVal = parseFloat(nextForm.lat) || 0;
-                    const lngVal = parseFloat(nextForm.lng) || 0;
+                    const latVal = parseFloat(nextForm.lat) || 0, lngVal = parseFloat(nextForm.lng) || 0;
                     nextForm.name = `LAT: ${latVal.toFixed(4)} / LNG: ${lngVal.toFixed(4)}`;
                 }
                 setEditForm(nextForm);
@@ -152,27 +117,13 @@
                 const hourAngle = (solarTime / 4 - 180) * Math.PI / 180;
                 const sinAlt = Math.sin(latR) * Math.sin(decl) + Math.cos(latR) * Math.cos(decl) * Math.cos(hourAngle);
                 const alt = Math.asin(Math.min(1, Math.max(-1, sinAlt))) * 180 / Math.PI;
-                
-                const isN = config.lat >= 0;
-                const sDecl = 23.44 * (isN ? 1 : -1) * Math.PI / 180;
-                const wDecl = 23.44 * (isN ? -1 : 1) * Math.PI / 180;
-                const getSinNoon = (d) => Math.cos(latR - d);
-
-                const rat = (ref) => {
-                    if (sinAlt <= 0) return "0.0";
-                    if (ref <= 0) return "∞";
-                    return ((sinAlt / ref) * 100).toFixed(1);
-                };
-
+                const isN = config.lat >= 0, sDecl = 23.44 * (isN ? 1 : -1) * Math.PI / 180, wDecl = 23.44 * (isN ? -1 : 1) * Math.PI / 180;
+                const getSinNoon = (d) => Math.cos(latR - d), rat = (ref) => (sinAlt <= 0 ? "0.0" : (ref <= 0 ? "∞" : ((sinAlt / ref) * 100).toFixed(1)));
                 return {
-                    alt: parseFloat(alt.toFixed(1)), sinAlt: sinAlt,
-                    zen: rat(1.0),
-                    day: rat(Math.cos(latR - decl)), 
-                    sum: rat(getSinNoon(sDecl)),
-                    equ: rat(getSinNoon(0)), 
-                    win: rat(getSinNoon(wDecl)),
-                    noonTime: (() => {
-                        const m = (720 - 4 * config.lng - eqtime) + (config.tz * 60);
+                    alt: parseFloat(alt.toFixed(1)), sinAlt: sinAlt, zen: rat(1.0), day: rat(Math.cos(latR - decl)), sum: rat(getSinNoon(sDecl)), equ: rat(getSinNoon(0)), win: rat(getSinNoon(wDecl)),
+                    eventTime: (() => {
+                        const baseMin = sinAlt > 0 ? 720 : 0;
+                        const m = (baseMin - 4 * config.lng - eqtime) + (config.tz * 60);
                         const s = (m + 14400) % 1440 * 60;
                         return `${String(Math.floor(s/3600)).padStart(2,'0')}:${String(Math.floor((s%3600)/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`;
                     })(),
@@ -182,10 +133,7 @@
 
             const outerBackgroundStyle = useMemo(() => {
                 const { alt, zen } = physics;
-                let energy = 0;
-                if (alt < -18) energy = 0;
-                else if (alt < 0) energy = ((alt + 18) / 18) * 0.15;
-                else energy = 0.15 + ((parseFloat(zen) || 0) / 100 * 0.85);
+                let energy = (alt < -18) ? 0 : (alt < 0 ? ((alt + 18) / 18) * 0.15 : 0.15 + ((parseFloat(zen) || 0) / 100 * 0.85));
                 const h = 230 + (energy * 130), s = 30 + (energy * 70), l = 3 + (energy * 42);
                 return { background: `radial-gradient(circle at 50% 50%, hsl(${h}, ${s}%, ${l}%) 0%, #000000 100%)` };
             }, [physics]);
@@ -196,239 +144,51 @@
                     const dec = 23.45 * Math.sin((2 * Math.PI / 365) * (284 + doy)) * Math.PI / 180;
                     const cosHA = (Math.sin(-0.833 * Math.PI / 180) - Math.sin(lat * Math.PI / 180) * Math.sin(dec)) / (Math.cos(lat * Math.PI / 180) * Math.cos(dec));
                     if (cosHA > 1 || cosHA < -1) return { rise: null, set: null };
-                    const gamma = 2 * Math.PI * (doy - 1) / 365;
-                    const eq = 229.18 * (0.000075 + 0.001868 * Math.cos(gamma) - 0.032077 * Math.sin(gamma) - 0.014615 * Math.cos(2 * gamma) - 0.040849 * Math.sin(2 * gamma));
-                    const ha = Math.acos(cosHA) * 180 / Math.PI;
+                    const ha = Math.acos(cosHA) * 180 / Math.PI, gamma = 2 * Math.PI * (doy - 1) / 365, eq = 229.18 * (0.000075 + 0.001868 * Math.cos(gamma) - 0.032077 * Math.sin(gamma) - 0.014615 * Math.cos(2 * gamma) - 0.040849 * Math.sin(2 * gamma));
                     return { rise: (720 - 4 * (lng + ha) - eq) / 60 + tz, set: (720 - 4 * (lng - ha) - eq) / 60 + tz };
                 };
                 const list = [-3, -2, -1, 0, 1, 2, 3].flatMap(off => {
                     const d = new Date(locationNow); d.setDate(locationNow.getDate() + off);
                     const s = getSunTimes(d, config.lat, config.lng, config.tz);
-                    const f = (h, type) => { 
-                        if (h === null) return null;
-                        const res = new Date(d); res.setHours(Math.floor(h % 24), Math.floor((h * 60) % 60), Math.floor((h * 3600) % 60), 0); 
-                        return { type, time: res };
-                    };
+                    const f = (h, type) => { if (h === null) return null; const res = new Date(d); res.setHours(Math.floor(h % 24), Math.floor((h * 60) % 60), Math.floor((h * 3600) % 60), 0); return { type, time: res }; };
                     return [f(s.rise, '日の出'), f(s.set, '日の入り')];
                 }).filter(e => e !== null).sort((a, b) => a.time - b.time);
                 return { prev: list.filter(e => e.time <= locationNow).pop(), next: list.filter(e => e.time > locationNow).shift() };
             }, [locationNow, config]);
 
-            const formatD = (ms) => {
-                const s = Math.floor(Math.abs(ms) / 1000);
-                return `${String(Math.floor(s / 3600)).padStart(2, '0')}:${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
-            };
-
-            const handleSave = () => {
-                const final = { ...editForm, lat: parseFloat(editForm.lat) || 0, lng: parseFloat(editForm.lng) || 0, tz: parseFloat(editForm.tz) || 0 };
-                setConfig(final);
-                localStorage.setItem('sun_observer_v56', JSON.stringify(final));
-                setShowSettings(false);
-            };
-
-            const isNormal = timeline.prev && timeline.next;
-            const pct = isNormal ? Math.floor(((locationNow - timeline.prev.time) / (timeline.next.time - timeline.prev.time)) * 100) : (physics.isUp ? 100 : 0);
+            const formatD = (ms) => { const s = Math.floor(Math.abs(ms) / 1000); return `${String(Math.floor(s / 3600)).padStart(2, '0')}:${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+            const handleSave = () => { const final = { ...editForm, lat: parseFloat(editForm.lat) || 0, lng: parseFloat(editForm.lng) || 0, tz: parseFloat(editForm.tz) || 0 }; setConfig(final); localStorage.setItem('sun_observer_v56', JSON.stringify(final)); setShowSettings(false); };
+            const isNormal = timeline.prev && timeline.next, pct = isNormal ? Math.floor(((locationNow - timeline.prev.time) / (timeline.next.time - timeline.prev.time)) * 100) : (physics.isUp ? 100 : 0);
 
             return (
                 <div className="w-full h-full min-h-screen flex flex-col items-center justify-center p-4 outer-canvas" style={{ background: outerBackgroundStyle.background }}>
-                    
-                    {/* ナビゲーション・クラスター */}
                     <div className="nav-cluster">
-                        <a href="../" className="btn-ui">
-                            <i className="fa-solid fa-arrow-left"></i>
-                            <span>玄関に戻る</span>
-                        </a>
-                        <div className="btn-ui" onClick={() => setShowInfo(true)}>
-                            <i className="fa-solid fa-circle-info"></i>
-                            <span>説明</span>
-                        </div>
-                        <div className="btn-ui" onClick={() => setShowSettings(true)}>
-                            <i className="fa-solid fa-gear"></i>
-                            <span>地点設定</span>
-                        </div>
+                        <a href="../" className="btn-ui"><i className="fa-solid fa-arrow-left"></i><span>玄関に戻る</span></a>
+                        <div className="btn-ui" onClick={() => setShowInfo(true)}><i className="fa-solid fa-circle-info"></i><span>説明</span></div>
+                        <div className="btn-ui" onClick={() => setShowSettings(true)}><i className="fa-solid fa-gear"></i><span>地点設定</span></div>
                     </div>
-
-                    {/* メインパネル */}
                     <div className="w-full max-w-sm h-full max-h-[580px] flex flex-col justify-between py-10 px-8 bg-[#0a0a0a]/98 backdrop-blur-3xl border border-[#ff85a2]/30 rounded-[60px] relative shadow-[0_0_80px_rgba(0,0,0,1)]">
-                        <div className="text-center space-y-1">
-                            <div className="text-[10px] font-bold tracking-[0.4em] text-[#ffb7c5]/60 uppercase leading-none">{config.name}</div>
-                            <div className="text-lg text-white font-mono tracking-widest leading-none">{locationNow.toLocaleTimeString('ja-JP', { hour12: false })}</div>
-                        </div>
-
-                        <div className="space-y-1">
-                            {isNormal ? (
-                                <>
-                                    <div className="text-left border-l border-[#ff85a2]/40 pl-4">
-                                        <div className="text-[13px] font-bold text-[#ffb7c5]/90 tracking-widest leading-none">
-                                            {timeline.prev.type}{"    "}から
-                                        </div>
-                                        <div className="text-[12px] font-mono text-white/60 mt-1">{timeline.prev.time.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
-                                    </div>
-                                    <div className="text-6xl font-bold tracking-tighter text-[#ff85a2] text-center py-2 glow-text">{formatD(locationNow - timeline.prev.time)}</div>
-                                </>
-                            ) : (
-                                <div className="py-8 text-center">
-                                    <div className="text-2xl font-bold text-[#ff85a2] tracking-[0.2em] uppercase">{physics.isUp ? '白夜観測中' : '極夜観測中'}</div>
-                                    <div className="text-[9px] opacity-40 mt-1 uppercase">Eternal Solar Phase</div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* 中央クラスタ */}
+                        <div className="text-center space-y-1"><div className="text-[10px] font-bold tracking-[0.4em] text-[#ffb7c5]/60 uppercase leading-none">{config.name}</div><div className="text-lg text-white font-mono tracking-widest leading-none">{locationNow.toLocaleTimeString('ja-JP', { hour12: false })}</div></div>
+                        <div className="space-y-1">{isNormal ? (<><div className="text-left border-l border-[#ff85a2]/40 pl-4"><div className="text-[13px] font-bold text-[#ffb7c5]/90 tracking-widest leading-none">{timeline.prev.type}{"    "}から</div><div className="text-[12px] font-mono text-white/60 mt-1">{timeline.prev.time.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div></div><div className="text-6xl font-bold tracking-tighter text-[#ff85a2] text-center py-2 glow-text">{formatD(locationNow - timeline.prev.time)}</div></>) : (<div className="py-8 text-center"><div className="text-2xl font-bold text-[#ff85a2] tracking-[0.2em] uppercase">{physics.isUp ? '白夜観測中' : '極夜観測中'}</div><div className="text-[9px] opacity-40 mt-1 uppercase">Eternal Solar Phase</div></div>)}</div>
                         <div className="space-y-1 pt-2 pb-1">
-                            <div className="flex flex-col items-center mb-0.5">
-                                <span className="text-[15px] font-bold text-white font-mono tracking-widest leading-none">{physics.noonTime}</span>
-                                <span className="text-[8px] font-bold text-[#ffb7c5]/40 uppercase tracking-tighter">今日の南中時刻 / Solar Noon</span>
-                            </div>
-                            
-                            <div className="progress-container relative space-y-2">
-                                <div className="flex justify-between items-end px-1">
-                                    <span className="text-[8px] font-bold opacity-30 uppercase tracking-[0.2em]">Temporal Axis</span>
-                                    <span className="text-sm font-bold text-[#ffb7c5]">{pct}%</span>
-                                </div>
-                                <div className="h-[2.5px] w-full bg-white/10 rounded-full overflow-hidden">
-                                    <div className="h-full bg-[#ff85a2] shadow-[0_0_15px_#ff85a2]" style={{ width: `${pct}%` }}></div>
-                                </div>
-                            </div>
-
+                            <div className="flex flex-col items-center mb-0.5"><span className="text-[15px] font-bold text-white font-mono tracking-widest leading-none">{physics.eventTime}</span><span className="text-[8px] font-bold text-[#ffb7c5]/40 uppercase tracking-tighter">今日の正中時刻 / {physics.isUp ? "Solar Noon" : "Solar Midnight"}</span></div>
+                            <div className="progress-container relative space-y-2"><div className="flex justify-between items-end px-1"><span className="text-[8px] font-bold opacity-30 uppercase tracking-[0.2em]">Temporal Axis</span><span className="text-sm font-bold text-[#ffb7c5]">{pct}%</span></div><div className="h-[2.5px] w-full bg-white/10 rounded-full overflow-hidden"><div className="h-full bg-[#ff85a2] shadow-[0_0_15px_#ff85a2]" style={{ width: `${pct}%` }}></div></div></div>
                             <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10">
                                 <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.alt}°</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">高度/Alt</span></div>
-                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.zen}{typeof physics.zen === 'string' && physics.zen.includes('∞') ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">天頂比/Zen</span></div>
+                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.zen}{physics.zen === '∞' ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">天頂比/Zen</span></div>
                                 <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.day}{physics.day === '∞' ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">今日比/Day</span></div>
                                 <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.sum}{physics.sum === '∞' ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">夏至比/Sum</span></div>
                                 <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.equ}{physics.equ === '∞' ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">春秋比/Equ</span></div>
                                 <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.win}{physics.win === '∞' ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#ffb7c5]/70 uppercase mt-1">冬至比/Win</span></div>
                             </div>
                         </div>
-
-                        <div className="space-y-1">
-                            {isNormal ? (
-                                <>
-                                    <div className="text-left border-l border-[#ff85a2]/40 pl-4">
-                                        <div className="text-[13px] font-bold text-[#ffb7c5]/90 tracking-widest leading-none">
-                                            {timeline.next.type}{"    "}まで
-                                        </div>
-                                        <div className="text-[12px] font-mono text-white/60 mt-1">{timeline.next.time.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
-                                    </div>
-                                    <div className="text-6xl font-bold tracking-tighter text-[#ffb7c5] text-center py-2 glow-text">{formatD(timeline.next.time - locationNow)}</div>
-                                </>
-                            ) : (
-                                <div className="text-center opacity-10 text-[9px] py-4 tracking-[1.2em] uppercase">Static State Observer</div>
-                            )}
-                        </div>
+                        <div className="space-y-1">{isNormal ? (<><div className="text-left border-l border-[#ff85a2]/40 pl-4"><div className="text-[13px] font-bold text-[#ffb7c5]/90 tracking-widest leading-none">{timeline.next.type}{"    "}まで</div><div className="text-[12px] font-mono text-white/60 mt-1">{timeline.next.time.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div></div><div className="text-6xl font-bold tracking-tighter text-[#ffb7c5] text-center py-2 glow-text">{formatD(timeline.next.time - locationNow)}</div></>) : (<div className="text-center opacity-10 text-[9px] py-4 tracking-[1.2em] uppercase">Static State Observer</div>)}</div>
                         <div className="text-[7px] opacity-10 tracking-[1.5em] text-center uppercase leading-none">The Boundary Observer</div>
                     </div>
-
-                    {/* 【復元レイアウト】説明モーダル */}
                     {showInfo && (
-                        <div className="info-overlay" onClick={() => setShowInfo(false)}>
-                            <div className="info-content" onClick={e => e.stopPropagation()}>
-                                <button onClick={() => setShowInfo(false)} className="fixed top-8 right-8 text-zinc-500 hover:text-white text-4xl transition-colors">×</button>
-                                
-                                <header className="info-header">
-                                    <h2 className="text-3xl font-black text-white italic tracking-tighter mb-4">境界までの時間 - 太陽高度・受照強度 観測ツール</h2>
-                                    <p className="text-sm tracking-[0.2em] text-[#ff85a2] font-bold">── (The Boundary Observer)</p>
-                                </header>
-
-                                <div className="space-y-10 text-base leading-relaxed text-slate-300 font-serif">
-                                    <div className="info-section-card">
-                                        <h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">1. 概要 / Overview</h3>
-                                        <p>本観測ツールは、地球上の任意の地点における太陽の現在高度と、地表に届く太陽光エネルギーの相対強度をリアルタイムで算出・可視化する観測ツールです。</p>
-                                        <p className="mt-4">日の出・日の入りのカウントダウンに加え、季節ごとの南中高度と比較した「現在の光量比」を算出できるため、日常生活における日差しの変化の把握、生活リズム合わせ、あるいは写真撮影のプランニング、天体観測の計画に活用いただけます。</p>
-                                    </div>
-
-                                    <div className="info-section-card">
-                                        <h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">2. 主な機能 / Key Features</h3>
-                                        <div className="space-y-6">
-                                            <div><h4 className="font-bold text-[#ff85a2]">境界カウントダウン</h4><p className="text-sm">日の出・日の入り時刻を算出。境界からの経過時間と、次の境界までの残り時間をリアルタイムに表示します。</p></div>
-                                            <div><h4 className="font-bold text-[#ff85a2]">光量比</h4><p className="text-sm">今この瞬間の太陽エネルギー（受照強度）を、天頂比、今日比、そして季節ごとの基準（夏至・春秋・冬至）と比較してパーセンテージで示します。</p></div>
-                                            <div><h4 className="font-bold text-[#ff85a2]">グローバル対応</h4><p className="text-sm">世界中の緯度・経度を入力可能。時差は経度からの理論値として自動計算。極圏での「白夜・極夜」モードにも対応しています。</p></div>
-                                            <div><h4 className="font-bold text-[#ff85a2]">環境同期型ビジュアル</h4><p className="text-sm">メインパネルの外側の背景色が、太陽の高度とエネルギー量に合わせてダイナミックに変化します。</p></div>
-                                        </div>
-                                    </div>
-
-                                    <div className="info-section-card">
-                                        <h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">3. 操作方法 / How to Use</h3>
-                                        <div className="space-y-4">
-                                            <h4 className="font-bold text-white/80">3.1 画面の見方</h4>
-                                            <p className="text-sm mb-2">ヘッダー: 観測地点名と現在時刻を表示。</p>
-                                            <p className="text-sm mb-2">上部タイマー: 「日の出」または「日の入り」が起きてから、現在までに経過した時間。</p>
-                                            <p className="text-sm mb-2 font-bold">中央セクション:</p>
-                                            <ul className="text-sm ml-4 mb-4 space-y-1">
-                                                <li>Solar Noon: 本日の太陽高度が最も高くなる時刻（*南中(正中）時刻）を表示。</li>
-                                                <li>Temporal Axis: 次の境界までの時間的進捗を示すプログレスバー。</li>
-                                                <li>物理量グリッド: 太陽高度（Alt）と、5種類の相対光量比（%）をリアルタイム表示。</li>
-                                            </ul>
-                                            <p className="text-sm">下部タイマー: 次の「日の出」または「日の入り」まで、あとどれくらい時間があるかを表示。</p>
-
-                                            <h4 className="font-bold text-white/80 mt-8">3.2 設定の変更</h4>
-                                            <p className="text-sm mb-2">画面右上のギアアイコン（⚙️）から設定メニューを開きます。</p>
-                                            <p className="text-sm mb-2">プリセット選択: 日本の主要都市（札幌〜那覇）をリストから即座に選択できます。</p>
-                                            <p className="text-sm mb-2 font-bold">手動入力 (Manual Input):</p>
-                                            <ul className="text-sm ml-4 mb-4 space-y-1">
-                                                <li>緯度 (Latitude): 北緯は正、南緯は負の値を入力。</li>
-                                                <li>経度 (Longitude): 東経は正、西経は負の値を入力。</li>
-                                                <li>標準時差 (UTC Offset): 経度から理論値が自動計算されますが、現地の法定時差に合わせて調整してください（日本は+9）。</li>
-                                            </ul>
-                                            <p className="text-sm">設定を保存して適用: ボタンを押すと、すべての計算と背景色が新地点の情報に同期されます。</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="info-section-card">
-                                        <h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">4. 指標の解説 / Data Glossary</h3>
-                                        <p className="text-sm mb-4 italic">本ツールでは、ランベルトの余弦則に基づき、地表面が受ける太陽エネルギーの強度を算出しています。（大気による反射等、薄明時の明るさは計算式に入れておりませんが、微小故、結果として実際と表示値に差はないと思われます。）</p>
-                                        <div className="grid grid-cols-1 gap-3 text-sm">
-                                            <div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">高度 (Alt)</span><span>地平線を0°とした太陽の角度。</span></div>
-                                            <div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">天頂比 (Zen)</span><span>太陽が真上（高度90°）にある時を100%とした比率。</span></div>
-                                            <div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">今日比 (Day)</span><span>今日の*南中（正中）時を100%とした今の比率。</span></div>
-                                            <div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">季節比</span><span>夏至(Sum) / 春秋(Equ) / 冬至(Win) の*南中（正中）時に対する比率。</span></div>
-                                        </div>
-                                        <p className="mt-6 text-xs text-white/40">※ 冬至比などは、季節によって100%を大きく超えることがありますが、これは「冬のピーク時に比べて今どれだけ強い光が届いているか」を正しく示す数値です。</p>
-                                    </div>
-
-                                    <footer class="pt-12 text-center pb-12">
-                                        <p className="text-xl font-black text-white italic tracking-tighter mb-12 uppercase leading-relaxed">リアルタイムに刻々と変化する「光」のデータを、日々の観測にお役立てください。</p>
-                                        <button onClick={() => setShowInfo(false)} className="bg-[#ff85a2] hover:bg-[#ff7592] text-black font-black py-4 px-12 rounded-full text-sm uppercase tracking-[0.2em] shadow-2xl transition-all active:scale-95">解説を閉じて観測に戻る</button>
-                                    </footer>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 設定モーダル */}
+                        <div className="info-overlay" onClick={() => setShowInfo(false)}><div className="info-content" onClick={e => e.stopPropagation()}><button onClick={() => setShowInfo(false)} className="fixed top-8 right-8 text-zinc-500 hover:text-white text-4xl transition-colors">×</button><header className="info-header"><h2 className="text-3xl font-black text-white italic tracking-tighter mb-4">境界までの時間 - 太陽高度・受照強度 観測ツール</h2><p className="text-sm tracking-[0.2em] text-[#ff85a2] font-bold">── (The Boundary Observer)</p></header><div className="space-y-10 text-base leading-relaxed text-slate-300 font-serif"><div className="info-section-card"><h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">1. 概要 / Overview</h3><p>本観測ツールは、地球上の任意の地点における太陽の現在高度と、地表に届く太陽光エネルギーの相対強度をリアルタイムで算出・可視化する観測ツールです。</p><p className="mt-4">日の出・日の入りカウントダウンに加え、季節ごとの南中高度と比較した「現在の光量比」を算出できるため、日常生活における日差しの変化の把握、生活リズム合わせ、あるいは写真撮影のプランニング、天体観測の計画に活用いただけます。</p></div><div className="info-section-card"><h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">2. 主な機能 / Key Features</h3><div className="space-y-6"><div><h4 className="font-bold text-[#ff85a2]">境界カウントダウン</h4><p className="text-sm">日の出・日の入り時刻を算出。境界からの経過時間と、次の境界までの残り時間をリアルタイムに表示します。</p></div><div><h4 className="font-bold text-[#ff85a2]">光量比</h4><p className="text-sm">今この瞬間の太陽エネルギー（受照強度）を、天頂比、今日比、そして季節ごとの基準（夏至・春秋・冬至）と比較してパーセンテージで示します。</p></div><div><h4 className="font-bold text-[#ff85a2]">グローバル対応</h4><p className="text-sm">世界中の緯度・経度を入力可能。時差は経度からの理論値として自動計算。極圏での「白夜・極夜」モードにも対応しています。</p></div><div><h4 className="font-bold text-[#ff85a2]">環境同期型ビジュアル</h4><p className="text-sm">メインパネルの外側の背景色が、太陽の高度とエネルギー量に合わせてダイナミックに変化します。</p></div></div></div><div className="info-section-card"><h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">3. 操作方法 / How to Use</h3><div className="space-y-4"><h4 className="font-bold text-white/80">3.1 画面の見方</h4><p className="text-sm mb-2">ヘッダー: 観測地点名と現在時刻を表示。</p><p className="text-sm mb-2">上部タイマー: 「日の出」または「日の入り」が起きてから、現在までに経過した時間。</p><p className="text-sm mb-2 font-bold">中央セクション:</p><ul className="text-sm ml-4 mb-4 space-y-1"><li>Solar Noon/Midnight: 本日の太陽高度が最も 高く/低くなる正中時刻（*南/北 中時刻）を表示。</li><li>Temporal Axis: 次の境界までの時間的進捗を示すプログレスバー。</li><li>物理量グリッド: 太陽高度（Alt）と、5種類の相対光量比（%）をリアルタイム表示。</li></ul><p className="text-sm">下部タイマー: 次の「日の出」または「日の入り」まで、あとどれくらい時間があるかを表示。</p><h4 className="font-bold text-white/80 mt-8">3.2 設定の変更</h4><p className="text-sm mb-2">画面右上のギアアイコン（⚙️）から設定メニューを開きます。</p><p className="text-sm mb-2">プリセット選択: 日本の主要都市（札幌〜那覇）をリストから即座に選択できます。</p><p className="text-sm mb-2 font-bold">手動入力 (Manual Input):</p><ul className="text-sm ml-4 mb-4 space-y-1"><li>緯度 (Latitude): 北緯は正、南緯は負の値を入力。</li><li>経度 (Longitude): 東経は正、西経は負の値を入力。</li><li>標準時差 (UTC Offset): 経度から理論値が自動計算されますが、現地の法定時差に合わせて調整してください（日本は+9）。</li></ul><p className="text-sm">設定を保存して適用: ボタンを押すと、すべての計算と背景色が新地点の情報に同期されます。</p></div></div><div className="info-section-card"><h3 className="text-xl font-bold text-white border-l-4 border-[#ff85a2] pl-4 mb-6">4. 指標の解説 / Data Glossary</h3><p className="text-sm mb-4 italic">本ツールでは、ランベルトの余弦則に基づき、地表面が受ける太陽エネルギーの強度を算出しています。（大気による反射等、薄明時の明るさは計算式に入れておりませんが、微小故、結果として実際と表示値に差はないと思われます。）</p><div className="grid grid-cols-1 gap-3 text-sm"><div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">高度 (Alt)</span><span>地平線を0°とした太陽の角度。</span></div><div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">天頂比 (Zen)</span><span>太陽が真上（高度90°）にある時を100%とした比率。</span></div><div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">今日比 (Day)</span><span>今日の*南中（正中）時を100%とした今の比率。</span></div><div className="flex border-b border-white/10 pb-2"><span className="w-24 font-bold text-[#ff85a2]">季節比</span><span>夏至(Sum) / 春秋(Equ) / 冬至(Win) の*南中（正中）時に対する比率。</span></div></div><p className="mt-6 text-xs text-white/40">※ 冬至比などは、季節によって100%を大きく超えることがありますが、これは「冬のピーク時に比べて今どれだけ強い光が届いているか」を正しく示す数値です。</p></div><footer class="pt-12 text-center pb-12"><p className="text-xl font-black text-white italic tracking-tighter mb-12 uppercase leading-relaxed">リアルタイムに刻々と変化する「光」のデータを、日々の観測にお役立てください。</p><button onClick={() => setShowInfo(false)} className="bg-[#ff85a2] hover:bg-[#ff7592] text-black font-black py-4 px-12 rounded-full text-sm uppercase tracking-[0.2em] shadow-2xl transition-all active:scale-95">解説を閉じて観測に戻る</button></footer></div></div></div>)}
                     {showSettings && (
-                        <div className="fixed inset-0 bg-black/98 backdrop-blur-3xl z-[210] flex items-center justify-center p-6 text-[#fce4ec]" onClick={() => setShowSettings(false)}>
-                            <div className="w-full max-w-sm bg-[#0d0d0d] border border-[#ff85a2]/30 p-10 rounded-[60px] space-y-6 shadow-2xl overflow-y-auto max-h-[98vh]" onClick={e => e.stopPropagation()}>
-                                <div className="text-center space-y-1">
-                                    <h2 className="text-[#ff85a2] font-bold tracking-[0.2em] text-xl uppercase leading-none">Settings / 設定</h2>
-                                    <p className="text-[8px] opacity-40 uppercase tracking-[0.1em] mt-1">Observation point parameters</p>
-                                </div>
-                                <div className="space-y-5 pt-6 text-left">
-                                    <div className="space-y-1.5">
-                                        <div className="flex flex-col"><span className="text-[11px] font-bold text-white">主要都市を選択</span><span className="text-[7px] opacity-50 uppercase text-white/40 leading-none">Select City Preset</span></div>
-                                        <select className="w-full bg-[#1a1a1a] border border-white/10 p-4 rounded-2xl text-sm outline-none text-white" value={editForm.id || 'custom'} onChange={(e) => { const id = e.target.value; if (id !== 'custom') { const p = PRESETS[id]; setEditForm({ ...p, id, lat: String(p.lat), lng: String(p.lng), tz: String(p.tz) }); } else { setEditForm({ ...editForm, id: 'custom' }); } }}>
-                                            <option value="custom">-- 手動入力 (Manual) --</option>
-                                            {Object.entries(PRESETS).map(([k, c]) => ( <option key={k} value={k}>{c.name.split(' / ')[0]}</option> ))}
-                                        </select>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-1.5"><div className="flex flex-col"><span className="text-[11px] font-bold text-white">緯度</span><span className="text-[7px] opacity-50 uppercase text-white/40 leading-none">Latitude</span></div><input type="text" value={editForm.lat} disabled={editForm.id !== 'custom'} onChange={(e) => handleCoordChange('lat', e.target.value)} className={`w-full bg-[#1a1a1a] border border-white/10 p-3.5 rounded-2xl text-sm outline-none text-white ${editForm.id !== 'custom' ? 'opacity-30' : ''}`} /></div>
-                                        <div className="space-y-1.5"><div className="flex flex-col"><span className="text-[11px] font-bold text-white">経度</span><span className="text-[7px] opacity-50 uppercase text-white/40 leading-none">Longitude</span></div><input type="text" value={editForm.lng} disabled={editForm.id !== 'custom'} onChange={(e) => handleCoordChange('lng', e.target.value)} className={`w-full bg-[#1a1a1a] border border-white/10 p-3.5 rounded-2xl text-sm outline-none text-white ${editForm.id !== 'custom' ? 'opacity-30' : ''}`} /></div>
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <div className="flex flex-col"><span className="text-[11px] font-bold text-white">標準時差 (UTC)</span><span className="text-[7px] opacity-50 uppercase text-white/40 leading-none">Timezone Offset</span></div>
-                                        <input type="text" value={editForm.tz} disabled={editForm.id !== 'custom'} onChange={(e) => setEditForm({ ...editForm, tz: e.target.value })} className={`w-full bg-[#1a1a1a] border border-white/10 p-4 rounded-2xl text-sm outline-none text-white ${editForm.id !== 'custom' ? 'opacity-30' : ''}`} />
-                                    </div>
-                                </div>
-                                <div className="flex flex-col gap-3 pt-6">
-                                    <button onClick={handleSave} className="w-full bg-[#ff85a2] text-black font-bold py-6 rounded-3xl shadow-lg active:scale-95 flex flex-col items-center justify-center gap-0.5 transition-all">
-                                        <span className="text-base leading-none font-bold">設定を保存して適用</span><span className="text-[10px] opacity-70 uppercase font-medium tracking-widest leading-none">Save & Apply</span>
-                                    </button>
-                                    <button onClick={() => setShowSettings(false)} className="py-1 text-[10px] opacity-40 uppercase hover:opacity-100 transition-opacity text-white/50 tracking-widest">Close / 閉じる</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                        <div className="fixed inset-0 bg-black/98 backdrop-blur-3xl z-[210] flex items-center justify-center p-6 text-[#fce4ec]" onClick={() => setShowSettings(false)}><div className="w-full max-w-sm bg-[#0d0d0d] border border-[#ff85a2]/30 p-10 rounded-[60px] space-y-6 shadow-2xl overflow-y-auto max-h-[98vh]" onClick={e => e.stopPropagation()}><div className="text-center space-y-1"><h2 className="text-[#ff85a2] font-bold tracking-[0.2em] text-xl uppercase leading-none">Settings / 設定</h2><p className="text-[8px] opacity-40 uppercase tracking-[0.1em] mt-1">Observation point parameters</p></div><div className="space-y-5 pt-6 text-left"><div className="space-y-1.5"><div className="flex flex-col"><span className="text-[11px] font-bold text-white">主要都市を選択</span><span className="text-[7px] opacity-50 uppercase text-white/40 leading-none">Select City Preset</span></div><select className="w-full bg-[#1a1a1a] border border-white/10 p-4 rounded-2xl text-sm outline-none text-white" value={editForm.id || 'custom'} onChange={(e) => { const id = e.target.value; if (id !== 'custom') { const p = PRESETS[id]; setEditForm({ ...p, id, lat: String(p.lat), lng: String(p.lng), tz: String(p.tz) }); } else { setEditForm({ ...editForm, id: 'custom' }); } }}><option value="custom">-- 手動入力 (Manual) --</option>{Object.entries(PRESETS).map(([k, c]) => ( <option key={k} value={k}>{c.name.split(' / ')[0]}</option> ))}</select></div><div className="grid grid-cols-2 gap-4"><div className="space-y-1.5"><div className="flex flex-col"><span className="text-[11px] font-bold text-white">緯度</span><span className="text-[7px] opacity-50 uppercase text-white/40 leading-none">Latitude</span></div><input type="text" value={editForm.lat} disabled={editForm.id !== 'custom'} onChange={(e) => handleCoordChange('lat', e.target.value)} className={`w-full bg-[#1a1a1a] border border-white/10 p-3.5 rounded-2xl text-sm outline-none text-white ${editForm.id !== 'custom' ? 'opacity-30' : ''}`} /></div><div className="space-y-1.5"><div className="flex flex-col"><span className="text-[11px] font-bold text-white">経度</span><span className="text-[7px] opacity-50 uppercase text-white/40 leading-none">Longitude</span></div><input type="text" value={editForm.lng} disabled={editForm.id !== 'custom'} onChange={(e) => handleCoordChange('lng', e.target.value)} className={`w-full bg-[#1a1a1a] border border-white/10 p-3.5 rounded-2xl text-sm outline-none text-white ${editForm.id !== 'custom' ? 'opacity-30' : ''}`} /></div></div><div className="space-y-1.5"><div className="flex flex-col"><span className="text-[11px] font-bold text-white">標準時差 (UTC)</span><span className="text-[7px] opacity-50 uppercase text-white/40 leading-none">Timezone Offset</span></div><input type="text" value={editForm.tz} disabled={editForm.id !== 'custom'} onChange={(e) => setEditForm({ ...editForm, tz: e.target.value })} className={`w-full bg-[#1a1a1a] border border-white/10 p-4 rounded-2xl text-sm outline-none text-white ${editForm.id !== 'custom' ? 'opacity-30' : ''}`} /></div></div><div className="flex flex-col gap-3 pt-6"><button onClick={handleSave} className="w-full bg-[#ff85a2] text-black font-bold py-6 rounded-3xl shadow-lg active:scale-95 flex flex-col items-center justify-center gap-0.5 transition-all"><span className="text-base leading-none font-bold">設定を保存して適用</span><span className="text-[10px] opacity-70 uppercase font-medium tracking-widest leading-none">Save & Apply</span></button><button onClick={() => setShowSettings(false)} className="py-1 text-[10px] opacity-40 uppercase hover:opacity-100 transition-opacity text-white/50 tracking-widest">Close / 閉じる</button></div></div></div>)}
                 </div>
             );
         };
