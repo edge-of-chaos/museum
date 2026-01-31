@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HXJR6GYWPY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-HXJR6GYWPY');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>直近の気温観測｜やまの純粋美術館</title>
+    <meta name="description" content="各地の気温の推移と1時間前の数値からの変化を表示する装置。">
+    <link rel="canonical" href="https://edge-of-chaos.github.io/museum/temp-trend/">
+
+    <meta property="og:title" content="直近の気温観測｜やまの純粋美術館">
+    <meta property="og:description" content="数値の脈動から、世界の今を観測する。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://edge-of-chaos.github.io/museum/temp-trend/">
+    <meta property="og:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        * { font-family: 'Noto Sans JP', 'M PLUS Rounded 1c', sans-serif; box-sizing: border-box; }
+        
+        body {
+            margin: 0; padding: 0; width: 100%; min-height: 100vh;
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            color: #1e293b;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+        }
+
+        .nav-cluster { position: fixed; top: 25px; right: 30px; z-index: 100; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; }
+        .btn-ui { text-decoration: none; color: #475569; background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.1); border-radius: 50px; padding: 10px 22px; font-size: 0.7rem; letter-spacing: 0.15rem; display: flex; align-items: center; gap: 10px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .btn-ui:hover { color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); background: #fff; transform: translateX(-5px); }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        .status-panel { background: #ffffff; border-bottom: 4px solid #f59e0b; }
+        .search-input { background: #ffffff; border: 1px solid #cbd5e1; color: #1e293b; border-radius: 12px; padding: 8px 18px; }
+        .search-input:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.1); }
+        .time-badge { background: #1e293b; color: #f8fafc; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 800; }
+
+        .info-overlay { position: fixed; inset: 0; background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(10px); z-index: 200; display: none; justify-content: center; overflow: hidden; }
+        .info-content { width: 100%; max-width: 800px; height: 100vh; overflow-y: auto; padding: 60px 40px; color: #334155; position: relative; }
+        .info-section-card { background: white; border: 1px solid rgba(0,0,0,0.05); border-radius: 24px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        
+        .modal-close-x { position: absolute; top: 30px; right: 40px; font-size: 2.5rem; color: #94a3b8; cursor: pointer; transition: color 0.3s; line-height: 1; }
+        .modal-close-x:hover { color: #1e293b; }
+
+        @media (max-width: 600px) { .nav-cluster { top: 20px; right: 20px; } .btn-ui { padding: 8px 18px; font-size: 0.6rem; } .modal-close-x { top: 20px; right: 25px; } }
+    </style>
+</head>
+<body class="px-4 py-2 md:px-8 md:py-4">
+
+    <div class="nav-cluster">
+        <a href="../" class="btn-ui"><i class="fa-solid fa-house-chimney"></i><span>玄関へ戻る</span></a>
+        <div class="btn-ui" onclick="openModal()"><i class="fa-solid fa-circle-info"></i><span>説明</span></div>
+    </div>
+
+    <div class="max-w-6xl w-full space-y-6 mt-14 md:mt-6">
+        <header class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 px-4">
+            <div class="space-y-4 flex-1 w-full">
+                <div>
+                    <div class="flex flex-wrap items-center gap-4">
+                        <p id="location-name" class="text-xs text-slate-500 uppercase tracking-[0.4em] font-black underline decoration-orange-500 decoration-2">大阪</p>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] text-slate-400">|</span>
+                            <span class="time-badge">JST</span>
+                            <span id="jst-time" class="text-[10px] font-bold text-slate-600">--:--</span>
+                            <span class="text-[10px] text-slate-400">|</span>
+                            <span class="time-badge bg-orange-600">LOCAL</span>
+                            <span id="local-time" class="text-[10px] font-bold text-orange-600">--:--</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-2 w-full max-w-md">
+                    <input type="text" id="location-search" placeholder="地点を検索..." class="flex-1 search-input text-sm shadow-sm">
+                    <button onclick="handleSearch()" class="bg-slate-800 text-white px-6 py-2 rounded-xl text-xs font-black hover:bg-slate-700 transition-all uppercase tracking-widest shadow-sm">SEARCH</button>
+                </div>
+            </div>
+            
+            <div class="flex gap-4">
+                <div class="status-panel px-6 py-3 rounded-2xl shadow-sm min-w-[140px]">
+                    <span class="text-[9px] text-slate-400 block uppercase font-black tracking-widest mb-1">Current</span>
+                    <div class="flex items-baseline gap-1">
+                        <span id="now-temp" class="text-2xl font-black text-orange-500">--.-</span>
+                        <span class="text-xs text-slate-400 font-bold">°C</span>
+                    </div>
+                </div>
+                <div class="status-panel px-6 py-3 rounded-2xl shadow-sm min-w-[140px]">
+                    <span class="text-[9px] text-slate-400 block uppercase font-black tracking-widest mb-1">1h Change</span>
+                    <div id="trend-val" class="text-xl font-black tracking-tighter text-slate-400">--.-°C</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="glass-card p-6 md:p-10 relative">
+            <div class="h-[450px] md:h-[580px] w-full">
+                <canvas id="compassChart"></canvas>
+            </div>
+        </div>
+
+        <footer class="flex flex-col md:flex-row justify-between items-center gap-6 px-8 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <div class="flex flex-wrap justify-center gap-6">
+                <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 bg-[#fb923c] rounded-sm"></div> 晴れ</div>
+                <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 bg-[#fde047] rounded-sm"></div> 薄曇</div>
+                <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 bg-[#94a3b8] rounded-sm"></div> 曇</div>
+                <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 bg-[#60a5fa] rounded-sm"></div> 雨</div>
+            </div>
+            <p class="italic opacity-30">The Compass Never Lies.</p>
+        </footer>
+    </div>
+
+    <div id="modal-overlay" class="info-overlay" onclick="closeModal()">
+        <div class="info-content" onclick="event.stopPropagation()">
+            <span class="modal-close-x" onclick="closeModal()">&times;</span>
+            <header class="mb-10 border-b border-slate-200 pb-8">
+                <h2 class="text-2xl font-black text-slate-800 italic tracking-tighter mb-2 uppercase">直近の気温観測</h2>
+            </header>
+            
+            <div class="space-y-8">
+                <div class="info-section-card">
+                    <h3 class="text-lg font-bold text-slate-800 border-l-4 border-orange-500 pl-4 mb-4">この装置で確認できること</h3>
+                    <p class="text-sm leading-relaxed">各地の現在・過去・未来の気温の推移と、1時間前からの変化を確認できます。グラフの横軸は過去約10日間の記録から現在を経て、8日先までの予測値を表示しています。</p>
+                    <ul class="mt-6 space-y-6 text-sm">
+                        <li>
+                            <strong>● 気温の推移（丸印）</strong><br>
+                            グラフ上の大きな丸印（●）は、その日の「現在と同じ時刻」の気温を示しています。
+                        </li>
+                        <li>
+                            <strong>● 気温の変化（矢印と小さな丸印）</strong><br>
+                            大きな丸印の近くにある小さな白抜きの丸印（○）は「1時間前の気温」を示しています。これらを結ぶ矢印は1時間前の気温からの変化を表し、気温が上昇していれば赤色、下降していれば青色で表示されます。
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="info-section-card">
+                    <h3 class="text-lg font-bold text-slate-800 border-l-4 border-orange-500 pl-4 mb-4">気象データについて</h3>
+                    <p class="text-sm leading-relaxed">本装置の気象データは Open-Meteo API より取得しています。これには気象庁（JMA）や世界各国の主要な気象機関が公開している数値予報モデルが統合・再解析されたものが含まれています。地点検索には OpenStreetMap の Nominatim を利用しています。優れたデータを提供してくださっている各機関に感謝いたします。</p>
+                </div>
+
+                <div class="text-center pt-6">
+                    <div class="btn-ui inline-flex px-14 py-3 font-bold text-sm" onclick="closeModal()">観測に戻る</div>
+                </div>
+            </div>
+            <div class="text-right mt-12 opacity-60 text-[10px] tracking-widest uppercase">館主・やま</div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+
+        const DEFAULT_LAT = 34.6863, DEFAULT_LON = 135.5200;
+        let currentLat = DEFAULT_LAT, currentLon = DEFAULT_LON, currentLocationName = "大阪", chartInstance = null;
+
+        window.onload = () => fetchAndRender();
+
+        async function handleSearch() {
+            const query = document.getElementById('location-search').value;
+            if (!query) return;
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+                const results = await res.json();
+                if (results && results.length > 0) {
+                    currentLat = parseFloat(results[0].lat); currentLon = parseFloat(results[0].lon);
+                    currentLocationName = results[0].display_name.split(',')[0];
+                    document.getElementById('location-name').textContent = currentLocationName;
+                    await fetchAndRender();
+                } else {
+                    const statusEl = document.getElementById('location-search');
+                    statusEl.value = "地点が見つかりませんでした";
+                    setTimeout(() => statusEl.value = "", 2000);
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function fetchAndRender() {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${currentLat}&longitude=${currentLon}&daily=temperature_2m_max,temperature_2m_min,weather_code&hourly=temperature_2m&past_days=10&forecast_days=8&current_weather=true&timezone=auto&models=jma_seamless`;
+                const res = await fetch(url);
+                const data = await res.json();
+                const processed = processCompassData(data);
+                renderCompassChart(processed);
+                updateUI(processed);
+                setTimeout(() => updateLocalTime(processed), 50);
+            } catch (err) { console.error(err); }
+        }
+
+        function processCompassData(data) {
+            const todayStr = data.current_weather.time.split('T')[0], todayIdx = data.daily.time.indexOf(todayStr);
+            const currentHour = new Date(data.current_weather.time.replace(' ', 'T')).getHours();
+            const daysJP = ['日', '月', '火', '水', '木', '金', '土'];
+            const labels = data.daily.time.map(t => { const d = new Date(t); return `${d.getMonth() + 1}/${d.getDate()}(${daysJP[d.getDay()]})`; });
+            const nowPoints = [], prevPoints = [], vecColors = [], barBgs = [], barBorders = [], diffs = [];
+
+            data.daily.time.forEach((_, i) => {
+                const hIdx = i * 24 + currentHour, tNow = data.hourly.temperature_2m[hIdx], tPrev = data.hourly.temperature_2m[hIdx - 1] || tNow, d = tNow - tPrev;
+                nowPoints.push(tNow); prevPoints.push(tPrev); diffs.push(d);
+                const code = data.daily.weather_code[i];
+                let style = { bg: 'rgba(148, 163, 184, 0.5)', border: 'rgba(71, 85, 105, 0.7)' };
+                if (code <= 1) style = { bg: 'rgba(251, 146, 60, 0.55)', border: 'rgba(234, 88, 12, 0.7)' }; 
+                else if (code === 2) style = { bg: 'rgba(253, 224, 71, 0.6)', border: 'rgba(234, 179, 8, 0.7)' };
+                else if (code >= 51) style = { bg: 'rgba(96, 165, 250, 0.55)', border: 'rgba(37, 99, 235, 0.7)' };
+                barBgs.push(style.bg); barBorders.push(style.border);
+                if (d > 0.05) vecColors.push("rgba(239, 68, 68, 0.8)"); 
+                else if (d < -0.05) vecColors.push("rgba(59, 130, 246, 0.8)"); 
+                else vecColors.push("rgba(148, 163, 184, 0.7)");
+            });
+            return { data, labels, nowPoints, prevPoints, vecColors, barBgs, barBorders, diffs, todayIdx, currentTemp: data.current_weather.temperature, timezone: data.timezone };
+        }
+
+        function updateUI(p) {
+            const jst = new Intl.DateTimeFormat('ja-JP', { timeZone: "Asia/Tokyo", hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
+            document.getElementById('jst-time').textContent = jst;
+            document.getElementById('now-temp').textContent = p.currentTemp.toFixed(1);
+            const d = p.diffs[p.todayIdx], el = document.getElementById('trend-val');
+            el.textContent = `${d > 0.05 ? "↑" : (d < -0.05 ? "↓" : "→")} ${(d >= 0 ? "+" : "")}${d.toFixed(1)}°C`;
+            el.style.color = d > 0.05 ? "#ef4444" : (d < -0.05 ? "#3b82f6" : "#64748b");
+        }
+
+        function updateLocalTime(p) {
+            try {
+                const local = new Intl.DateTimeFormat('ja-JP', { timeZone: p.timezone, hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
+                document.getElementById('local-time').textContent = local;
+            } catch (e) { document.getElementById('local-time').textContent = "--:--"; }
+        }
+
+        function renderCompassChart(p) {
+            const ctx = document.getElementById('compassChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+            const barData = p.data.daily.temperature_2m_min.map((v, i) => [v, p.data.daily.temperature_2m_max[i]]);
+            chartInstance = new Chart(ctx, {
+                plugins: [{
+                    id: 'todayMarker',
+                    afterDatasetsDraw(chart) {
+                        const { ctx, chartArea, scales: { x } } = chart;
+                        const xPos = x.getPixelForValue(p.labels[p.todayIdx]), bar = chart.getDatasetMeta(2).data[p.todayIdx];
+                        if (bar) {
+                            ctx.save(); ctx.fillStyle = '#f59e0b'; ctx.font = '900 11px "Noto Sans JP"'; ctx.textAlign = 'center';
+                            ctx.fillText('今日', xPos, chartArea.top - 10);
+                            ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
+                            ctx.beginPath(); ctx.moveTo(xPos, chartArea.top); ctx.lineTo(xPos, bar.y); ctx.stroke();
+                            ctx.beginPath(); ctx.moveTo(xPos, bar.base); ctx.lineTo(xPos, chartArea.bottom); ctx.stroke();
+                            ctx.restore();
+                        }
+                    }
+                }, {
+                    id: 'vectorArrows',
+                    afterDatasetsDraw(chart) {
+                        const { ctx } = chart, mNow = chart.getDatasetMeta(0).data, mPrev = chart.getDatasetMeta(1).data;
+                        p.labels.forEach((_, i) => {
+                            if (mNow[i] && mPrev[i]) {
+                                ctx.save(); 
+                                ctx.beginPath(); ctx.moveTo(mPrev[i].x, mPrev[i].y); ctx.lineTo(mNow[i].x, mNow[i].y);
+                                ctx.strokeStyle = p.vecColors[i]; ctx.lineWidth = 1.5; ctx.stroke();
+                                const ang = Math.atan2(mNow[i].y - mPrev[i].y, mNow[i].x - mPrev[i].x), hL = 8;
+                                ctx.beginPath(); ctx.moveTo(mNow[i].x, mNow[i].y);
+                                ctx.lineTo(mNow[i].x - hL * Math.cos(ang - Math.PI/6), mNow[i].y - hL * Math.sin(ang - Math.PI/6));
+                                ctx.moveTo(mNow[i].x, mNow[i].y);
+                                ctx.lineTo(mNow[i].x - hL * Math.cos(ang + Math.PI/6), mNow[i].y - hL * Math.sin(ang + Math.PI/6));
+                                ctx.stroke(); ctx.restore();
+                            }
+                        });
+                    }
+                }],
+                data: {
+                    labels: p.labels,
+                    datasets: [
+                        { 
+                            type: 'line', data: p.nowPoints, 
+                            backgroundColor: c => p.vecColors[c.dataIndex], 
+                            borderColor: c => c.dataIndex === p.todayIdx ? '#fff' : 'transparent', 
+                            borderWidth: c => c.dataIndex === p.todayIdx ? 2.5 : 0,
+                            pointRadius: c => c.dataIndex === p.todayIdx ? 7.5 : 5.5, 
+                            showLine: false, zIndex: 100 
+                        },
+                        { 
+                            type: 'line', data: p.prevPoints, 
+                            backgroundColor: '#fff', 
+                            borderColor: c => p.vecColors[c.dataIndex], 
+                            borderWidth: 1.5, pointRadius: 2.8, showLine: false, zIndex: 90 
+                        },
+                        { type: 'bar', data: barData, backgroundColor: p.barBgs, borderColor: p.barBorders, borderWidth: 2, borderRadius: 12, borderSkipped: false, barPercentage: 0.8 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { enabled: true } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: c => c.index === p.todayIdx ? '#f59e0b' : '#64748b', font: { weight: 'bold' } } },
+                        y: { grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { font: { weight: '900' }, callback: v => v + '°' } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
