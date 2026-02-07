@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HXJR6GYWPY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-HXJR6GYWPY');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    
+    <title>境界の時空：月の観測室｜やまの純粋美術館</title>
+    <meta name="description" content="光と闇の境界線を刻む、月の高度シミュレーター。夜空を流れる月光の事象を、静かに観測するための窓です。">
+    <link rel="canonical" href="https://edge-of-chaos.github.io/museum/moon-basho/">
+
+    <meta property="og:title" content="境界の時空：月の観測室｜やまの純粋美術館">
+    <meta property="og:description" content="光と闇の境界線を刻む、月の高度シミュレーター。今この瞬間の月光を、宇宙の軸から観測します。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://edge-of-chaos.github.io/museum/moon-basho/"> 
+    <meta property="og:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap');
+        * { font-family: 'M PLUS Rounded 1c', sans-serif; box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #000 !important; overflow: hidden; touch-action: none; color: #f2f2f2; }
+        /* 月の青銀のグロー */
+        .glow-text { text-shadow: 0 0 20px rgba(200, 220, 255, 0.6); }
+        .glow-text-future { text-shadow: 0 0 15px rgba(230, 230, 255, 0.4); }
+        select { -webkit-appearance: none; appearance: none; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .physics-card { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(200, 220, 255, 0.4); border-radius: 14px; padding: 8px 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); }
+        .outer-canvas { transition: background 4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .nav-cluster { position: absolute; top: 25px; right: 30px; z-index: 100; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; }
+        .btn-ui { text-decoration: none; color: rgba(200, 220, 255, 0.6); background: rgba(10,10,20,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(200, 220, 255, 0.2); border-radius: 50px; padding: 10px 22px; font-size: 0.7rem; letter-spacing: 0.15rem; display: flex; align-items: center; gap: 10px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; }
+        .btn-ui:hover { color: #c8dcff; border-color: rgba(200, 220, 255, 0.5); background: rgba(200, 220, 255, 0.05); transform: translateX(-5px); }
+        .btn-ui i { font-size: 0.8rem; width: 14px; text-align: center; }
+        .info-overlay { position: fixed; inset: 0; background: rgba(5, 5, 10, 0.96); backdrop-filter: blur(20px); z-index: 200; display: flex; justify-content: center; items-start: flex-start; overflow: hidden; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .info-content { width: 100%; max-width: 800px; height: 100vh; overflow-y: auto; padding: 60px 40px; color: #e2e8f0; text-align: left; }
+        .info-content::-webkit-scrollbar { width: 4px; }
+        .info-content::-webkit-scrollbar-thumb { background: #c8dcff; border-radius: 10px; }
+        .info-header { border-bottom: 1px solid rgba(200, 220, 255, 0.3); padding-bottom: 30px; margin-bottom: 40px; }
+        .info-section-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(200, 220, 255, 0.1); border-radius: 24px; padding: 30px; margin-bottom: 30px; }
+        @media (max-width: 600px) { .nav-cluster { top: 20px; right: 20px; gap: 8px; } .btn-ui { padding: 8px 18px; font-size: 0.6rem; } .info-content { padding: 40px 20px; } }
+    </style>
+</head>
+<body>
+    <div id="root" style="width: 100%; height: 100%;"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+        const PRESETS = {
+            sapporo: { lat: 43.0618, lng: 141.3545, name: "札幌 / SAPPORO", tz: 9 },
+            sendai: { lat: 38.2682, lng: 140.8694, name: "仙台 / SENDAI", tz: 9 },
+            tokyo: { lat: 35.6895, lng: 139.6917, name: "東京 / TOKYO", tz: 9 },
+            nagoya: { lat: 35.1815, lng: 136.9066, name: "名古屋 / NAGOYA", tz: 9 },
+            osaka: { lat: 34.6937, lng: 135.5023, name: "大阪 / OSAKA", tz: 9 },
+            hiroshima: { lat: 34.3853, lng: 132.4553, name: "広島 / HIROSHIMA", tz: 9 },
+            fukuoka: { lat: 33.5904, lng: 130.4017, name: "福岡 / FUKUOKA", tz: 9 },
+            naha: { lat: 26.2124, lng: 127.6809, name: "那覇 / NAHA", tz: 9 }
+        };
+
+        const App = () => {
+            const [config, setConfig] = useState(() => {
+                const saved = localStorage.getItem('moon_observer_v56');
+                return saved ? JSON.parse(saved) : { ...PRESETS.osaka, id: 'osaka' };
+            });
+            const [now, setNow] = useState(new Date());
+            const [showInfo, setShowInfo] = useState(false);
+            const [showSettings, setShowSettings] = useState(false);
+            const [editForm, setEditForm] = useState({ ...config, lat: String(config.lat), lng: String(config.lng), tz: String(config.tz) });
+
+            useEffect(() => {
+                const timer = setInterval(() => setNow(new Date()), 1000);
+                return () => clearInterval(timer);
+            }, []);
+
+            useEffect(() => { if (showSettings) setEditForm({ ...config, lat: String(config.lat), lng: String(config.lng), tz: String(config.tz) }); }, [showSettings, config]);
+
+            const handleCoordChange = (field, value) => {
+                const nextForm = { ...editForm, [field]: value };
+                if (nextForm.id === 'custom') {
+                    const lNum = parseFloat(nextForm.lng) || 0;
+                    if (field === 'lng') nextForm.tz = String(Math.round(lNum / 15));
+                    const latVal = parseFloat(nextForm.lat) || 0, lngVal = parseFloat(nextForm.lng) || 0;
+                    nextForm.name = `LAT: ${latVal.toFixed(4)} / LNG: ${lngVal.toFixed(4)}`;
+                }
+                setEditForm(nextForm);
+            };
+
+            const locationNow = useMemo(() => {
+                const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+                return new Date(utc + (3600000 * config.tz));
+            }, [now, config.tz]);
+
+            const getMoonPosition = (time, lat, lng) => {
+                const d = time.getTime() / 86400000 - 10957.5;
+                const rad = Math.PI / 180;
+                const L = (218.316 + 13.176396 * d) % 360;
+                const M = (134.963 + 13.064993 * d) % 360;
+                const Mprime = (357.529 + 0.9856003 * d) % 360;
+                const D = (297.850 + 12.190749 * d) % 360;
+                const F = (93.272 + 13.229350 * d) % 360;
+                let lambda = L + 6.289 * Math.sin(M * rad) - 1.274 * Math.sin((M - 2*D) * rad) + 0.658 * Math.sin(2 * D * rad) + 0.214 * Math.sin(2 * M * rad) - 0.186 * Math.sin(Mprime * rad) - 0.114 * Math.sin(2 * F * rad);
+                let beta = 5.128 * Math.sin(F * rad) + 0.280 * Math.sin((M + F) * rad) + 0.277 * Math.sin((M - F) * rad) + 0.173 * Math.sin((2*D - F) * rad);
+                const eps = 23.439 * rad;
+                const dec = Math.asin(Math.sin(beta * rad) * Math.cos(eps) + Math.cos(beta * rad) * Math.sin(eps) * Math.sin(lambda * rad));
+                const ra = Math.atan2(Math.sin(lambda * rad) * Math.cos(eps) - Math.tan(beta * rad) * Math.sin(eps), Math.cos(lambda * rad));
+                const siderealTime = (18.697374558 + 24.06570982441908 * d + lng / 15) % 24;
+                const hourAngle = (siderealTime * 15 * rad) - ra;
+                const sinAlt = Math.sin(lat * rad) * Math.sin(dec) + Math.cos(lat * rad) * Math.cos(dec) * Math.cos(hourAngle);
+                const knownDate = new Date(2026, 0, 31, 13, 30);
+                const knownAge = 12.3;
+                const msDiff = time.getTime() - knownDate.getTime();
+                const dayDiff = msDiff / 86400000;
+                const moonAge = (knownAge + dayDiff % 29.530589 + 29.530589) % 29.530589;
+                return { sinAlt, dec, moonAge };
+            };
+
+            const physics = useMemo(() => {
+                const pos = getMoonPosition(locationNow, config.lat, config.lng);
+                const alt = Math.asin(Math.min(1, Math.max(-1, pos.sinAlt))) * 180 / Math.PI;
+                const phaseIntensity = (1 - Math.cos((pos.moonAge / 29.530589) * 2 * Math.PI)) / 2;
+                const latR = config.lat * Math.PI / 180;
+                const rat = (ref) => (pos.sinAlt <= 0 ? "0.0" : (ref <= 0 ? "∞" : ((pos.sinAlt / ref) * 100 * phaseIntensity).toFixed(1)));
+                return {
+                    alt: parseFloat(alt.toFixed(1)), sinAlt: pos.sinAlt, zen: rat(1.0), day: rat(Math.cos(latR - pos.dec)),
+                    moonAge: pos.moonAge.toFixed(1), max: rat(Math.cos(latR - (28.5 * Math.PI / 180))), min: rat(Math.cos(latR - (-28.5 * Math.PI / 180))),
+                    isUp: pos.sinAlt > 0
+                };
+            }, [locationNow, config]);
+
+            const outerBackgroundStyle = useMemo(() => {
+                const { alt, moonAge } = physics;
+                let energy = 0;
+                const phaseFac = (1 - Math.cos((parseFloat(moonAge) / 29.530589) * 2 * Math.PI)) / 2;
+                if (alt < -18) energy = 0;
+                else if (alt < 0) energy = ((alt + 18) / 18) * 0.12 * phaseFac;
+                else energy = (0.12 + (alt / 90) * 0.88) * phaseFac;
+                const h = 235 - (energy * 185), s = 25 + (energy * 45), l = 2.5 + (energy * 18.5);
+                return { background: `radial-gradient(circle at 50% 50%, hsl(${h}, ${s}%, ${l}%) 0%, #000000 100%)` };
+            }, [physics]);
+
+            const timeline = useMemo(() => {
+                const scan = [];
+                const scanStep = 10 * 60 * 1000;
+                const range = 36 * 3600 * 1000;
+                const start = locationNow.getTime() - range, end = locationNow.getTime() + range;
+                let prevPos = getMoonPosition(new Date(start), config.lat, config.lng);
+                for (let t = start + scanStep; t <= end; t += scanStep) {
+                    const checkTime = new Date(t), currPos = getMoonPosition(checkTime, config.lat, config.lng);
+                    if (prevPos.sinAlt <= 0 && currPos.sinAlt > 0) scan.push({ type: '月の出', time: new Date(t - scanStep + ((0 - prevPos.sinAlt) / (currPos.sinAlt - prevPos.sinAlt)) * scanStep) });
+                    if (prevPos.sinAlt > 0 && currPos.sinAlt <= 0) scan.push({ type: '月の入り', time: new Date(t - scanStep + ((0 - prevPos.sinAlt) / (currPos.sinAlt - prevPos.sinAlt)) * scanStep) });
+                    prevPos = currPos;
+                }
+                const sorted = scan.sort((a, b) => a.time - b.time);
+                return { prev: sorted.filter(e => e.time <= locationNow).pop(), next: sorted.filter(e => e.time > locationNow).shift() };
+            }, [config.lat, config.lng, locationNow]);
+
+            const transitTime = useMemo(() => {
+                let bestTime = locationNow, peakSin = physics.isUp ? -2 : 2;
+                const base = locationNow.getTime();
+                for(let i = -780; i <= 780; i += 2) {
+                    const t = new Date(base + i * 60 * 1000), s = getMoonPosition(t, config.lat, config.lng).sinAlt;
+                    if(physics.isUp ? s > peakSin : s < peakSin) { peakSin = s; bestTime = t; }
+                }
+                return bestTime.toLocaleTimeString('ja-JP', { hour12: false });
+            }, [config.lat, config.lng, locationNow, physics.isUp]);
+
+            const formatD = (ms) => { const s = Math.floor(Math.abs(ms) / 1000); return `${String(Math.floor(s / 3600)).padStart(2, '0')}:${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+            const handleSave = () => { const final = { ...editForm, lat: parseFloat(editForm.lat) || 0, lng: parseFloat(editForm.lng) || 0, tz: parseFloat(editForm.tz) || 0 }; setConfig(final); localStorage.setItem('moon_observer_v56', JSON.stringify(final)); setShowSettings(false); };
+            const isNormal = timeline.prev && timeline.next, pct = isNormal ? Math.floor(((locationNow - timeline.prev.time) / (timeline.next.time - timeline.prev.time)) * 100) : (physics.isUp ? 100 : 0);
+
+            return (
+                <div className="w-full h-full min-h-screen flex flex-col items-center justify-center p-4 outer-canvas" style={{ background: outerBackgroundStyle.background }}>
+                    <div className="nav-cluster">
+                        <a href="../" class="btn-ui"><i className="fa-solid fa-arrow-left"></i><span>玄関に戻る</span></a>
+                        <div className="btn-ui" onClick={() => setShowInfo(true)}><i className="fa-solid fa-circle-info"></i><span>説明</span></div>
+                        <div className="btn-ui" onClick={() => setShowSettings(true)}><i className="fa-solid fa-gear"></i><span>地点設定</span></div>
+                    </div>
+                    <div className="w-full max-w-sm h-full max-h-[580px] flex flex-col justify-between py-10 px-8 bg-[#0a0a0a]/98 backdrop-blur-3xl border border-[#c8dcff]/30 rounded-[60px] relative shadow-[0_0_80px_rgba(0,0,0,1)]">
+                        <div className="text-center space-y-1"><div className="text-[10px] font-bold tracking-[0.4em] text-[#c8dcff]/60 uppercase leading-none">{config.name}</div><div className="text-lg text-white font-mono tracking-widest leading-none">{locationNow.toLocaleTimeString('ja-JP', { hour12: false })}</div></div>
+                        <div className="space-y-1">{isNormal ? (<><div className="text-left border-l border-[#c8dcff]/40 pl-4"><div className="text-[13px] font-bold text-[#c8dcff]/90 tracking-widest leading-none">{timeline.prev.type}{"    "}から</div><div className="text-[12px] font-mono text-white/60 mt-1">{timeline.prev.time.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div></div><div className="text-6xl font-bold tracking-tighter text-[#c8dcff] text-center py-2 glow-text">{formatD(locationNow - timeline.prev.time)}</div></>) : (<div className="py-8 text-center"><div className="text-2xl font-bold text-[#c8dcff] tracking-[0.2em] uppercase">{physics.isUp ? '周極星観測中' : '月没中'}</div><div className="text-[9px] opacity-40 mt-1 uppercase">Eternal Lunar Phase</div></div>)}</div>
+                        <div className="space-y-1 pt-2 pb-1">
+                            <div className="flex flex-col items-center mb-0.5"><span className="text-[15px] font-bold text-white font-mono tracking-widest leading-none">{transitTime}</span><span className="text-[8px] font-bold text-[#c8dcff]/40 uppercase tracking-tighter">今日の正中時刻 / Lunar Transit</span></div>
+                            <div className="progress-container relative space-y-2"><div className="flex justify-between items-end px-1"><span className="text-[8px] font-bold opacity-30 uppercase tracking-[0.2em]">Temporal Axis</span><span className="text-sm font-bold text-[#ffb7c5]">{pct}%</span></div><div className="h-[2.5px] w-full bg-white/10 rounded-full overflow-hidden"><div className="h-full bg-[#c8dcff] shadow-[0_0_15px_#c8dcff]" style={{ width: `${pct}%` }}></div></div></div>
+                            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10">
+                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.alt}°</span><span className="text-[7.5px] font-bold text-[#c8dcff]/70 uppercase mt-1">高度/Alt</span></div>
+                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.zen}{physics.zen === '∞' ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#c8dcff]/70 uppercase mt-1">天頂比/Zen</span></div>
+                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.day}{physics.day === '∞' ? '' : '%'}</span><span className="text-[7.5px] font-bold text-[#c8dcff]/70 uppercase mt-1">今日比/Day</span></div>
+                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.moonAge}</span><span className="text-[7.5px] font-bold text-[#c8dcff]/70 uppercase mt-1">月齢/Age</span></div>
+                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.max}%</span><span className="text-[7.5px] font-bold text-[#c8dcff]/70 uppercase mt-1">最大比/Max</span></div>
+                                <div className="physics-card"><span className="text-[11px] font-bold text-white leading-none">{physics.min}%</span><span className="text-[7.5px] font-bold text-[#c8dcff]/70 uppercase mt-1">最小比/Min</span></div>
+                            </div>
+                        </div>
+                        <div className="space-y-1">{isNormal ? (<><div className="text-left border-l border-[#c8dcff]/40 pl-4"><div className="text-[13px] font-bold text-[#c8dcff]/90 tracking-widest leading-none">{timeline.next.type}{"    "}まで</div><div className="text-[12px] font-mono text-white/60 mt-1">{timeline.next.time.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div></div><div className="text-6xl font-bold tracking-tighter text-[#c8dcff] text-center py-2 glow-text">{formatD(timeline.next.time - locationNow)}</div></>) : (<div className="text-center opacity-10 text-[9px] py-4 tracking-[1.2em] uppercase">Static State Observer</div>)}</div>
+                        <div className="text-[7px] opacity-10 tracking-[1.5em] text-center uppercase leading-none">The Boundary Observer</div>
+                    </div>
+                    {showInfo && (
+                        <div className="info-overlay" onClick={() => setShowInfo(false)}><div className="info-content" onClick={e => e.stopPropagation()}><button onClick={() => setShowInfo(false)} className="fixed top-8 right-8 text-zinc-500 hover:text-white text-4xl transition-colors">×</button><header className="info-header"><h2 className="text-3xl font-black text-white italic tracking-tighter mb-4">境界の時空：月の観測室</h2><p className="text-sm tracking-[0.2em] text-[#c8dcff] font-bold">── (The Boundary Observer)</p></header><div className="space-y-10 text-base leading-relaxed text-slate-300 font-serif"><div className="info-section-card"><h3 className="text-xl font-bold text-white border-l-4 border-[#c8dcff] pl-4 mb-6">1. 概要 / Overview</h3><p>地球上の任意の地点における月の現在高度と、相対的な月光強度を算出。日々約50分ずつ遅れる月の公転リズムを、実存的な数値として記述します。</p></div><div className="info-section-card"><h3 className="text-xl font-bold text-white border-l-4 border-[#c8dcff] pl-4 mb-6">2. 指標の解説</h3><p className="text-sm">月齢（Age)は簡易算出値です。最大比・最小比は、月の軌道傾斜による最大高度到達時の光量を100%とした相対値を示します。</p></div><footer class="pt-12 text-center pb-12"><button onClick={() => setShowInfo(false)} className="bg-[#c8dcff] hover:bg-[#aabeff] text-black font-black py-4 px-12 rounded-full text-sm uppercase tracking-[0.2em] shadow-2xl transition-all active:scale-95">解説を閉じて観測に戻る</button></footer></div></div></div>
+                    )}
+                    {showSettings && (
+                        <div className="fixed inset-0 bg-black/98 backdrop-blur-3xl z-[210] flex items-center justify-center p-6 text-[#fce4ec]" onClick={() => setShowSettings(false)}><div className="w-full max-w-sm bg-[#0d0d0d] border border-[#c8dcff]/30 p-10 rounded-[60px] space-y-6 shadow-2xl overflow-y-auto max-h-[98vh]" onClick={e => e.stopPropagation()}><div className="text-center space-y-1"><h2 className="text-[#c8dcff] font-bold tracking-[0.2em] text-xl uppercase leading-none">Settings / 設定</h2><p className="text-[8px] opacity-40 uppercase tracking-[0.1em] mt-1">Lunar observation parameters</p></div><div className="space-y-5 pt-6 text-left"><div className="space-y-1.5"><div className="flex flex-col"><span className="text-[11px] font-bold text-white">主要都市を選択</span><span className="text-[7px] opacity-50 uppercase text-white/40 leading-none">Select City Preset</span></div><select className="w-full bg-[#1a1a1a] border border-white/10 p-4 rounded-2xl text-sm outline-none text-white" value={editForm.id || 'custom'} onChange={(e) => { const id = e.target.value; if (id !== 'custom') { const p = PRESETS[id]; setEditForm({ ...p, id, lat: String(p.lat), lng: String(p.lng), tz: String(p.tz) }); } else { setEditForm({ ...editForm, id: 'custom' }); } }}><option value="custom">-- 手動入力 (Manual) --</option>{Object.entries(PRESETS).map(([k, c]) => ( <option key={k} value={k}>{c.name.split(' / ')[0]}</option> ))}</select></div><div className="grid grid-cols-2 gap-4"><div className="space-y-1.5"><div className="flex flex-col"><span className="text-[11px] font-bold text-white">緯度</span><span className="text-[7px] opacity-50 uppercase text-white/40 leading-none">Latitude</span></div><input type="text" value={editForm.lat} disabled={editForm.id !== 'custom'} onChange={(e) => handleCoordChange('lat', e.target.value)} className={`w-full bg-[#1a1a1a] border border-white/10 p-3.5 rounded-2xl text-sm outline-none text-white ${editForm.id !== 'custom' ? 'opacity-30' : ''}`} /></div><div className="space-y-1.5"><div className="flex flex-col"><span className="text-[11px] font-bold text-white">経度</span><span className="text-[7px] opacity-50 uppercase text-white/40 leading-none">Longitude</span></div><input type="text" value={editForm.lng} disabled={editForm.id !== 'custom'} onChange={(e) => handleCoordChange('lng', e.target.value)} className={`w-full bg-[#1a1a1a] border border-white/10 p-3.5 rounded-2xl text-sm outline-none text-white ${editForm.id !== 'custom' ? 'opacity-30' : ''}`} /></div></div><div className="space-y-1.5"><div className="flex flex-col"><span className="text-[11px] font-bold text-white">標準時差 (UTC)</span><span className="text-[7px] opacity-50 uppercase text-white/40 leading-none">Timezone Offset</span></div><input type="text" value={editForm.tz} disabled={editForm.id !== 'custom'} onChange={(e) => setEditForm({ ...editForm, tz: e.target.value })} className={`w-full bg-[#1a1a1a] border border-white/10 p-4 rounded-2xl text-sm outline-none text-white ${editForm.id !== 'custom' ? 'opacity-30' : ''}`} /></div></div><div className="flex flex-col gap-3 pt-6"><button onClick={handleSave} className="w-full bg-[#c8dcff] text-black font-bold py-6 rounded-3xl shadow-lg active:scale-95 flex flex-col items-center justify-center gap-0.5 transition-all"><span className="text-base leading-none font-bold">設定を保存して適用</span><span className="text-[10px] opacity-70 uppercase font-medium tracking-widest leading-none">Save & Apply</span></button><button onClick={() => setShowSettings(false)} className="py-1 text-[10px] opacity-40 uppercase hover:opacity-100 transition-opacity text-white/50 tracking-widest">Close / 閉じる</button></div></div></div>)}
+                </div>
+            );
+        };
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
