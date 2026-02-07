@@ -12,12 +12,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>玄関：各室案内｜やまの純粋美術館</title>
-    <meta name="description" content="館内各展示室への入口。地形、社会、意志、太陽。それぞれの窓から、日常の裏側に潜む数理的な理を観測します。">
+    <meta name="description" content="館内各展示室への入口。地形、社会、意志、太陽、月。それぞれの窓から、日常の裏側に潜む数理的な理を観測します。">
     <link rel="canonical" href="https://edge-of-chaos.github.io/museum/">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* ベース設定：スクロールを許可し、中央揃えを調整 */
         body { 
             margin: 0; background: #050505; color: #d4d4d4; 
             font-family: "Hiragino Mincho ProN", "MS Mincho", serif; 
@@ -39,7 +38,6 @@
         h1 { font-size: 2.2rem; letter-spacing: 1.2rem; font-weight: normal; color: #ffffff; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.1); }
         .eng-sub { font-size: 0.7rem; letter-spacing: 0.4rem; color: #555; margin-top: 0.8rem; text-transform: uppercase; }
 
-        /* 脈動する円（シアンに統一） */
         .void-pulse { 
             width: 160px; height: 160px; border-radius: 50%; 
             background: radial-gradient(circle, rgba(0,212,255,0.15) 0%, rgba(0,0,0,0) 70%); 
@@ -61,13 +59,9 @@
         .exhibit-card:hover .exhibit-title { color: #ffffff; }
         .exhibit-sub { font-size: 0.55rem; color: #444; letter-spacing: 0.1rem; text-transform: uppercase; }
 
-        /* アーカイブセクション */
         .archive-section { margin-top: 80px; text-align: center; width: 90%; max-width: 550px; }
         .archive-divider { height: 1px; background: linear-gradient(90deg, transparent, #222, transparent); margin-bottom: 60px; }
-        .archive-link { 
-            display: inline-flex; flex-direction: column; align-items: center; 
-            text-decoration: none; transition: all 0.4s;
-        }
+        .archive-link { display: inline-flex; flex-direction: column; align-items: center; text-decoration: none; transition: all 0.4s; }
         .archive-icon { color: #00d4ff; opacity: 0.3; font-size: 2rem; margin-bottom: 15px; transition: all 0.4s; }
         .archive-link:hover .archive-icon { opacity: 1; transform: scale(1.1); }
         .archive-label { font-size: 0.7rem; letter-spacing: 0.4rem; color: #00d4ff; opacity: 0.5; font-weight: bold; text-transform: uppercase; }
@@ -76,7 +70,6 @@
 
         footer { margin-top: 100px; font-size: 0.55rem; color: #333; letter-spacing: 0.3rem; text-transform: uppercase; font-style: italic; }
 
-        /* モーダル基本設定 */
         #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: center; z-index: 100; }
         #modal-content { background: #0a0a0a; border: 1px solid #222; padding: 40px; max-width: 600px; width: 85%; max-height: 80vh; overflow-y: auto; line-height: 1.8; color: #b9b9b9; position: relative; }
         .modal-close-x { position: absolute; top: 20px; right: 25px; font-size: 1.8rem; color: #444; cursor: pointer; transition: color 0.3s; }
@@ -91,14 +84,8 @@
 <body>
 
     <div class="nav-cluster">
-        <a href="../" class="nav-back-link">
-            <i class="fa-solid fa-arrow-left"></i>
-            <span>敷地へ戻る</span>
-        </a>
-        <div class="info-trigger-top" onclick="openModal()">
-            <i class="fa-solid fa-circle-info info-icon"></i>
-            <span class="info-text">説明</span>
-        </div>
+        <a href="../" class="nav-back-link"><i class="fa-solid fa-arrow-left"></i><span>敷地へ戻る</span></a>
+        <div class="info-trigger-top" onclick="openModal()"><i class="fa-solid fa-circle-info info-icon"></i><span class="info-text">説明</span></div>
     </div>
 
     <header>
@@ -124,8 +111,12 @@
             <div class="exhibit-sub">Hierarchy of Wills: Structural Dynamics</div>
         </a>
         <a href="./solar-basho/" class="exhibit-card">
-            <div class="exhibit-title">境界の時空</div>
+            <div class="exhibit-title">境界の時空：太陽の観測室</div>
             <div class="exhibit-sub">The Boundary Observer: Solar Axis</div>
+        </a>
+        <a href="./moon-basho/" class="exhibit-card">
+            <div class="exhibit-title">境界の時空：月の観測室</div>
+            <div class="exhibit-sub">The Boundary Observer: Lunar Axis</div>
         </a>
         <a href="./temp-trend/" class="exhibit-card">
             <div class="exhibit-title">直近の気温観測</div>
@@ -147,27 +138,20 @@
     <div id="modal-overlay" onclick="closeModal()">
         <div id="modal-content" onclick="event.stopPropagation()">
             <span class="modal-close-x" onclick="closeModal()">&times;</span>
-            
             <h2>純粋美術館：現象と構造の観測所</h2>
             <p>当館へお越しいただき、ありがとうございます。ここは、私たちの世界を形づくる目に見えない律動を、あるがままに観測するための実験場です。</p>
-
             <h3>■ コンセプト：なぜここを作ったのか</h3>
             <p>現代の情報の海は、誰かの意図や一時的な流行によって絶えず塗り替えられています。そんな中で、そうした作為から一度離れ、ただそこにある世界の理（ことわり）に触れてみたいという想いが、この美術館のはじまりです。ここにあるのは、物理法則や数理的な理だけが描き出す、純粋な世界です。</p>
-
             <h3>■ 展示の軌跡：広がり続ける展示室</h3>
-            <p>館内に並ぶ展示室（プログラム）は、それぞれが世界の仕組みを覗き見るための小さな窓のようなものです。地形と水流、意思と社会、そして地から見た太陽……。展示室はこれからも、観測主・やまの探究の赴くままに、少しずつ増えていく予定です。</p>
-
+            <p>館内に並ぶ展示室（プログラム）は、それぞれが世界の仕組みを覗き見るための小さな窓のようなものです。地形と水流、意思と社会、そして地から見た太陽、月、感じた気温……。展示室はこれからも、観測主・やまの探究の赴くままに、少しずつ増えていく予定です。</p>
             <h3>■ 観測の楽しみ方</h3>
             <p>ここでは、あなたが装置を操作（行為）することで、初めて新しい現象が生まれます。数理が描く静かな風景の中に、あなただけの発見を見つけてみてください。</p>
-
             <div style="text-align: right; color: #b0b0b0; font-size: 0.85rem; margin-top: 50px; opacity: 0.8; letter-spacing: 0.1rem; line-height: 1.8;">
                 この静寂が、あなたを映す鏡となりますように。<br>
                 理（ことわり）が描く風景を、あなたと共に。<br>
                 ―― 館主・やま
             </div>
-
             <hr style="border: none; border-top: 1px solid #222; margin: 40px 0;">
-
             <h3 style="color: #b0b0b0; font-size: 1rem; font-weight: normal;">【プライバシーポリシー】</h3>
             <p style="font-size: 0.8rem; color: #b0b0b0;">当館では、美術館の利用状況を統計的に把握し、より良い体験を提供するための改善資料として、Googleアナリティクスを使用しています。</p>
             <ul style="font-size: 0.8rem; color: #b0b0b0; padding-left: 20px;">
@@ -175,17 +159,13 @@
                 <li>用途: 閲覧状況の統計的な把握のみに使用し、個人を特定する情報は一切取得しません。</li>
                 <li>設定: ブラウザの設定によりCookieを無効化することで、データの収集を拒否することが可能です。</li>
             </ul>
-
-            <div class="close-btn">
-                <span class="close-link" onclick="closeModal()">CLOSE</span>
-            </div>
+            <div class="close-btn"><span class="close-link" onclick="closeModal()">CLOSE</span></div>
         </div>
     </div>
 
     <script>
         function openModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
         function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
-        // モーダル外クリックで閉じる機能
         window.onclick = function(event) { if (event.target == document.getElementById('modal-overlay')) closeModal(); };
     </script>
 </body>
