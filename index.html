@@ -53,12 +53,12 @@
 
         @media (min-width: 1024px) { #bgLayer { background-size: contain; } }
 
-        /* 天空の観測ボード：中央寄りにコンパクト化 */
+        /* 天空の観測ボード：高密度・対称レイアウト */
         .celestial-dashboard {
             position: absolute;
             top: 40px;
             width: 90%;
-            max-width: 600px; /* ここを絞って左右の離れすぎを防止 */
+            max-width: 600px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -74,7 +74,6 @@
             flex: 1;
         }
 
-        /* 項目間の隙間を極限まで詰める */
         .point-box {
             display: flex;
             flex-direction: column;
@@ -89,7 +88,7 @@
         .conjunction-label {
             font-size: 0.6rem;
             color: var(--text-sub);
-            margin: 4px 0 2px; /* 上下の無駄なスペースを排除 */
+            margin: 4px 0 2px;
             letter-spacing: 0.4em;
         }
 
@@ -107,7 +106,7 @@
             color: #ffffff;
             font-family: serif;
             font-weight: bold;
-            padding-top: 8px; /* テキストの高さに合わせる */
+            padding-top: 8px;
             opacity: 0.6;
         }
 
@@ -248,6 +247,10 @@
         const NIGHT_URL = 'https://edge-of-chaos.github.io/top-landscape-night.jpg';
         let currentMode = '';
 
+        /**
+         * 太陽黄経計算エンジン ( Keplarian Model )
+         * 針の動きは 360度の物理モデルに準拠します。
+         */
         function getSolarLongitude(date) {
             const J2000 = new Date(Date.UTC(2000, 0, 1, 12, 0, 0));
             const n = (date - J2000) / (1000 * 60 * 60 * 24);
@@ -260,22 +263,31 @@
 
         function lonToUI(lon) { return (lon - 90 + 360) % 360; }
 
+        /**
+         * 国立天文台（NAOJ）精密データ
+         */
         function getCelestialPoints(year) {
-            const baselines = [
-                { jp: "春分", b: 20.69, m: 0.2422 },
-                { jp: "夏至", b: 21.37, m: 0.2422 },
-                { jp: "秋分", b: 23.09, m: 0.2422 },
-                { jp: "冬至", b: 21.93, m: 0.2422 }
-            ];
-            return baselines.map((p, i) => {
-                let day = p.b + (p.m * (year - 2000)) - Math.floor((year - 2000) / 4);
-                let frac = day - Math.floor(day);
-                let s = Math.floor(frac * 86400);
-                return {
-                    jp: p.jp,
-                    date: new Date(year, (i + 1) * 3 - 1, Math.floor(day), Math.floor(s/3600), Math.floor((s%3600)/60), s%60)
-                };
-            });
+            const naojData = {
+                2024: { "春分": "03-20T12:06:00", "夏至": "06-21T05:51:00", "秋分": "09-22T21:44:00", "冬至": "12-21T18:20:00" },
+                2025: { "春分": "03-20T18:01:00", "夏至": "06-21T11:42:00", "秋分": "09-23T03:19:00", "冬至": "12-22T00:03:00" },
+                2026: { "春分": "03-20T23:46:00", "夏至": "06-21T17:24:00", "秋分": "09-23T09:05:00", "冬至": "12-22T05:50:00" },
+                2027: { "春分": "03-21T05:25:00", "夏至": "06-21T23:11:00", "秋分": "09-23T15:02:00", "冬至": "12-22T11:42:00" }
+            };
+
+            const yearData = naojData[year];
+            if (!yearData) {
+                const baselines = [{jp:"春分",b:20.69},{jp:"夏至",b:21.37},{jp:"秋分",b:23.09},{jp:"冬至",b:21.93}];
+                return baselines.map((p, i) => {
+                    let d = p.b + (0.2422 * (year - 2000)) - Math.floor((year - 2000) / 4);
+                    let frac = d - Math.floor(d);
+                    let s = Math.floor(frac * 86400);
+                    return { jp: p.jp, date: new Date(year, (i + 1) * 3 - 1, Math.floor(d), Math.floor(s/3600), Math.floor((s%3600)/60), s%60) };
+                });
+            }
+
+            return Object.entries(yearData).map(([jp, timeStr]) => {
+                return { jp: jp, date: new Date(`${year}-${timeStr}+09:00`) };
+            }).sort((a, b) => a.date - b.date);
         }
 
         function toggleBg() {
@@ -314,16 +326,20 @@
             const now = new Date();
             const clockEl = document.getElementById('jst-clock');
             if(clockEl) clockEl.textContent = formatFullTime(now);
+
             const lon = getSolarLongitude(now);
             const uiAngle = lonToUI(lon);
             document.getElementById('clockHandWrap').style.transform = `rotate(${uiAngle}deg)`;
+
             const year = now.getFullYear();
             const allPoints = [...getCelestialPoints(year - 1), ...getCelestialPoints(year), ...getCelestialPoints(year + 1)].sort((a, b) => a.date - b.date);
+
             let last = null, next = null;
             for (let i = 0; i < allPoints.length; i++) {
                 if (allPoints[i].date <= now) last = allPoints[i];
                 else { next = allPoints[i]; break; }
             }
+
             if (last && next) {
                 document.getElementById('last-name').textContent = last.jp;
                 document.getElementById('last-time-full').textContent = formatFullTime(last.date);
