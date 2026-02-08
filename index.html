@@ -13,211 +13,309 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>やまの純粋美術館｜静寂と観測の敷地</title>
-    <meta name="description" content="境界の先に広がる、静かな観測の地。地表界隈や社会の構造を透視し、日常の裏側に潜む「理（ことわり）」を静かに見つめる場所です。">
-    
+    <meta name="description" content="宇宙の運行と同期する精密円環。日常の裏側に潜む理を風景とともに見つめる場所。">
     <link rel="canonical" href="https://edge-of-chaos.github.io/">
-
-    <meta property="og:title" content="やまの純粋美術館｜静寂と観測の敷地">
-    <meta property="og:description" content="境界の先に広がる、静かな観測の地。日常の裏側に潜む「理」を静かに見つめる場所です。">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://edge-of-chaos.github.io/">
-    <meta property="og:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
-    <meta property="og:site_name" content="やまの純粋美術館">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="やまの純粋美術館｜静寂と観測の敷地">
-    <meta name="twitter:description" content="境界の先に広がる、静かな観測の地。日常の裏側に潜む「理」を静かに見つめる場所です。">
-    <meta name="twitter:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
             --accent-blue: #00d4ff;
             --text-main: #ffffff;
             --text-sub: rgba(255, 255, 255, 0.4);
-            --magnet-power: 0; 
+            --glass-border: rgba(255, 255, 255, 0.08);
+            /* カウントダウン数字用の控えめな色 */
+            --timer-color: rgba(255, 255, 255, 0.7);
         }
 
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            background: #000;
-            display: flex; justify-content: center; align-items: center;
-            font-family: "Hiragino Mincho ProN", "MS Mincho", serif;
+        html { background-color: #000; }
+
+        body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: transparent; 
+            color: var(--text-main);
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            letter-spacing: 0.15em;
             overflow: hidden;
-        }
-        
-        .world-container {
-            position: relative;
-            height: 100vh;
-            width: calc(100vh * (2/3));
-            max-width: 100vw;
-            background-repeat: no-repeat;
-            background-position: center center;
-            background-size: contain;
-            transition: background-image 2s ease-in-out;
-        }
-
-        .author-signature {
-            position: absolute; top: 25px; right: 25px;
-            color: var(--text-main); font-size: 0.75rem; letter-spacing: 0.15rem;
-            opacity: 0.6; z-index: 30; cursor: pointer;
-            text-shadow: 0 0 8px rgba(0,0,0,0.5); transition: opacity 0.3s;
-        }
-        .author-signature:hover { opacity: 1; }
-        .author-signature span { font-size: 0.6rem; margin: 0 0.05rem; }
-
-        .area-node {
-            position: absolute; 
-            left: 0; 
             display: flex; flex-direction: column; align-items: center;
-            text-decoration: none; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); width: 100%;
         }
 
-        .museum-aura {
-            position: absolute; top: 50%; left: 50%;
-            width: 300px; height: 300px; transform: translate(-50%, -50%);
-            background: radial-gradient(circle, rgba(0, 212, 255, calc(0.15 + var(--magnet-power) * 0.2)) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1; pointer-events: none;
-            filter: blur(20px); animation: aura-pulse 4s infinite ease-in-out;
+        #bgLayer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: -10; 
+            filter: brightness(0.6);
+            opacity: 1;
+            background-color: #000;
+            transition: background-image 2.5s ease-in-out;
         }
 
-        .node-prefix {
-            font-size: 0.9rem; letter-spacing: 0.1rem; color: var(--text-main);
-            margin-bottom: 0.3rem; font-weight: normal; opacity: 0.9;
+        /* 天空の観測計 */
+        .celestial-bar {
+            position: absolute;
+            top: 35px; width: 100%;
+            display: flex; flex-direction: column; align-items: center;
+            z-index: 20;
+            pointer-events: none;
         }
-        .node-prefix span { font-size: 0.6rem; margin-left: 0.1rem; opacity: 0.8; }
 
-        .label-jp { 
-            letter-spacing: 0.5rem; 
-            text-indent: 0.5rem; 
-            color: var(--text-main); text-shadow: 0 0 15px rgba(0,0,0,0.8); margin-bottom: 0.3rem; 
+        .chronometer-top { display: flex; align-items: center; gap: 0px; font-weight: 200; }
+        .point-box { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 4px; }
+        .point-name { font-size: 1.15rem; color: var(--text-main); margin-bottom: 2px; letter-spacing: 0.35em; }
+        .point-time { font-size: 0.55rem; font-family: "Courier New", monospace; color: var(--text-sub); margin-top: 4px; }
+        .conjunction { font-size: 0.65rem; color: var(--text-sub); padding-bottom: 28px; }
+        .arrow { color: #ffffff; font-size: 1.15rem; margin: 0 6px; padding-bottom: 28px; font-family: serif; font-weight: bold; }
+
+        .duration-info { margin-top: 20px; display: flex; gap: 40px; }
+        .duration-item { display: flex; flex-direction: column; align-items: center; }
+        .duration-item .label { font-size: 0.45rem; color: var(--text-sub); letter-spacing: 0.25em; margin-bottom: 6px; }
+        /* 数字の色を控えめに変更 */
+        .duration-item b { color: var(--timer-color); font-weight: normal; font-family: "Courier New", monospace; font-size: 1.3rem; letter-spacing: 0.05em; }
+
+        /* 右上の文字だけリンク：装飾なし */
+        .manual-nav {
+            position: absolute;
+            top: 25px; right: 30px;
+            z-index: 100;
         }
-        .label-en { letter-spacing: 0.2rem; color: var(--text-sub); text-transform: uppercase; transition: color 0.4s; }
 
-        /* 美術館ノード */
-        .node-museum { 
-            top: 30%; cursor: pointer; z-index: 20; opacity: 0.8;
-            animation: heartbeat 4s infinite ease-in-out; 
+        .nav-link-discreet {
+            text-decoration: none !important; color: #666; font-size: 0.75rem; letter-spacing: 0.15rem;
+            cursor: pointer; transition: color 0.4s;
+            display: block;
+            border: none !important;
+            outline: none !important;
         }
-        .node-museum .node-prefix { font-size: 1.1rem; }
-        .node-museum .label-jp { font-size: 1.8rem; }
-        .node-museum .label-en { font-size: 0.75rem; }
+        .nav-link-discreet:hover { color: var(--accent-blue); }
 
-        .node-museum:hover { transform: scale(1.15) !important; animation-play-state: paused; }
-        .node-museum:hover .label-jp { color: var(--accent-blue); text-shadow: 0 0 25px rgba(0, 212, 255, 0.6); }
+        /* 中央の円環クロノメーター */
+        .seasonal-clock-container {
+            position: absolute;
+            top: 54%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 480px; height: 480px;
+            z-index: 50;
+            display: flex; justify-content: center; align-items: center;
+            pointer-events: none;
+        }
 
-        /* 東屋・図書館ノード（ベース） */
-        .node-gazebo, .node-library { bottom: 25%; opacity: 0.5; }
-        .node-gazebo .label-jp, .node-library .label-jp { font-size: 1.1rem; transition: all 0.4s; }
-        .node-gazebo .label-en, .node-library .label-en { font-size: 0.5rem; }
+        .clock-ring { position: absolute; width: 100%; height: 100%; border: 1px solid var(--glass-border); border-radius: 50%; opacity: 0.3; }
+        .marker { position: absolute; color: var(--text-sub); font-size: 0.75rem; letter-spacing: 0.3em; white-space: nowrap; }
+        .marker-top { top: -35px; left: 50%; transform: translateX(-50%); } 
+        .marker-right { right: -60px; top: 50%; transform: translateY(-50%); } 
+        .marker-bottom { bottom: -35px; left: 50%; transform: translateX(-50%); } 
+        .marker-left { left: -60px; top: 50%; transform: translateY(-50%); } 
+
+        .clock-hand-wrap { position: absolute; width: 100%; height: 100%; top: 0; left: 0; transition: transform 1s linear; }
+        .clock-hand { position: absolute; top: 0; left: 50%; width: 1px; height: 50%; background: linear-gradient(to bottom, var(--accent-blue), transparent); transform-origin: bottom center; }
+        .clock-hand-dot { position: absolute; top: -4px; left: 50%; width: 9px; height: 9px; background: var(--accent-blue); border-radius: 50%; transform: translateX(-50%); box-shadow: 0 0 25px var(--accent-blue); }
+
+        /* 命の脈動 */
+        .void-pulse { 
+            width: 230px; height: 230px; border-radius: 50%; 
+            background: radial-gradient(circle, rgba(0,212,255,0.2) 0%, rgba(0,0,0,0) 70%); 
+            border: 2px solid rgba(0,212,255,0.5); 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            z-index: -1; animation: pulse 6s infinite ease-in-out; pointer-events: none;
+        }
+        @keyframes pulse { 
+            0%, 100% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.2; } 
+            50% { transform: translate(-50%, -50%) scale(1.45); opacity: 0.9; box-shadow: 0 0 80px rgba(0,212,255,0.4); } 
+        }
+
+        /* 玄関への扉 */
+        .entrance-container { z-index: 100; text-align: center; pointer-events: auto; position: relative; }
+        .entrance-link { text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .entrance-link h1 { font-size: 2.3rem; font-weight: 200; margin: 0; letter-spacing: 0.55em; line-height: 1.7; text-shadow: 0 0 40px rgba(0,0,0,1); white-space: nowrap; }
         
-        /* 図書館（収蔵庫リンク）のホバー演出 */
-        .node-library { left: 25%; cursor: pointer; }
-        .node-library:hover { opacity: 1; transform: scale(1.1); }
-        .node-library:hover .label-jp { color: var(--accent-blue); }
-        .node-library:hover .label-en { color: #888; }
-
-        .node-gazebo { left: -25%; cursor: default; }
-
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(calc(1.04 + var(--magnet-power) * 0.04)); }
+        /* CLICK誘導：スタイリッシュな案内 */
+        .click-trigger {
+            font-size: 0.6rem;
+            letter-spacing: 0.8em;
+            color: var(--accent-blue);
+            margin-top: 15px;
+            opacity: 0.8;
+            font-weight: 900;
+            text-transform: uppercase;
+            animation: blink 3s infinite;
         }
+        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        @keyframes aura-pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.5; }
-            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-        }
-
-        .footer-quote {
-            position: absolute; bottom: 30px; width: 100%; text-align: center;
-            font-size: 0.55rem; color: rgba(255,255,255,0.2); letter-spacing: 0.4rem; text-transform: uppercase;
-        }
+        .responsive-br { display: none; }
 
         @media (max-width: 600px) {
-            .world-container { width: 100vw; }
-            .node-museum .label-jp { font-size: 1.4rem; letter-spacing: 0.3rem; }
-            .node-museum .node-prefix { font-size: 0.9rem; }
-            .node-gazebo .label-jp, .node-library .label-jp { font-size: 0.9rem; }
-            .node-gazebo { left: -20%; }
-            .node-library { left: 20%; }
-            .author-signature { top: 20px; right: 20px; font-size: 0.65rem; }
-            .author-signature span { font-size: 0.55rem; }
+            .responsive-br { display: block; }
+            .entrance-link h1 { white-space: normal; line-height: 1.4; font-size: 1.7rem; }
+            .seasonal-clock-container { width: 320px; height: 320px; }
+            .marker-right { right: -45px; } .marker-left { left: -45px; }
+            .manual-nav { top: 20px; right: 20px; }
+            .void-pulse { width: 160px; height: 160px; }
         }
+
+        .entrance-link:hover { transform: scale(1.045); text-shadow: 0 0 45px var(--accent-blue), 0 0 15px #fff; letter-spacing: 0.6em; }
+        .museum-desc { font-size: 0.85rem; margin-top: 25px; color: var(--text-main); opacity: 0.45; letter-spacing: 0.4em; transition: all 1.2s ease; }
+
+        .footer-clock { position: absolute; bottom: 30px; font-size: 0.6rem; color: var(--text-sub); letter-spacing: 0.6em; z-index: 20; font-family: "Courier New", monospace; }
     </style>
 </head>
 <body>
 
-    <div class="world-container" id="mainWorld">
-        <div class="author-signature" id="signature" onclick="toggleNightMode()"></div>
+    <div id="bgLayer"></div>
 
-        <a href="./museum/" class="area-node node-museum" id="museumNode">
-            <div class="museum-aura"></div>
-            <span class="node-prefix">やま<span>の</span></span>
-            <span class="label-jp">純粋美術館</span>
-            <span class="label-en">Museum of Pure Experience</span>
-        </a>
-
-        <div class="area-node node-gazebo">
-            <span class="label-jp">東屋</span>
-            <span class="label-en">Gazebo</span>
+    <div class="manual-nav">
+        <div id="bgToggleLink" class="nav-link-discreet" onclick="toggleBg()">
+            <span>---</span>
         </div>
+    </div>
 
-        <a href="museum/archive/index.html" class="area-node node-library">
-            <span class="label-jp">収蔵庫</span>
-            <span class="label-en">Library</span>
-        </a>
+    <div class="celestial-bar">
+        <div class="chronometer-top">
+            <div class="point-box">
+                <span class="point-name" id="last-name">---</span>
+                <span class="point-time" id="last-time-full">---</span>
+            </div>
+            <span class="conjunction">から</span>
+            <div class="arrow">>></div>
+            <div class="point-box">
+                <span class="point-name" id="next-name">---</span>
+                <span class="point-time" id="next-time-full">---</span>
+            </div>
+            <span class="conjunction">まで</span>
+        </div>
+        <div class="duration-info">
+            <div class="duration-item">
+                <span class="label">ELAPSED</span>
+                <b id="elapsed-display">00d 00:00:00</b>
+            </div>
+            <div class="duration-item">
+                <span class="label">REMAINING</span>
+                <b id="countdown-display">00d 00:00:00</b>
+            </div>
+        </div>
+    </div>
 
-        <div class="footer-quote">Absolute Contradiction & Co-evolution</div>
+    <div class="seasonal-clock-container">
+        <div class="clock-ring"></div>
+        <div class="marker marker-top">夏至</div>
+        <div class="marker marker-right">秋分</div>
+        <div class="marker marker-bottom">冬至</div>
+        <div class="marker marker-left">春分</div>
+        <div id="clockHandWrap" class="clock-hand-wrap">
+            <div class="clock-hand"></div>
+            <div class="clock-hand-dot"></div>
+        </div>
+        <div class="entrance-container">
+            <div class="void-pulse"></div>
+            <a href="./list.html" class="entrance-link">
+                <h1>やまの<br class="responsive-br">純粋美術館</h1>
+                <p class="museum-desc">静寂と観測の敷地</p>
+                <div class="click-trigger">CLICK TO ENTER</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer-clock">
+        PRECISION JST: <span id="jst-clock">0000.00.00 00:00:00</span>
     </div>
 
     <script>
-        let isManualNightMode = null;
+        const DAY_URL = 'https://edge-of-chaos.github.io/top-landscape.jpg';
+        const NIGHT_URL = 'https://edge-of-chaos.github.io/top-landscape-night.jpg';
+        let currentMode = '';
 
-        function updateEnvironment() {
-            const world = document.getElementById('mainWorld');
-            const sig = document.getElementById('signature');
-            let isNight;
-            if (isManualNightMode !== null) {
-                isNight = isManualNightMode;
-            } else {
-                const now = new Date();
-                const hour = now.getHours();
-                isNight = (hour >= 18 || hour < 6);
+        function getSolarLongitude(date) {
+            const J2000 = new Date(Date.UTC(2000, 0, 1, 12, 0, 0));
+            const n = (date - J2000) / (1000 * 60 * 60 * 24);
+            let L = (280.460 + 0.9856474 * n) % 360;
+            let g = (357.528 + 0.9856003 * n) % 360;
+            let gRad = g * Math.PI / 180;
+            let lambda = L + 1.915 * Math.sin(gRad) + 0.020 * Math.sin(2 * gRad);
+            return (lambda + 360) % 360;
+        }
+
+        function lonToUI(lon) { return (lon - 90 + 360) % 360; }
+
+        function getCelestialPoints(year) {
+            const baselines = [
+                { jp: "春分", b: 20.69, m: 0.2422 },
+                { jp: "夏至", b: 21.37, m: 0.2422 },
+                { jp: "秋分", b: 23.09, m: 0.2422 },
+                { jp: "冬至", b: 21.93, m: 0.2422 }
+            ];
+            return baselines.map((p, i) => {
+                let day = p.b + (p.m * (year - 2000)) - Math.floor((year - 2000) / 4);
+                let frac = day - Math.floor(day);
+                let s = Math.floor(frac * 86400);
+                return {
+                    jp: p.jp,
+                    date: new Date(year, (i + 1) * 3 - 1, Math.floor(day), Math.floor(s/3600), Math.floor((s%3600)/60), s%60)
+                };
+            });
+        }
+
+        function toggleBg() {
+            const nextMode = (currentMode === 'day') ? 'night' : 'day';
+            applyMode(nextMode);
+        }
+
+        function applyMode(mode) {
+            currentMode = mode;
+            const bg = document.getElementById('bgLayer');
+            const link = document.getElementById('bgToggleLink');
+            bg.style.backgroundImage = `url('${mode === 'day' ? DAY_URL : NIGHT_URL}')`;
+            link.innerHTML = `<span>${mode === 'day' ? 'やまの朝' : 'やまの夜'}</span>`;
+        }
+
+        function initBackground() {
+            const hour = new Date().getHours();
+            const isNight = (hour >= 18 || hour < 5);
+            applyMode(isNight ? 'night' : 'day');
+        }
+
+        function formatDuration(ms) {
+            const absMs = Math.abs(ms);
+            const d = Math.floor(absMs / 86400000);
+            const h = Math.floor((absMs % 86400000) / 3600000);
+            const m = Math.floor((absMs % 3600000) / 60000);
+            const s = Math.floor((absMs % 60000) / 1000);
+            return `${d}d ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function formatFullTime(date) {
+            return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+        }
+
+        function update() {
+            const now = new Date();
+            const clockEl = document.getElementById('jst-clock');
+            if(clockEl) clockEl.textContent = formatFullTime(now);
+            const lon = getSolarLongitude(now);
+            const uiAngle = lonToUI(lon);
+            document.getElementById('clockHandWrap').style.transform = `rotate(${uiAngle}deg)`;
+            const year = now.getFullYear();
+            const allPoints = [...getCelestialPoints(year - 1), ...getCelestialPoints(year), ...getCelestialPoints(year + 1)].sort((a, b) => a.date - b.date);
+            let last = null, next = null;
+            for (let i = 0; i < allPoints.length; i++) {
+                if (allPoints[i].date <= now) last = allPoints[i];
+                else { next = allPoints[i]; break; }
             }
-            if (isNight) {
-                world.style.backgroundImage = "url('https://edge-of-chaos.github.io/top-landscape-night.jpg')";
-                sig.innerHTML = 'やま<span>の</span>夜';
-            } else {
-                world.style.backgroundImage = "url('https://edge-of-chaos.github.io/top-landscape.jpg')";
-                sig.innerHTML = 'やま<span>の</span>朝';
+            if (last && next) {
+                document.getElementById('last-name').textContent = last.jp;
+                document.getElementById('last-time-full').textContent = formatFullTime(last.date);
+                document.getElementById('next-name').textContent = next.jp;
+                document.getElementById('next-time-full').textContent = formatFullTime(next.date);
+                document.getElementById('elapsed-display').textContent = formatDuration(now - last.date);
+                document.getElementById('countdown-display').textContent = formatDuration(next.date - now);
             }
         }
 
-        function toggleNightMode() {
-            const world = document.getElementById('mainWorld');
-            const currentIsNight = world.style.backgroundImage.includes('night');
-            isManualNightMode = !currentIsNight;
-            updateEnvironment();
-        }
-
-        document.addEventListener('mousemove', (e) => {
-            const node = document.getElementById('museumNode');
-            if (!node) return;
-            const rect = node.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const dist = Math.hypot(e.clientX - centerX, e.clientY - centerY);
-            
-            const power = Math.max(0, 1 - dist / 250);
-            node.style.setProperty('--magnet-power', power);
-        });
-
-        document.addEventListener('touchstart', () => {
-             document.getElementById('museumNode').style.setProperty('--magnet-power', '0.5');
-        }, {passive: true});
-
-        updateEnvironment();
-        setInterval(updateEnvironment, 60000);
+        window.onload = () => {
+            initBackground(); 
+            setInterval(update, 1000);
+            update();
+        };
     </script>
 </body>
 </html>
