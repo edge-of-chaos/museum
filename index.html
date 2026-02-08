@@ -41,7 +41,6 @@
         #bgLayer {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            /* 基本設定：モバイル優先で画面を埋め尽くす */
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -52,11 +51,9 @@
             transition: background-image 2.5s ease-in-out;
         }
 
-        /* 【追加】PC画面（幅1024px以上）向けの調整 */
+        /* PC画面（幅1024px以上）向けの背景調整 */
         @media (min-width: 1024px) {
             #bgLayer {
-                /* 画像全体が収まるように表示（拡大しすぎを防ぐ） */
-                /* 余白が出た場合は黒背景になる */
                 background-size: contain;
             }
         }
@@ -120,7 +117,7 @@
         .clock-hand { position: absolute; top: 0; left: 50%; width: 1px; height: 50%; background: linear-gradient(to bottom, var(--accent-blue), transparent); transform-origin: bottom center; }
         .clock-hand-dot { position: absolute; top: -4px; left: 50%; width: 9px; height: 9px; background: var(--accent-blue); border-radius: 50%; transform: translateX(-50%); box-shadow: 0 0 25px var(--accent-blue); }
 
-        /* 命の脈動 */
+        /* 命の脈動（ Void Pulse ） */
         .void-pulse { 
             width: 230px; height: 230px; border-radius: 50%; 
             background: radial-gradient(circle, rgba(0,212,255,0.2) 0%, rgba(0,0,0,0) 70%); 
@@ -216,7 +213,7 @@
         </div>
         <div class="entrance-container">
             <div class="void-pulse"></div>
-            <a href="./list.html" class="entrance-link">
+            <a href="https://edge-of-chaos.github.io/museum/" class="entrance-link">
                 <h1>やまの<br class="responsive-br">純粋美術館</h1>
                 <p class="museum-desc">静寂と観測の敷地</p>
                 <div class="click-trigger">CLICK TO ENTER</div>
