@@ -46,59 +46,26 @@
         }
         @media (min-width: 1024px) { #bgLayer { background-size: contain; } }
 
-        /* 天空の観測ボード */
         .celestial-dashboard {
             position: absolute;
-            top: 40px;
-            width: 90%;
-            max-width: 600px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            gap: 15px;
-            z-index: 20;
-            pointer-events: none;
+            top: 40px; width: 90%; max-width: 600px;
+            display: flex; justify-content: center; align-items: flex-start;
+            gap: 15px; z-index: 20; pointer-events: none;
         }
 
-        .dashboard-side {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-        }
+        .dashboard-side { display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .point-box { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 2px; }
 
-        .point-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            margin-bottom: 2px;
-        }
-
-        /* 冬至・春分の文字：少し小さく (1.3rem -> 0.95rem) */
         .point-name { font-size: 0.95rem; color: var(--text-main); letter-spacing: 0.35em; line-height: 1.2; font-weight: 300; }
-        .point-time { font-size: 0.5rem; font-family: "Courier New", monospace; color: var(--text-sub); margin-top: 2px; }
+        .point-time { font-size: 0.5rem; font-family: "Courier New", monospace; color: var(--text-sub); margin-top: 4px; }
 
-        /* から・までの文字：少し大きく (0.6rem -> 0.8rem) */
-        .conjunction-label {
-            font-size: 0.8rem;
-            color: var(--text-sub);
-            margin: 6px 0 4px;
-            letter-spacing: 0.4em;
-        }
+        .conjunction-label { font-size: 0.8rem; color: var(--text-sub); margin: 6px 0 4px; letter-spacing: 0.4em; }
 
         .duration-item { display: flex; flex-direction: column; align-items: center; }
         .duration-item .label { font-size: 0.4rem; color: var(--text-sub); letter-spacing: 0.2em; margin-bottom: 2px; }
         .duration-item b { color: var(--timer-color); font-weight: normal; font-family: "Courier New", monospace; font-size: 1.15rem; letter-spacing: 0.05em; }
 
-        .arrow-center {
-            font-size: 1.1rem;
-            color: #ffffff;
-            font-family: serif;
-            font-weight: bold;
-            padding-top: 8px;
-            opacity: 0.4;
-        }
+        .arrow-center { font-size: 1.1rem; color: #ffffff; font-family: serif; font-weight: bold; padding-top: 8px; opacity: 0.4; }
 
         .manual-nav { position: absolute; top: 25px; right: 30px; z-index: 100; }
         .nav-link-discreet {
@@ -233,9 +200,6 @@
 
         function lonToUI(lon) { return (lon - 90 + 360) % 360; }
 
-        /**
-         * 国立天文台 (NAOJ) Precision Data - JST Seconds
-         */
         function getCelestialPoints(year) {
             const naojData = {
                 2024: { "春分": "03-20T12:06:03", "夏至": "06-21T05:50:41", "秋分": "09-22T21:43:30", "冬至": "12-21T18:20:20" },
@@ -246,10 +210,11 @@
 
             const yearData = naojData[year];
             if (!yearData) {
+                // 精密テーブル外（2028年以降）は、合理的な近似式で理を守る
                 const baselines = [{jp:"春分",b:20.69},{jp:"夏至",b:21.37},{jp:"秋分",b:23.09},{jp:"冬至",b:21.93}];
                 return baselines.map((p, i) => {
                     let d = p.b + (0.2422 * (year - 2000)) - Math.floor((year - 2000) / 4);
-                    let frac = d - Math.floor(day);
+                    let frac = d - Math.floor(d);
                     let s = Math.floor(frac * 86400);
                     return { jp: p.jp, date: new Date(year, (i + 1) * 3 - 1, Math.floor(d), Math.floor(s/3600), Math.floor((s%3600)/60), s%60) };
                 });
