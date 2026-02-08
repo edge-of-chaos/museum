@@ -27,7 +27,6 @@
         }
 
         html { background-color: #000; }
-
         body {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: transparent; 
@@ -41,19 +40,13 @@
         #bgLayer {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            z-index: -10; 
-            filter: brightness(0.6);
-            opacity: 1;
-            background-color: #000;
+            background-size: cover; background-repeat: no-repeat; background-position: center;
+            z-index: -10; filter: brightness(0.6); opacity: 1; background-color: #000;
             transition: background-image 2.5s ease-in-out;
         }
-
         @media (min-width: 1024px) { #bgLayer { background-size: contain; } }
 
-        /* 天空の観測ボード：高密度・対称レイアウト */
+        /* 天空の観測ボード */
         .celestial-dashboard {
             position: absolute;
             top: 40px;
@@ -82,22 +75,19 @@
             margin-bottom: 2px;
         }
 
-        .point-name { font-size: 1.1rem; color: var(--text-main); letter-spacing: 0.35em; line-height: 1.2; }
+        /* 冬至・春分の文字：少し小さく (1.3rem -> 0.95rem) */
+        .point-name { font-size: 0.95rem; color: var(--text-main); letter-spacing: 0.35em; line-height: 1.2; font-weight: 300; }
         .point-time { font-size: 0.5rem; font-family: "Courier New", monospace; color: var(--text-sub); margin-top: 2px; }
 
+        /* から・までの文字：少し大きく (0.6rem -> 0.8rem) */
         .conjunction-label {
-            font-size: 0.6rem;
+            font-size: 0.8rem;
             color: var(--text-sub);
-            margin: 4px 0 2px;
+            margin: 6px 0 4px;
             letter-spacing: 0.4em;
         }
 
-        .duration-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
+        .duration-item { display: flex; flex-direction: column; align-items: center; }
         .duration-item .label { font-size: 0.4rem; color: var(--text-sub); letter-spacing: 0.2em; margin-bottom: 2px; }
         .duration-item b { color: var(--timer-color); font-weight: normal; font-family: "Courier New", monospace; font-size: 1.15rem; letter-spacing: 0.05em; }
 
@@ -107,10 +97,9 @@
             font-family: serif;
             font-weight: bold;
             padding-top: 8px;
-            opacity: 0.6;
+            opacity: 0.4;
         }
 
-        /* 右上の文字だけリンク */
         .manual-nav { position: absolute; top: 25px; right: 30px; z-index: 100; }
         .nav-link-discreet {
             text-decoration: none !important; color: #666; font-size: 0.75rem; letter-spacing: 0.15rem;
@@ -118,15 +107,12 @@
         }
         .nav-link-discreet:hover { color: var(--accent-blue); }
 
-        /* 中央の円環クロノメーター */
         .seasonal-clock-container {
             position: absolute;
             top: 58%; left: 50%;
             transform: translate(-50%, -50%);
             width: 480px; height: 480px;
-            z-index: 50;
-            display: flex; justify-content: center; align-items: center;
-            pointer-events: none;
+            z-index: 50; display: flex; justify-content: center; align-items: center; pointer-events: none;
         }
 
         .clock-ring { position: absolute; width: 100%; height: 100%; border: 1px solid var(--glass-border); border-radius: 50%; opacity: 0.3; }
@@ -140,7 +126,6 @@
         .clock-hand { position: absolute; top: 0; left: 50%; width: 1px; height: 50%; background: linear-gradient(to bottom, var(--accent-blue), transparent); transform-origin: bottom center; }
         .clock-hand-dot { position: absolute; top: -4px; left: 50%; width: 9px; height: 9px; background: var(--accent-blue); border-radius: 50%; transform: translateX(-50%); box-shadow: 0 0 25px var(--accent-blue); }
 
-        /* 命の脈動 */
         .void-pulse { 
             width: 230px; height: 230px; border-radius: 50%; 
             background: radial-gradient(circle, rgba(0,212,255,0.2) 0%, rgba(0,0,0,0) 70%); 
@@ -153,30 +138,21 @@
             50% { transform: translate(-50%, -50%) scale(1.45); opacity: 0.9; box-shadow: 0 0 80px rgba(0,212,255,0.4); } 
         }
 
-        /* 玄関への扉 */
         .entrance-container { z-index: 100; text-align: center; pointer-events: auto; position: relative; }
         .entrance-link { text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .entrance-link h1 { font-size: 2.3rem; font-weight: 200; margin: 0; letter-spacing: 0.55em; line-height: 1.7; text-shadow: 0 0 40px rgba(0,0,0,1); white-space: nowrap; }
-        
         .click-trigger { font-size: 0.6rem; letter-spacing: 0.8em; color: var(--accent-blue); margin-top: 15px; opacity: 0.8; font-weight: 900; text-transform: uppercase; animation: blink 3s infinite; }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-
-        .responsive-br { display: none; }
 
         @media (max-width: 600px) {
             .celestial-dashboard { gap: 8px; top: 25px; max-width: 340px; }
             .point-name { font-size: 0.85rem; letter-spacing: 0.15em; }
+            .conjunction-label { font-size: 0.7rem; }
             .duration-item b { font-size: 0.95rem; }
-            .responsive-br { display: block; }
             .entrance-link h1 { white-space: normal; line-height: 1.4; font-size: 1.7rem; }
             .seasonal-clock-container { width: 320px; height: 320px; top: 60%; }
-            .marker-right { right: -45px; } .marker-left { left: -45px; }
-            .manual-nav { top: 20px; right: 20px; }
-            .void-pulse { width: 160px; height: 160px; }
         }
 
-        .entrance-link:hover { transform: scale(1.045); text-shadow: 0 0 45px var(--accent-blue), 0 0 15px #fff; letter-spacing: 0.6em; }
-        .museum-desc { font-size: 0.85rem; margin-top: 25px; color: var(--text-main); opacity: 0.45; letter-spacing: 0.4em; transition: all 1.2s ease; }
         .footer-clock { position: absolute; bottom: 30px; font-size: 0.6rem; color: var(--text-sub); letter-spacing: 0.6em; z-index: 20; font-family: "Courier New", monospace; }
     </style>
 </head>
@@ -202,9 +178,7 @@
                 <b id="elapsed-display">00d 00:00:00</b>
             </div>
         </div>
-
         <div class="arrow-center">>></div>
-
         <div class="dashboard-side">
             <div class="point-box">
                 <span class="point-name" id="next-name">---</span>
@@ -247,10 +221,6 @@
         const NIGHT_URL = 'https://edge-of-chaos.github.io/top-landscape-night.jpg';
         let currentMode = '';
 
-        /**
-         * 太陽黄経計算エンジン ( Keplarian Model )
-         * 針の動きは 360度の物理モデルに準拠します。
-         */
         function getSolarLongitude(date) {
             const J2000 = new Date(Date.UTC(2000, 0, 1, 12, 0, 0));
             const n = (date - J2000) / (1000 * 60 * 60 * 24);
@@ -264,14 +234,14 @@
         function lonToUI(lon) { return (lon - 90 + 360) % 360; }
 
         /**
-         * 国立天文台（NAOJ）精密データ
+         * 国立天文台 (NAOJ) Precision Data - JST Seconds
          */
         function getCelestialPoints(year) {
             const naojData = {
-                2024: { "春分": "03-20T12:06:00", "夏至": "06-21T05:51:00", "秋分": "09-22T21:44:00", "冬至": "12-21T18:20:00" },
-                2025: { "春分": "03-20T18:01:00", "夏至": "06-21T11:42:00", "秋分": "09-23T03:19:00", "冬至": "12-22T00:03:00" },
-                2026: { "春分": "03-20T23:46:00", "夏至": "06-21T17:24:00", "秋分": "09-23T09:05:00", "冬至": "12-22T05:50:00" },
-                2027: { "春分": "03-21T05:25:00", "夏至": "06-21T23:11:00", "秋分": "09-23T15:02:00", "冬至": "12-22T11:42:00" }
+                2024: { "春分": "03-20T12:06:03", "夏至": "06-21T05:50:41", "秋分": "09-22T21:43:30", "冬至": "12-21T18:20:20" },
+                2025: { "春分": "03-20T18:01:14", "夏至": "06-21T11:42:01", "秋分": "09-23T03:19:10", "冬至": "12-22T00:03:01" },
+                2026: { "春分": "03-20T23:45:42", "夏至": "06-21T17:24:16", "秋分": "09-23T09:05:01", "冬至": "12-22T05:50:09" },
+                2027: { "春分": "03-21T05:24:34", "夏至": "06-21T23:10:45", "秋分": "09-23T15:01:34", "冬至": "12-22T11:42:04" }
             };
 
             const yearData = naojData[year];
@@ -279,7 +249,7 @@
                 const baselines = [{jp:"春分",b:20.69},{jp:"夏至",b:21.37},{jp:"秋分",b:23.09},{jp:"冬至",b:21.93}];
                 return baselines.map((p, i) => {
                     let d = p.b + (0.2422 * (year - 2000)) - Math.floor((year - 2000) / 4);
-                    let frac = d - Math.floor(d);
+                    let frac = d - Math.floor(day);
                     let s = Math.floor(frac * 86400);
                     return { jp: p.jp, date: new Date(year, (i + 1) * 3 - 1, Math.floor(d), Math.floor(s/3600), Math.floor((s%3600)/60), s%60) };
                 });
@@ -326,20 +296,16 @@
             const now = new Date();
             const clockEl = document.getElementById('jst-clock');
             if(clockEl) clockEl.textContent = formatFullTime(now);
-
             const lon = getSolarLongitude(now);
             const uiAngle = lonToUI(lon);
             document.getElementById('clockHandWrap').style.transform = `rotate(${uiAngle}deg)`;
-
             const year = now.getFullYear();
             const allPoints = [...getCelestialPoints(year - 1), ...getCelestialPoints(year), ...getCelestialPoints(year + 1)].sort((a, b) => a.date - b.date);
-
             let last = null, next = null;
             for (let i = 0; i < allPoints.length; i++) {
                 if (allPoints[i].date <= now) last = allPoints[i];
                 else { next = allPoints[i]; break; }
             }
-
             if (last && next) {
                 document.getElementById('last-name').textContent = last.jp;
                 document.getElementById('last-time-full').textContent = formatFullTime(last.date);
