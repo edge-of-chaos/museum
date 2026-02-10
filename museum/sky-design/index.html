@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HXJR6GYWPY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-HXJR6GYWPY');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>空の設計図：大気立体観測室｜やまの純粋美術館</title>
+    
+    <meta name="description" content="大気の鉛直構造を3Dで透視し、風と湿度の理を可視化する。やまの純粋美術館・第7展示室。">
+    <meta name="keywords" content="気象観測, 3D可視化, 大気構造, 太陽黄経, やまの純粋美術館, Three.js, React">
+    <meta name="author" content="やまの純粋美術館">
+    <link rel="canonical" href="https://edge-of-chaos.github.io/museum/sky-design/">
+
+    <meta property="og:title" content="空の設計図：大気立体観測室｜やまの純粋美術館">
+    <meta property="og:description" content="大気の層を透視し、風と湿度の理を可視化する3D観測窓。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://edge-of-chaos.github.io/museum/sky-design/">
+    <meta property="og:image" content="https://edge-of-chaos.github.io/top-landscape.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/examples/jsm/controls/OrbitControls": "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js"
+      }
+    }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap');
+        * { font-family: 'M PLUS Rounded 1c', sans-serif; box-sizing: border-box; }
+        .font-mono { font-family: 'JetBrains Mono', monospace !important; }
+        
+        html, body, #root { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #111111; overflow: hidden; color: #f2f2f2; }
+
+        .nav-cluster { position: absolute; top: 20px; right: 25px; z-index: 100; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+        .btn-ui {
+            text-decoration: none; color: rgba(255, 255, 255, 0.6); background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50px; padding: 8px 18px;
+            font-size: 0.65rem; letter-spacing: 0.1rem; display: flex; align-items: center; gap: 8px; transition: all 0.3s; cursor: pointer;
+        }
+        .btn-ui:hover { color: #00d4ff; border-color: rgba(0, 212, 255, 0.4); transform: translateX(-3px); }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.3); border-radius: 10px; }
+        input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+
+        const { useState, useEffect, useRef } = React;
+
+        const Icons = {
+            Compass: () => (
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
+                    <circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+                </svg>
+            ),
+            Zap: () => (
+                <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2" fill="currentColor">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+            ),
+            Terminal: () => (
+                <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" strokeWidth="2" fill="none">
+                    <polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>
+                </svg>
+            )
+        };
+
+        const getWindColor = (dir) => (dir > 90 && dir < 270 ? "#fb923c" : "#22d3ee");
+        const getRHColor = (rh) => (rh < 60 ? "#fb923c" : rh < 85 ? "#22d3ee" : "#ffffff");
+
+        const VectorViz = ({ speed, dir, omega }) => {
+            const ms = (speed * 0.5144).toFixed(1);
+            const cms = (Math.abs(omega) * 0.1).toFixed(1);
+            const windColor = getWindColor(dir);
+            const omegaColor = omega > 0 ? "#000000" : "#ffffff";
+            const vectorDir = (dir + 180) % 360;
+
+            return (
+                <div className="flex items-center gap-1 bg-gray-700/80 px-1 py-0.5 rounded border border-gray-600 shadow-inner">
+                    <div className="relative w-10 h-10 flex items-center justify-center border-r border-gray-500/30 pr-1">
+                        <svg width="40" height="40" viewBox="-20 -20 40 40">
+                            <g transform={`rotate(${vectorDir})`}>
+                                <line x1="0" y1="0" x2="0" y2="-15" stroke={windColor} strokeWidth="4" />
+                                <path d="M -3 -12 L 0 -16 L 3 -12" fill="none" stroke={windColor} strokeWidth="2.5" />
+                            </g>
+                            <text x="0" y="0" fontSize="11" fill="#ffffff" textAnchor="middle" dominantBaseline="central" fontWeight="900" className="font-mono stroke-black stroke-[2px]" style={{ paintOrder: 'stroke fill' }}>{ms}</text>
+                        </svg>
+                    </div>
+                    <div className="relative w-10 h-10 flex items-center justify-center">
+                        <svg width="40" height="40" viewBox="-20 -20 40 40">
+                            <g transform={omega <= 0 ? "" : "scale(1, -1)"}>
+                                <line x1="0" y1="6" x2="0" y2="-15" stroke={omegaColor} strokeWidth="5" />
+                                {omega !== 0 && <path d="M -5 -11 L 0 -16 L 5 -11" fill="none" stroke={omegaColor} strokeWidth="3" />}
+                            </g>
+                            <text
+                                x="0" y="0"
+                                fontSize="12"
+                                fill={omega > 0 ? "#ffffff" : "#000000"}
+                                stroke={omega > 0 ? "#000000" : "#ffffff"}
+                                strokeWidth="2.5"
+                                style={{ paintOrder: 'stroke fill' }}
+                                textAnchor="middle" dominantBaseline="central"
+                                fontWeight="900"
+                                className="font-mono"
+                            >
+                                {cms}
+                            </text>
+                        </svg>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const defaultData = [
+                { "level": 300, "temp": -42, "rh": 20, "windSpeed": 50, "windDir": 280, "omega": 5, "name": "Upper", "altitude": 200 },
+                { "level": 500, "temp": -16, "rh": 30, "windSpeed": 35, "windDir": 290, "omega": 10, "name": "Mid T", "altitude": 150 },
+                { "level": 700, "temp": 2, "rh": 88, "windSpeed": 25, "windDir": 300, "omega": -15, "name": "Mid B", "altitude": 100 },
+                { "level": 850, "temp": 11, "rh": 40, "windSpeed": 15, "windDir": 320, "omega": 8, "name": "Lower", "altitude": 50 },
+                { "level": 1000, "temp": 18, "rh": 35, "windSpeed": 8, "windDir": 335, "omega": 3, "name": "Surface", "altitude": 0 }
+            ];
+
+            const [data, setData] = useState(defaultData);
+            const [bulkInput, setBulkInput] = useState("");
+            const mountRef = useRef(null);
+            const dataRef = useRef(data);
+            const clockRef = useRef(new THREE.Clock());
+            const needsSyncRef = useRef(true);
+
+            useEffect(() => { dataRef.current = data; needsSyncRef.current = true; }, [data]);
+
+            const handleBulkSync = () => {
+                try {
+                    const parsed = JSON.parse(bulkInput);
+                    if (Array.isArray(parsed) && parsed.length === 5) { setData(parsed); setBulkInput(""); }
+                } catch (err) { console.error("Sync Protocol Denied."); }
+            };
+
+            useEffect(() => {
+                if (!mountRef.current) return;
+                const scene = new THREE.Scene();
+                scene.background = new THREE.Color(0x444444);
+                const camera = new THREE.PerspectiveCamera(60, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 10000);
+                camera.position.set(380, 220, 380);
+
+                const renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                mountRef.current.appendChild(renderer.domElement);
+
+                const controls = new OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                
+                scene.add(new THREE.AmbientLight(0xffffff, 1.1), new THREE.DirectionalLight(0xffffff, 0.5));
+                scene.add(new THREE.GridHelper(400, 20, 0x333333, 0x555555));
+                scene.add(new THREE.ArrowHelper(new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 0.1, 0), 180, 0xffffff, 30, 15));
+
+                const pCount = 3000;
+                const geometry = new THREE.BufferGeometry();
+                const initialPosArr = new Float32Array(pCount * 3), posArr = new Float32Array(pCount * 3), colArr = new Float32Array(pCount * 3);
+                for (let i = 0; i < pCount; i++) {
+                    initialPosArr[i*3]=(Math.random()-0.5)*320; initialPosArr[i*3+1]=Math.random()*220; initialPosArr[i*3+2]=(Math.random()-0.5)*320;
+                }
+                geometry.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
+                geometry.setAttribute('color', new THREE.BufferAttribute(colArr, 3));
+                scene.add(new THREE.Points(geometry, new THREE.PointsMaterial({ size: 3.5, vertexColors: true, transparent: true, opacity: 0.95 })));
+
+                const arrowLineGeo = new THREE.BufferGeometry();
+                const arrowLinePosArr = new Float32Array(pCount * 18), arrowLineColArr = new Float32Array(pCount * 18);
+                arrowLineGeo.setAttribute('position', new THREE.BufferAttribute(arrowLinePosArr, 3));
+                arrowLineGeo.setAttribute('color', new THREE.BufferAttribute(arrowLineColArr, 3));
+                scene.add(new THREE.LineSegments(arrowLineGeo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.85 })));
+
+                const cloudGroup = new THREE.Group();
+                scene.add(cloudGroup);
+                const cloudSeeds = Array.from({ length: 200 }, () => ({ x:(Math.random()-0.5)*280, z:(Math.random()-0.5)*280, offsetY:(Math.random()-0.5)*15, scale:0.8+Math.random()*0.8 }));
+
+                const rainCount = 1500;
+                const rainGeo = new THREE.BufferGeometry();
+                const rainPosArr = new Float32Array(rainCount * 6), rainColArr = new Float32Array(rainCount * 6);
+                for(let i=0; i<rainCount*6; i++) rainPosArr[i] = -5000; 
+                rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPosArr, 3));
+                rainGeo.setAttribute('color', new THREE.BufferAttribute(rainColArr, 3));
+                const rainSystem = new THREE.LineSegments(rainGeo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.9, linewidth: 2.5 }));
+                scene.add(rainSystem);
+
+                let sortedData = [];
+                const getVal = (h, f) => {
+                    if (sortedData.length === 0) return 0;
+                    for (let i = 0; i < sortedData.length - 1; i++) {
+                        if (h >= sortedData[i].altitude && h <= sortedData[i+1].altitude) {
+                            const t = (h - sortedData[i].altitude) / (sortedData[i+1].altitude - sortedData[i].altitude);
+                            return sortedData[i][f] * (1 - t) + sortedData[i+1][f] * t;
+                        }
+                    }
+                    return sortedData[h < sortedData[0].altitude ? 0 : sortedData.length - 1][f];
+                };
+
+                let frameId;
+                const animate = () => {
+                    frameId = requestAnimationFrame(animate);
+                    const t = clockRef.current.getElapsedTime() % 5.0;
+                    const d = dataRef.current;
+                    const p = geometry.attributes.position.array, c = geometry.attributes.color.array;
+                    const ap = arrowLineGeo.attributes.position.array, ac = arrowLineGeo.attributes.color.array;
+                    const rp = rainGeo.attributes.position.array, rc = rainGeo.attributes.color.array;
+
+                    if (needsSyncRef.current) {
+                        sortedData = [...d].sort((a, b) => a.altitude - b.altitude);
+                        cloudGroup.clear();
+                        d.forEach((layer, index) => {
+                            if (layer.rh > 80) {
+                                const isConv = layer.omega <= -15; 
+                                if (isConv) {
+                                    for(let k=0; k<18; k++) {
+                                        const s = cloudSeeds[k + index * 10];
+                                        const box = new THREE.Mesh(new THREE.BoxGeometry(32*s.scale, 20, 32*s.scale), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 }));
+                                        box.position.set(s.x, layer.altitude + s.offsetY, s.z);
+                                        cloudGroup.add(box);
+                                    }
+                                } else {
+                                    const cyl = new THREE.Mesh(new THREE.CylinderGeometry(180, 180, 5, 48), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.15 }));
+                                    cyl.position.y = layer.altitude;
+                                    cloudGroup.add(cyl);
+                                }
+                            }
+                        });
+                        needsSyncRef.current = false;
+                    }
+
+                    for (let i = 0; i < pCount; i++) {
+                        const bx = initialPosArr[i*3], by = initialPosArr[i*3+1], bz = initialPosArr[i*3+2];
+                        const dir = getVal(by, 'windDir'), ws = getVal(by, 'windSpeed')*0.35, om = getVal(by, 'omega');
+                        const curX = bx + (-Math.sin((dir*Math.PI)/180) * ws) * t, curY = by - (om * 0.15 * t), curZ = bz + (Math.cos((dir*Math.PI)/180) * ws) * t;
+                        p[i*3]=curX; p[i*3+1]=curY; p[i*3+2]=curZ;
+                        const col = new THREE.Color(getWindColor(dir));
+                        c[i*3]=col.r; c[i*3+1]=col.g; c[i*3+2]=col.b;
+
+                        const vLen = om * 0.15 * 5.0, headSize = 1.3, i18 = i * 18;
+                        if (Math.abs(om) > 0.5) {
+                            const isSubs = om > 0;
+                            const tipY = isSubs ? curY : curY + Math.abs(vLen), tailY = isSubs ? curY + vLen : curY;
+                            ap[i18]=curX; ap[i18+1]=tailY; ap[i18+2]=curZ; ap[i18+3]=curX; ap[i18+4]=tipY; ap[i18+5]=curZ;
+                            const sign = isSubs ? 1 : -1;
+                            ap[i18+6]=curX; ap[i18+7]=tipY; ap[i18+8]=curZ; ap[i18+9]=curX-headSize; ap[i18+10]=tipY+(headSize*sign); ap[i18+11]=curZ;
+                            ap[i18+12]=curX; ap[i18+13]=tipY; ap[i18+14]=curZ; ap[i18+15]=curX+headSize; ap[i18+16]=tipY+(headSize*sign); ap[i18+17]=curZ;
+                            const val = isSubs ? 0 : 0.8; for(let j=0; j<6; j++){ ac[i18+j*3]=val; ac[i18+j*3+1]=val; ac[i18+j*3+2]=val; }
+                        } else { for(let j=0; j<18; j++) ap[i18+j] = 0; }
+                    }
+
+                    for(let i=0; i<rainCount; i++){
+                        const idx = i * 6;
+                        let yBase = rp[idx+1];
+                        if(yBase < -10) {
+                            const sY = Math.random()*200;
+                            if(getVal(sY, 'rh') > 94 && getVal(sY, 'omega') < -12) { 
+                                rp[idx+1] = sY; rp[idx] = rp[idx+3] = (Math.random()-0.5)*320; rp[idx+2] = rp[idx+5] = (Math.random()-0.5)*320;
+                            }
+                        } else {
+                            const temp = getVal(yBase, 'temp');
+                            const isSnow = temp <= 2.5;
+                            const speed = isSnow ? 0.9 : 5.8;
+                            const len = isSnow ? 2.0 : 12.0;
+                            yBase -= speed;
+                            const realBottom = Math.max(0, yBase);
+                            const realTop = Math.max(0, yBase + len);
+                            rp[idx+1] = realBottom; rp[idx+4] = realTop;
+                            const color = isSnow ? new THREE.Color(0xe0f2fe) : new THREE.Color(0x22d3ee);
+                            rc[idx]=rc[idx+3]=color.r; rc[idx+1]=rc[idx+4]=color.g; rc[idx+2]=rc[idx+5]=color.b;
+                            if(realTop <= 0) rp[idx+1] = -5000;
+                        }
+                    }
+                    geometry.attributes.position.needsUpdate = true; geometry.attributes.color.needsUpdate = true;
+                    arrowLineGeo.attributes.position.needsUpdate = true; arrowLineGeo.attributes.color.needsUpdate = true;
+                    rainGeo.attributes.position.needsUpdate = true; rainGeo.attributes.color.needsUpdate = true;
+                    controls.update(); renderer.render(scene, camera);
+                };
+                frameId = requestAnimationFrame(animate);
+
+                const handleResize = () => {
+                    if (!mountRef.current) return;
+                    renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+                    camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
+                    camera.updateProjectionMatrix();
+                };
+                window.addEventListener('resize', handleResize);
+                return () => {
+                    window.removeEventListener('resize', handleResize);
+                    cancelAnimationFrame(frameId);
+                    mountRef.current?.removeChild(renderer.domElement);
+                    renderer.dispose();
+                };
+            }, []);
+
+            return (
+                <div className="flex flex-col h-screen bg-[#111111] text-white font-sans overflow-hidden select-none">
+                    <div className="nav-cluster">
+                        <a href="../" className="btn-ui"><i className="fa-solid fa-arrow-left"></i><span>玄関に戻る</span></a>
+                    </div>
+
+                    <header className="flex justify-between items-center bg-[#000000] p-3 border-b border-white/10 shrink-0 shadow-2xl">
+                        <div className="flex items-center gap-2">
+                            <Icons.Compass />
+                            <h1 className="text-xs font-black tracking-widest uppercase">空の設計図 <span className="text-cyan-400 font-mono text-[9px] opacity-70">v10.8</span></h1>
+                        </div>
+                        <div className="text-[8px] font-bold text-emerald-400 font-mono italic animate-pulse uppercase tracking-tighter">ATMOSPHERIC_OBSERVATION</div>
+                    </header>
+
+                    <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+                        <div className="w-full h-[45vh] lg:h-full lg:flex-1 relative bg-[#444444] border-b lg:border-b-0 lg:border-r border-white/10">
+                            <div ref={mountRef} className="w-full h-full" />
+                            <div className="absolute top-3 left-3 pointer-events-none bg-black/60 backdrop-blur-md p-2 rounded-lg border border-white/10 space-y-1 shadow-2xl">
+                                <div className="flex items-center gap-1.5"><div className="w-3 h-1 bg-white/40 border border-white/30 rounded-full" /><span className="text-[7px] font-black uppercase">Cloud Volume</span></div>
+                                <div className="flex items-center gap-1.5 border-t border-white/5 pt-1 mt-1"><div className="w-1.5 h-1.5 rounded-full bg-orange-400" /><span className="text-[7px] font-black uppercase text-white">Warm Air (S)</span></div>
+                                <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /><span className="text-[7px] font-black uppercase text-white">Cold Air (N)</span></div>
+                            </div>
+                        </div>
+
+                        <div className="w-full lg:w-[380px] h-[55vh] lg:h-full flex flex-col gap-0.5 overflow-hidden p-2 bg-[#050505]">
+                            <div className="bg-gray-900/80 backdrop-blur-xl border border-white/10 rounded-xl p-2 flex-1 flex flex-col overflow-hidden shadow-2xl">
+                                <h2 className="text-[9px] font-black text-white uppercase flex items-center gap-1 mb-2 px-1 tracking-widest border-b border-white/5 pb-1 leading-none">
+                                    <Icons.Zap /> Atmospheric Injector
+                                </h2>
+                                <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar px-0.5 pb-2">
+                                    {data.map((layer, idx) => (
+                                        <div key={idx} className="bg-gray-800/60 p-1 rounded-lg border border-white/5 flex items-center transition-all hover:bg-gray-700/60">
+                                            <div className="w-10 flex flex-col items-center border-r border-white/5 mr-2 leading-none">
+                                                <span className="text-[7px] font-black text-slate-400 uppercase italic leading-none">{layer.name}</span>
+                                                <span className="text-[7px] font-mono text-cyan-200 mt-1 leading-none">{layer.level}</span>
+                                            </div>
+                                            <VectorViz speed={layer.windSpeed} dir={layer.windDir} omega={layer.omega} />
+                                            <div className="flex-1 flex flex-col gap-1 pl-2 ml-auto justify-center">
+                                                <div className="flex items-center justify-end gap-1 leading-none">
+                                                    <span className="text-[5px] font-black uppercase opacity-60" style={{color: getRHColor(layer.rh)}}>RH%</span>
+                                                    <input type="number" value={layer.rh} onChange={(e) => {const n=[...data]; n[idx].rh=parseFloat(e.target.value); setData(n)}} className="w-12 bg-transparent border-b border-white/5 text-[11px] font-mono text-right outline-none font-black" style={{color: getRHColor(layer.rh)}} />
+                                                </div>
+                                                <div className="flex items-center justify-end gap-1 leading-none">
+                                                    <span className="text-[5px] text-white/40 font-black text-right uppercase">°C</span>
+                                                    <input type="number" value={layer.temp} onChange={(e) => {const n=[...data]; n[idx].temp=parseFloat(e.target.value); setData(n)}} className="w-12 bg-transparent border-b border-white/5 text-[11px] font-mono text-right outline-none font-black" style={{color: getWindColor(layer.windDir)}} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="bg-gray-900/40 border border-white/5 rounded-xl p-2 flex-none flex flex-col mt-1 shadow-inner">
+                                <div className="flex justify-between items-center mb-1 px-1 leading-none">
+                                    <h3 className="text-[7px] font-black text-amber-500 uppercase flex items-center gap-1 tracking-widest"><Icons.Terminal /> Data Port</h3>
+                                    <button onClick={handleBulkSync} className="text-[7px] bg-amber-700 border border-amber-500 text-white px-3 py-0.5 rounded font-black hover:bg-amber-600 transition-colors">Sync</button>
+                                </div>
+                                <textarea rows={3} value={bulkInput} onChange={(e) => setBulkInput(e.target.value)} placeholder='Paste JSON...' className="bg-black/50 rounded px-2 py-1 text-[9px] font-mono text-amber-100 focus:outline-none border border-white/5 resize-none custom-scrollbar" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
